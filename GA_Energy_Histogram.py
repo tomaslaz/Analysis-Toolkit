@@ -11,10 +11,9 @@ The script must be executed at the top level of the KLMC simulation directory
 
 """
 
-import sys, os, copy
+import sys, os
 import numpy as np
 import matplotlib.pyplot as plt
-import re
 import time
 
 _energyRange = 2.0
