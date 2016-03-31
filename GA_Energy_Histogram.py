@@ -70,8 +70,8 @@ def binTheEnergies(energyArr):
     
   maxFreq = np.max(n)
 
-  plt.xlabel('Energy (eV)', fontsize=18)
-  plt.ylabel('Frequency', fontsize=18)
+  plt.xlabel('Energy Bin (eV)', fontsize=18)
+  plt.ylabel('Number of Configurations', fontsize=18)
   
   plt.grid(True)
   
