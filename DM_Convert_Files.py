@@ -233,8 +233,8 @@ def cmdLineArgs():
       
   (options, args) = parser.parse_args()
 
-  if (len(args) != 2):
-      parser.error("incorrect number of arguments")
+  if (len(args) < 2 and len(args) > 3):
+    parser.error("incorrect number of arguments")
 
   return options, args
 
@@ -396,7 +396,7 @@ def readClusterFromFileGIN(fileName, outputMode=False):
       return cluster, error
     
   cluster = Cluster(NAtoms)
-  
+    
   atomsCnt = 0
   regionSt = False
   regionRead = True
@@ -635,7 +635,7 @@ def writeCAR(cluster, outputFile):
   
   return success, error
 
-def writeGIN(cluster, outputFile):
+def writeGIN(cluster, outputFile, controlFile=None):
   """
   Writes cluster as a GIN file.
   
@@ -644,7 +644,10 @@ def writeGIN(cluster, outputFile):
   error = ""
   success = True
   
-  masterGinFile = "Master.gin"
+  if (controlFile is None):
+    masterGinFile = "Master.gin"
+  else:
+    masterGinFile = controlFile
   
   if cluster is None:
     success = False
@@ -699,7 +702,7 @@ def writeGIN(cluster, outputFile):
   fout.write(footer)
   
   fout.close()
-  
+
   return success, error
 
 def writeXYZ(cluster, outputFile):
@@ -740,7 +743,7 @@ def writeXYZ(cluster, outputFile):
   
   return success, error
 
-def convertFile(cluster, outFile):
+def convertFile(cluster, outFile, controlFile=None):
   """
   Saves a cluster in to a file according to the file format
   
@@ -755,12 +758,12 @@ def convertFile(cluster, outFile):
     success, error = writeCAR(cluster, outFile)
     
   elif outFile.endswith(".gin"):
-    success, error = writeGIN(cluster, outFile)
+    success, error = writeGIN(cluster, outFile, controlFile=controlFile)
     
   else:
     error = "Undefined output format"
     success = False
-  
+    
   return success, error
     
 if __name__ == "__main__":
@@ -773,6 +776,11 @@ if __name__ == "__main__":
   inFileName = args[0]
   outFileName = args[1]
   
+  if (len(args) > 2):
+    controlFile = args[2]
+  else:
+    controlFile = None
+    
   if inFileName[-3:] == outFileName[-3:]:
     sys.exit("Formats must differ!")
   
@@ -780,11 +788,11 @@ if __name__ == "__main__":
     fileList = glob.glob("*.gin")
       
     for fileName in fileList:
-      cluster = readClusterFromFileGIN(fileName)
+      cluster, error = readClusterFromFileGIN(fileName)
         
       outputFile = fileName[:-3] + outFileName[-3:]
       
-      ok, error = convertFile(cluster, outputFile)
+      ok, error = convertFile(cluster, outputFile, controlFile)
   
   elif inFileName == ".car":
     fileList = glob.glob("*.car")
@@ -795,7 +803,7 @@ if __name__ == "__main__":
        
       outputFile = fileName[:-3] + outFileName[-3:]
       
-      ok, error = convertFile(cluster, outputFile)
+      ok, error = convertFile(cluster, outputFile, controlFile)
   
   elif inFileName == ".xyz":
     fileList = glob.glob("*.xyz")
@@ -805,7 +813,7 @@ if __name__ == "__main__":
         
       outputFile = fileName[:-3] + outFileName[-3:]
       
-      ok, error = convertFile(cluster, outputFile)
+      ok, error = convertFile(cluster, outputFile, controlFile)
     
   else:
     
@@ -822,7 +830,7 @@ if __name__ == "__main__":
       print "Unrecognised input file ", inFileName, " format"
       sys.exit()
       
-    ok, error = convertFile(cluster, outFileName)
+    ok, error = convertFile(cluster, outFileName, controlFile)
     
     if ok:
       print "Finished!"
