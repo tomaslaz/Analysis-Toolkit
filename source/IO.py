@@ -1,0 +1,516 @@
+"""
+Input/Output module.
+
+@author Tomas Lazauskas, 2016
+@web www.lazauskas.net
+@email tomas.lazauskas[a]gmail.com
+"""
+
+import os
+
+import System
+
+def countMixAtoms(fileName):
+  """
+  Counts the number of atoms to be used in mixing.
+  
+  """
+  
+  success = False
+  error = ""
+  atomsCnt = 0
+  
+  if not os.path.isfile(fileName):
+    error = "File [%s] doesn't exist." % (fileName)
+    return success, error, atomsCnt
+  
+  try:
+    f = open(fileName)
+  except:
+    error = "Cannot read file [%s]" % (fileName)
+    return success, error, atomsCnt
+    
+  regionSt = False
+  regionRead = True
+  
+  for line in f:
+    
+    if (("extra" in line) or ("species" in line)):
+      regionSt = False
+      regionRead = False
+    
+    elif regionRead and regionSt:
+    
+      atomsCnt += 1
+    
+    if (("fractional" in line) or ("cartesian" in line)):
+      regionSt = True
+    
+  f.close()
+  
+  print "Counting the number of atoms (including vacancies): %d" % (atomsCnt)
+  
+  success = True
+  return success, error, atomsCnt
+
+def readSystemFromFileCAR(fileName):
+    """
+    Reads in the structure of a system from a CAR file.
+    
+    """
+    
+    system = None
+    
+    if not os.path.isfile(fileName):
+        print "File [%s] doesn't exist." % (fileName)
+        return system
+    
+    try:
+        f = open(fileName)
+    except:
+        print "Cannot read file [%s]" % (fileName)
+        return system
+    
+    i = 0
+    totAtomCnt = 0
+    
+    for line in f:
+      
+      i += 1
+      line = line.strip()
+      
+      if ("end" in line):
+        break
+      
+      if (i >= 5):
+        totAtomCnt += 1
+      
+    f.close()
+    
+    system = System.System(totAtomCnt)
+    
+    f = open(fileName)
+    
+    i = 0
+    atomCnt = 0
+    
+    for line in f:
+      
+      i += 1
+      line = line.strip()
+      
+      if ("end" in line):
+        break
+      
+      if (i >= 5):
+        array = line.split()
+              
+        sym = array[7].strip()
+         
+        if sym not in system.specieList:
+            system.addSpecie(sym)
+       
+        specInd = system.specieIndex(sym)
+         
+        system.specieCount[specInd] += 1
+         
+        system.specie[atomCnt] = specInd
+         
+        for j in range(3):
+            system.pos[atomCnt*3 + j] = float(array[j+1])
+        
+        system.charge[atomCnt] = float(array[8])
+        atomCnt += 1
+    
+    f.close()
+
+    return system
+
+def readSystemFromFileGIN(fileName, outputMode=False):
+  """
+  Reads in the structure of a system from a GIN file.
+  
+  """
+  
+  header = ""
+  footer = ""
+  
+  system = None
+  
+  success, error, NAtoms = countMixAtoms(fileName)
+  
+  if not success:
+    if outputMode:
+      return system, error, header, footer
+    
+    else:
+      return system, error
+  
+  if not os.path.isfile(fileName):
+    error = "File [%s] doesn't exist." % (fileName)
+    
+    if outputMode:
+      return system, error, header, footer
+    
+    else:
+      return system, error
+  
+  try:
+    f = open(fileName)
+    
+  except:
+    error = "Cannot read file [%s]" % (fileName)
+    
+    if outputMode:
+      return system, error, header, footer
+    
+    else:
+      return system, error
+    
+  system = System.System(NAtoms)
+    
+  atomsCnt = 0
+  regionSt = False
+  regionRead = True
+  regionReached = False
+  
+  speciesSt = False
+  speciesEnd = False
+  speciesCnt = 0
+  
+  getCellParams = False
+  
+  for line in f:
+    
+    if outputMode:
+      if (not regionRead and not regionSt):
+        footer += line
+        
+      elif (regionRead and not regionSt):
+        header += line
+      
+    if getCellParams:
+      line = line.strip()
+      array = line.split()
+      
+      system.cellDims[0] = array[0]
+      system.cellDims[1] = array[1]
+      system.cellDims[2] = array[2]
+      
+      system.cellAngles[0] = array[3]
+      system.cellAngles[1] = array[4]
+      system.cellAngles[2] = array[5]
+      
+      system.PBC[0] = 1
+      system.PBC[1] = 1
+      system.PBC[2] = 1
+      
+      #TODO: extend to not only cubic systems
+      if ((system.cellAngles[0] <> 90.0) or (system.cellAngles[1] <> 90.0) or (system.cellAngles[2] <> 90.0)):
+        print " : At the moment we can deal only with cubic cells. Please contact if you want to use different systems"
+        
+      else:
+        sys.exit(__name__ +" : Cannot determine cell type")
+      
+      getCellParams = False
+      
+    elif (("extra" in line) or ("species" in line)):
+      regionSt = False
+      regionRead = False
+      
+      if ("species" in line):
+        speciesSt = True
+        
+        array = line.split()
+        speciesCnt = int(array[1])
+        
+    elif (speciesSt and (speciesCnt > 0)):
+      # Reading in the species
+      
+      line = line.strip()
+      array = line.split()
+
+      try:
+        system.gulpSpecies[array[0].strip()]
+        system.gulpSpecies[array[0].strip()] += array[1].strip() + "," + array[2].strip() + ";"
+      except:
+        system.gulpSpecies[array[0].strip()] = array[1].strip() + "," +  array[2].strip() + ";"
+        
+      speciesCnt -= 1
+    
+    elif regionRead and regionSt:
+
+      line = line.strip()
+      array = line.split()
+      
+      # reading the specie
+      sym = array[0].strip()
+      
+      if sym not in system.specieList:
+        system.addSpecie(sym)
+      
+      specInd = system.specieIndex(sym)
+      system.specieCount[specInd] += 1
+      system.specie[atomsCnt] = specInd
+      
+      # positions
+      for j in range(3):
+        system.pos[atomsCnt*3 + j] = float(array[j+2])
+      
+      # charge 
+      try:
+        system.charge[atomsCnt] = float(array[5])
+        
+      except:
+        system.charge[atomsCnt] = 0.0
+      
+      atomsCnt += 1
+      
+    elif ("fractional" in line):
+      
+      regionSt = True
+      regionReached = True
+
+    elif ("cartesian" in line):
+      
+      regionSt = True
+      regionReached = True
+      
+    
+    if atomsCnt == NAtoms:
+      regionSt = False
+      regionRead = False
+
+  f.close()
+      
+  if outputMode:
+    return system, error, header, footer
+  
+  else:
+    return system, error
+  
+def readSystemFromFileXYZ(fileName):
+    """
+    Reads in the structure of a system from an XYZ file.
+    
+    """
+    
+    system = None
+    
+    if not os.path.isfile(fileName):
+        print "File [%s] doesn't exist." % (fileName)
+        return system
+    
+    try:
+        f = open(fileName)
+    except:
+        print "Cannot read file [%s]" % (fileName)
+        return system
+    
+    line = f.readline().strip()
+    
+    NAtoms = int(line)
+        
+    system = System.System(NAtoms)
+    
+    # additional info
+    line = f.readline().strip()
+    
+    # size ?
+    array = line.split()
+#     system.cellDims[0] = float(array[0])
+#     system.cellDims[1] = float(array[1])
+#     system.cellDims[2] = float(array[2])
+
+    # atoms and their positions
+    i = 0
+    for line in f:
+        array = line.strip().split()
+
+        sym = array[0].strip()
+        
+        if sym not in system.specieList:
+            system.addSpecie(sym)
+        
+        specInd = system.specieIndex(sym)
+        
+        system.specieCount[specInd] += 1
+        
+        system.specie[i] = specInd
+        
+        for j in range(3):
+            system.pos[i*3 + j] = float(array[j+1])
+        
+        try:
+            system.charge[i] = array[4]
+        except:
+            system.charge[i] = 0.0
+        
+        i += 1
+        
+        if i == NAtoms:
+          break
+    
+    f.close()
+
+    return system
+
+def writeCAR(system, outputFile):
+  """
+  Writes system as a CAR file.
+  
+  """
+  
+  error = ""
+  success = True
+  
+  if system is None:
+    success = False
+    error = __name__ + ": no data to write"
+    
+    return success, error
+  
+  try:
+    fout = open(outputFile, "w")
+  except:
+    success = False
+    error = __name__ + ": Cannot open: " + filePath
+    
+    return success, error
+  
+  fout.write("%s\n" % "!BIOSYM archive 3")
+ 
+  if (system.PBC[0] <> 0 or system.PBC[0] <> 0 or system.PBC[0] <> 0):
+    success = False
+    error = __name__ + ": PBC are not implemented for CAR"
+  
+    return success, error
+  
+  fout.write("%s\n" % "PBC=OFF")
+    
+  fout.write("\n")
+  fout.write("%s\n" % "!DATE")
+  
+  for i in range(system.NAtoms):
+    
+    tempStr =  ("%s%d" % (system.specieList[system.specie[i]], i+1))
+    tempStr = "{:<7}".format(tempStr)
+    
+    fout.write("%7s %13.10f %13.10f %13.10f XXXX 1      xx      %2s %.4f\n" % (tempStr, 
+      system.pos[3*i], system.pos[3*i+1], system.pos[3*i+2], 
+      "{:<2}".format(system.specieList[system.specie[i]]), system.charge[i]))
+  
+  fout.write("end\n")
+  fout.write("end\n")
+  
+  fout.close()
+  
+  return success, error
+
+def writeGIN(system, outputFile, controlFile=None):
+  """
+  Writes system as a GIN file.
+  
+  """
+  
+  error = ""
+  success = True
+  
+  if (controlFile is None):
+    masterGinFile = "Master.gin"
+  else:
+    masterGinFile = controlFile
+  
+  if system is None:
+    success = False
+    error = __name__ + ": no data to write"
+    
+    return success, error
+  
+  if (not os.path.isfile(masterGinFile)):
+    success = False
+    error = __name__ + ": could not locate Master.gin file"
+
+    return success, error
+    
+  masterSystem, error, header, footer = readSystemFromFileGIN(masterGinFile, outputMode=True)
+  
+  if (masterSystem is None):
+    success = False
+    return success, error
+  
+  try:
+    fout = open(outputFile, "w")
+  except:
+    success = False
+    error = __name__ + ": Cannot open: " + filePath
+     
+    return success, error
+  
+  fout.write(header)
+
+  for i in range(system.NAtoms):
+    tempStr = system.specieList[system.specie[i]]
+    
+    gulpSpecies = masterSystem.gulpSpecies[tempStr]
+    
+    gulpSpeciesArr = gulpSpecies.split(";")
+    
+    for j in range(len(gulpSpeciesArr)):
+      if len(gulpSpeciesArr[j].strip()) > 0:
+        
+        gulpSpeciesArr2 = gulpSpeciesArr[j].split(",")
+                
+        type = gulpSpeciesArr2[0].strip()
+        
+        try:
+          charge = float(gulpSpeciesArr2[1].strip())
+        except:
+          charge = 0.0
+
+        fout.write("%s %s %13.10f %13.10f %13.10f %.4f\n" % 
+                  (tempStr, type, system.pos[3*i], system.pos[3*i+1], system.pos[3*i+2], charge)) 
+     
+  fout.write(footer)
+  
+  fout.close()
+
+  return success, error
+
+def writeXYZ(system, outputFile):
+  """
+  Writes system as an XYZ file.
+  
+  """
+  
+  error = ""
+  success = True
+  
+  if system is None:
+    success = False
+    error = __name__ + ": no data to write"
+    
+    return success, error
+  
+  try:
+    fout = open(outputFile, "w")
+    
+  except:
+    success = False
+    error = __name__ + ": Cannot open: " + filePath
+    
+    return success, error
+  
+  fout.write("%d\n" % system.NAtoms)
+  
+  metaData = "SCF Done             %.10e;" % (system.totalEnergy)
+    
+  fout.write("%s\n" % (metaData))
+  for i in range(system.NAtoms):
+    
+    fout.write("%s %.10f %.10f %.10f %.2f\n" % (system.specieList[system.specie[i]], 
+      system.pos[3*i], system.pos[3*i+1], system.pos[3*i+2], system.charge[i]))
+  
+  fout.close()
+  
+  return success, error

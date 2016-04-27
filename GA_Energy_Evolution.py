@@ -17,7 +17,7 @@ import time
 # Number of structres to be presented on the graph
 lowEnergyCnt = 20
 # Energy range to be presented on the graph 
-energyRange = 10.0
+energyRange = 1.0
 
 # Settings below should not be changed if you are not sure what they are for
 #---------------------------------------------------------------------------

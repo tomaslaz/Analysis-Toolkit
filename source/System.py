@@ -1,27 +1,19 @@
-#!/usr/bin/env python
-
 """
-A script to convert files. Works with XYZ, CAR, and GIN formats.
+System module.
 
 @author Tomas Lazauskas, 2016
 @web www.lazauskas.net
 @email tomas.lazauskas[a]gmail.com
+
 """
 
-import glob
-import os
-import sys
 import numpy as np
-from optparse import OptionParser
 
-import source.Atoms as Atoms
-import source.IO as IO
-
-class Cluster(object):
+class System(object):
   """
-  A class to save the structure of a cluster.
+  A class to save the systems.
   
-  NAtoms: number of atoms in cluster (N)
+  NAtoms: number of atoms in system (N)
   specie[N]: array of symbols of atoms
   pos[3N]: array of positions of atoms
   charge[N]: array of charges of atoms
@@ -55,7 +47,7 @@ class Cluster(object):
         
   def addAtom(self, sym, pos, charge):
     """
-    Add an atom to the cluster
+    Add an atom to the system
     
     """
     
@@ -77,7 +69,7 @@ class Cluster(object):
   def calcCOM(self):
       
     """
-    Calculates the centre of mass of a cluster
+    Calculates the centre of mass of a system
     
     """
     
@@ -140,7 +132,7 @@ class Cluster(object):
       
   def moveToCOM(self):
     """
-    Centers the cluster on the centre of of mass.
+    Centers the system on the centre of of mass.
     
     """
     
@@ -150,7 +142,7 @@ class Cluster(object):
       
   def removeAtom( self, index ):
     """
-    Remove an atom from the structure
+    Remove an atom from the system
     
     """
     
@@ -219,118 +211,3 @@ class Cluster(object):
         if not PBC[i]:
             self.minPos[i] = self.pos[i::3].min()
             self.maxPos[i] = self.pos[i::3].max()
-
-def cmdLineArgs():
-  """
-  Handles command line arguments and options.
-  
-  """
-  
-  usage = "usage: %prog inputFile outputFile"
-  
-  parser = OptionParser(usage=usage)
-
-  parser.disable_interspersed_args()
-      
-  (options, args) = parser.parse_args()
-
-  if (len(args) < 2 and len(args) > 3):
-    parser.error("incorrect number of arguments")
-
-  return options, args
-
-def convertFile(cluster, outFile, controlFile=None):
-  """
-  Saves a cluster in to a file according to the file format
-  
-  """
-  error = ""
-  success = True
-  
-  if outFile.endswith(".xyz"):
-    success, error = IO.writeXYZ(cluster, outFile)
-    
-  elif outFile.endswith(".car"):
-    success, error = IO.writeCAR(cluster, outFile)
-    
-  elif outFile.endswith(".gin"):
-    success, error = IO.writeGIN(cluster, outFile, controlFile=controlFile)
-    
-  else:
-    error = "Undefined output format"
-    success = False
-    
-  return success, error
-    
-if __name__ == "__main__":
-  
-  ok = 1
-  error = ""
-  
-  _, args = cmdLineArgs()
-  
-  inFileName = args[0]
-  outFileName = args[1]
-  
-  if (len(args) > 2):
-    controlFile = args[2]
-  else:
-    controlFile = None
-    
-  if inFileName[-3:] == outFileName[-3:]:
-    sys.exit("Formats must differ!")
-  
-  if inFileName == ".gin":
-    fileList = glob.glob("*.gin")
-      
-    for fileName in fileList:
-      cluster, error = IO.readClusterFromFileGIN(fileName)
-        
-      outputFile = fileName[:-3] + outFileName[-3:]
-      
-      ok, error = convertFile(cluster, outputFile, controlFile)
-  
-  elif inFileName == ".car":
-    fileList = glob.glob("*.car")
-    
-    for fileName in fileList:
-      
-      cluster = IO.readClusterFromFileCAR(fileName)
-       
-      outputFile = fileName[:-3] + outFileName[-3:]
-      
-      ok, error = convertFile(cluster, outputFile, controlFile)
-  
-  elif inFileName == ".xyz":
-    fileList = glob.glob("*.xyz")
-    
-    for fileName in fileList:
-      cluster = IO.readClusterFromFileXYZ(fileName)
-        
-      outputFile = fileName[:-3] + outFileName[-3:]
-      
-      ok, error = convertFile(cluster, outputFile, controlFile)
-    
-  else:
-    
-    if inFileName.endswith(".xyz"):
-      cluster = IO.readClusterFromFileXYZ(inFileName)
-      
-    elif inFileName.endswith(".car"):
-      cluster = IO.readClusterFromFileCAR(inFileName)
-    
-    elif inFileName.endswith(".gin"):
-      cluster, error = IO.readClusterFromFileGIN(inFileName)
-    
-    else:
-      print "Unrecognised input file ", inFileName, " format"
-      sys.exit()
-      
-    ok, error = convertFile(cluster, outFileName, controlFile)
-    
-    if ok:
-      print "Finished!"
-    
-    else:
-      print "Error: ", error
-      
