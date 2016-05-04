@@ -7,6 +7,7 @@ System module.
 
 """
 
+import math
 import numpy as np
 
 class System(object):
@@ -21,7 +22,9 @@ class System(object):
   """
     
   def __init__(self, NAtoms):
-      
+    self.name = ""
+    self.hashkey = ""
+    
     self.totalEnergy = 0.0
     self.NAtoms = NAtoms
     self.cellDims = np.zeros(3, np.float64)
@@ -35,6 +38,7 @@ class System(object):
     self.charge = np.empty(self.NAtoms, np.float64)
     
     self.com = np.empty(3, np.float64)
+    self.cog = np.empty(3, np.float64)
     self.momentOfInertia = np.zeros([3, 3], np.float64)
     
     dt = np.dtype((str, 2))
@@ -44,7 +48,10 @@ class System(object):
     self.PBC = np.zeros(3, np.int32)
     
     self.gulpSpecies = {}
-        
+    
+    self.noOfcores = 0
+    self.runTime = 0.0
+    
   def addAtom(self, sym, pos, charge):
     """
     Add an atom to the system
@@ -65,6 +72,22 @@ class System(object):
     self.charge = np.append(self.charge, charge)
 
     self.NAtoms += 1
+  
+  def calcCOG(self):
+      
+    """
+    Calculates the the geometric centre
+    
+    """
+    
+    totMass = 0.0
+    self.cog[:] = 0.0
+    
+    for i in range(self.NAtoms):      
+      for j in range(3):
+        self.cog[j] += self.pos[3*i + j]
+
+    self.cog = self.cog / self.NAtoms
     
   def calcCOM(self):
       
@@ -119,6 +142,30 @@ class System(object):
     self.momentOfInertia[2][0] = moi[4]
     self.momentOfInertia[2][1] = moi[5]
   
+  def findNN(self, atomIdx, rdfCutOffSq):
+    
+    cntrx = self.pos[3*atomIdx+0]
+    cntry = self.pos[3*atomIdx+1]
+    cntrz = self.pos[3*atomIdx+2]
+    
+    neighboursCnt = 0
+    neighboursArr = np.zeros(self.NAtoms, np.int32)
+    neighboursDistArr = np.zeros(self.NAtoms, np.float64)
+    
+    for i in range(self.NAtoms):
+      if (i != atomIdx):
+        distSq = ((cntrx - self.pos[3*i+0])**2 + 
+                  (cntry - self.pos[3*i+1])**2 + 
+                  (cntrz - self.pos[3*i+2])**2)
+    
+        if (distSq <= rdfCutOffSq):
+          neighboursArr[neighboursCnt] = i
+          neighboursDistArr[neighboursCnt] = math.sqrt(distSq)
+          
+          neighboursCnt += 1
+    
+    return neighboursCnt, neighboursArr, neighboursDistArr
+  
   def rotateToMOI(self, basis):
     
     for i in range(self.NAtoms):
@@ -129,10 +176,20 @@ class System(object):
           elSum += self.pos[3*i+k] * basis[k][j]
 
         self.pos[3*i+j] = elSum
-      
+  
+  def moveToCOG(self):
+    """
+    Centers the system on the centre of geometry.
+    
+    """
+    
+    for i in range(self.NAtoms):
+      for j in range(3):
+        self.pos[3*i + j] -= self.cog[j]
+       
   def moveToCOM(self):
     """
-    Centers the system on the centre of of mass.
+    Centers the system on the centre of mass.
     
     """
     

@@ -13,6 +13,8 @@ numpy v.1.x (x => 10.1)
 # Scripts
 DM_Convert_Files - converts files from one format to another. Works with the most popular formats, such us XYZ, CAR, and GIN.
 
+DM_Coordination_Bonding - analyses systems (xyz format) in terms of avg. bond distance and coordination
+
 GA_Energy_Evolution - plots the energy evolution graph of the n lowest energy structures during a KLMC GA simulation
 
 GA_Energy_Histogram - plots energy distribution histogram from the last iteration of a KLMC GA simulation

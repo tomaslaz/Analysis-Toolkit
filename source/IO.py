@@ -10,6 +10,61 @@ import os
 
 import System
 
+def checkDirectory(dirPath, createMd=0):
+  """
+  Checks if directory exists
+  """
+  
+  exists = os.path.exists(dirPath)
+  
+  if ((not exists) and (createMd)):
+    try:
+      os.makedirs(dirPath)
+      exists = True
+    except:
+      exists = False
+      
+  return exists
+
+def checkFile(filePath):
+  """
+  Checks if file exists.
+  
+  """
+  
+  return os.path.isfile(filePath)
+
+def countLines(fileName):
+  """
+  Counts the number of lines in a file
+  
+  """
+  
+  
+  
+  success = False
+  error = ""
+  linesCount = 0
+  
+  if not os.path.isfile(fileName):
+    error = "File [%s] doesn't exist." % (fileName)
+    return success, error, linesCount
+  
+  try:
+    f = open(fileName)
+    
+  except:
+    error = "Cannot read file [%s]" % (fileName)
+    return success, error, linesCount
+  
+  for line in f:
+    linesCount += 1
+  
+  f.close()
+  
+  success = True
+  return success, error, linesCount
+  
 def countMixAtoms(fileName):
   """
   Counts the number of atoms to be used in mixing.
@@ -318,9 +373,6 @@ def readSystemFromFileXYZ(fileName):
     
     # size ?
     array = line.split()
-#     system.cellDims[0] = float(array[0])
-#     system.cellDims[1] = float(array[1])
-#     system.cellDims[2] = float(array[2])
 
     # atoms and their positions
     i = 0
@@ -352,7 +404,9 @@ def readSystemFromFileXYZ(fileName):
           break
     
     f.close()
-
+    
+    system.name = os.path.splitext(os.path.basename(fileName))[0]
+    
     return system
 
 def writeCAR(system, outputFile):
@@ -487,6 +541,12 @@ def writeXYZ(system, outputFile):
   success = True
   
   if system is None:
+    success = False
+    error = __name__ + ": no data to write"
+    
+    return success, error
+  
+  if (len(system.specieList) < 1):
     success = False
     error = __name__ + ": no data to write"
     

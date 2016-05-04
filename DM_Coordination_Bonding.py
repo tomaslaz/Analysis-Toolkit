@@ -226,7 +226,7 @@ def cmdLineArgs():
   
   """
   
-  usage = "usage: %prog inputFile"
+  usage = "usage: %prog inputFile minRadius maxRadius"
   
   parser = OptionParser(usage=usage)
 
