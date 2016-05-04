@@ -11,11 +11,13 @@ Matplotlib v.1.x (x => 5.0)
 numpy v.1.x (x => 10.1)
 
 # Scripts
-DM_Convert_Files - converts files from one format to another. Works with the most popular formats, such us XYZ, CAR, and GIN.
+DM_Convert_Files - converts files from one format to another. Works with the most popular formats, such us XYZ, CAR, and GIN
 
 DM_Coordination_Bonding - analyses systems (xyz format) in terms of avg. bond distance and coordination
 
-DM_FHIaims_analysis - analyses FHI-aims simulations in terms of runtime, systems' energies etc.
+DM_FHIaims_analysis - analyses FHI-aims simulations in terms of runtime, systems' energies etc
+
+DM_RDF - plots radial distribution function
 
 GA_Energy_Evolution - plots the energy evolution graph of the n lowest energy structures during a KLMC GA simulation
 
