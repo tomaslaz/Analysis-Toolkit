@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# One-time analysis tools
+DM_Coordination_Bonding_DB.py
+
 # C extensions
 *.so
 
