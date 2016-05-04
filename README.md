@@ -2,7 +2,7 @@
 # Author: Tomas Lazauskas, 2015-2016
 # www: www.lazauskas.net
 
-A set of scripts to pre/post-process the data for/from KLMC simulations.
+A set of scripts to pre/post-process data for/from KLMC simulations.
 
 # Requiremenets 
 Python v.2.7.x (x => 9)
