@@ -4,7 +4,7 @@
 
 A set of scripts to pre/post-process data for/from KLMC simulations.
 
-# Requiremenets 
+# Requirements 
 Python v.2.7.x (x => 9)
 
 Matplotlib v.1.x (x => 5.0)
