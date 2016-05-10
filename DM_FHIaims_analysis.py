@@ -23,6 +23,7 @@ _fhiaimsGeometryFile = "geometry.in"
 _fhiaimsOutFile = "FHIaims.out"
 _outputDir = "output"
 _topDir = "tops"
+_uniqueDir = "unique"
 
 def getFileList(dirPath=None):
   """
@@ -40,7 +41,7 @@ def getFileList(dirPath=None):
     
   return dirList
 
-def generateStatistics(systemlist):
+def generateStatistics(systemlist, unique=False):
   """
   Generates statistics about the FHI-aims simulations
     
@@ -50,7 +51,10 @@ def generateStatistics(systemlist):
   sumOfCores = 0
   runTimes = np.zeros(noOfSystems, np.float64)
   
-  f = open("Stats.csv", "w")
+  if not unique:
+    f = open("Stats.csv", "w")
+  else:
+    f = open("%s/Stats.csv" % (_uniqueDir), "w")
   
   f.write("%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", "Time", "Tot.Time"))
   
@@ -87,13 +91,15 @@ def readFHIaimsSystems(fhiaimsDirs):
     cwd = os.getcwd()
     
     os.chdir(dirName)
-
-    systemName = dirName[len(_outputDir)+1:].strip()
-    
+    #systemName = dirName[len(_outputDir)+1:-2].strip()
+    systemName = dirName.strip()
+   
     success, error, system = FHIaims._readAimsStructure(_fhiaimsGeometryFile, _fhiaimsOutFile)
-    system.name = systemName
     
-    systemsList.append(system)
+    if success:
+      system.name = systemName
+      
+      systemsList.append(system)
     
     os.chdir(cwd)
   
@@ -106,27 +112,50 @@ def saveFiles(systemsList):
   """
   
   cwd = os.getcwd()
+
   os.system("rm -rf %s" % (_topDir))
+  os.system("rm -rf %s" % (_uniqueDir))
+  
+  IO.checkDirectory(_uniqueDir, True)
   IO.checkDirectory(_topDir, True)
   os.chdir(_topDir)
   
   systemListLen = len(systemsList)
   
+  uniquehashkeys = []
+  uniqueSystems = []
+  uniqueCnt = 0
+   
   for i in range(systemListLen):
     
-    fileName = "%03d_%s.xyz" % (i+1, systemsList[i].name)
+    nStr = "n%02d" % (systemsList[i].NAtoms)
     
+    fileName = "%s_%03d_%s.xyz" % (nStr, i+1, systemsList[i].name)
+
     IO.writeXYZ(systemsList[i], fileName)
     
-    hashkeyRadius = Atoms.getRadius(systemsList[i]) + 0.4
-        
+    hashkeyRadius = Atoms.getRadius(systemsList[i]) + 1.0
+
     cmdLine = "python ~/git/hkg/hkg.py %s %f" % (fileName, hashkeyRadius)
     
     hashkey = os.popen(cmdLine).read().strip()
     
     systemsList[i].hashkey = copy.deepcopy(hashkey)
+    
+    # saving only uniques:
+    if not (hashkey in uniquehashkeys):
+      uniqueCnt += 1
+      uniquehashkeys.append(hashkey)
+      
+      uniqueSystems.append(systemsList[i])
+      
+      fileName2 = "%s_%03d_%s.xyz" % (nStr, uniqueCnt, systemsList[i].name)
+      
+      os.system("cp %s ../%s/%s" % (fileName, _uniqueDir, fileName2))
   
   os.chdir(cwd)
+  
+  return uniqueSystems
 
 def sortSystems(systemsList):
   """
@@ -149,6 +178,8 @@ if __name__ == "__main__":
   # looks for FHI-aims simulations in the output directory
   fhiaimsDirs = getFileList()
   
+  print "fhiaimsDirs: ", fhiaimsDirs
+  
   # reads in the FHI-aims systems
   systems = readFHIaimsSystems(fhiaimsDirs)
   
@@ -156,11 +187,14 @@ if __name__ == "__main__":
   sortSystems(systems)
   
   # save files
-  saveFiles(systems)
+  uniqueSystems = saveFiles(systems)
+  sortSystems(uniqueSystems)
   
   # generate statistics
   generateStatistics(systems)
   
+  # generating unique statistics
+  generateStatistics(uniqueSystems, True)
   
   print "Finished."
   
