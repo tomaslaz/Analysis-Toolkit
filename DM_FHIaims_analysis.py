@@ -177,9 +177,7 @@ if __name__ == "__main__":
   
   # looks for FHI-aims simulations in the output directory
   fhiaimsDirs = getFileList()
-  
-  print "fhiaimsDirs: ", fhiaimsDirs
-  
+    
   # reads in the FHI-aims systems
   systems = readFHIaimsSystems(fhiaimsDirs)
   
