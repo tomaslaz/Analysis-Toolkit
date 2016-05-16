@@ -24,3 +24,4 @@ GA_Energy_Evolution - plots the energy evolution graph of the n lowest energy st
 
 GA_Energy_Histogram - plots energy distribution histogram from the last iteration of a KLMC GA simulation
 
+GA_Family_Tree - finds parents, grandparents, etc for a specific GA iteration.
