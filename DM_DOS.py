@@ -35,7 +35,7 @@ def cmdLineArgs():
 
   parser.disable_interspersed_args()
   
-  parser.add_option('-t', dest="temps", default="0", help="List of temperatures, separated by a comma (default t=0)")
+  parser.add_option('-t', dest="temps", default=None, help="List of temperatures, separated by a comma (default t=0)")
     
   (options, args) = parser.parse_args()
 
@@ -182,8 +182,12 @@ if __name__ == "__main__":
   options, args = cmdLineArgs()
   
   # getting the temperatures
-  temps = getTheListOfTemps(options.temps)
-  noOfTemps = len(temps)
+  if options.temps is not None:
+    temps = getTheListOfTemps(options.temps)
+    noOfTemps = len(temps)
+    
+  else:
+    noOfTemps = 0
     
   # reading the energies from a file
   energies = np.loadtxt(args[0])
@@ -214,25 +218,29 @@ if __name__ == "__main__":
   for i in range(M):
     energyDOS[i] = np.sum((1/(_sigma*np.pi**0.5)) * np.exp(-(energyBins[i] - energies)**2 / _sigma**2))
     
-    # going through the list of temperatures
-    for j in range(noOfTemps):
-      temp = temps[j]
+    if noOfTemps > 0:
       
-      # calculating the integrated DOS       
-      tempArrs[i][j] = ((1.0/(_sigma*np.pi**0.5)) * 
-                        np.sum(((np.pi**0.5/(2*_sigma**-1)) * 
-                                (scipy.special.erf(1/_sigma * (energyBins[i] - energiesUnique)) - 
-                                 scipy.special.erf(-np.infty))) * 
-                               np.exp(-(energiesUnique)/(_kB*temp) )))
+      # going through the list of temperatures
+      for j in range(noOfTemps):
+        temp = temps[j]
+         
+        # calculating the integrated DOS       
+        tempArrs[i][j] = ((1.0/(_sigma*np.pi**0.5)) * 
+                          np.sum(((np.pi**0.5/(2*_sigma**-1)) * 
+                                  (scipy.special.erf(1/_sigma * (energyBins[i] - energiesUnique)) - 
+                                   scipy.special.erf(-np.infty))) * 
+                                 np.exp(-(energiesUnique)/(_kB*temp) )))
   
   # printing DOS graph
   plotDOS(energyBins, energyDOS, eMax)    
 
-  # printing integrated DOS graph
-  plotIntegratedDOS(energyBins, tempArrs, noOfTemps, temps, eMax)
   
-  # printing DOS and integrated DOS
-  plotDOSandIntegratedDOS(energyBins, energyDOS, tempArrs, noOfTemps, temps, eMax)
+  if noOfTemps > 0:
+    # printing integrated DOS graph
+    plotIntegratedDOS(energyBins, tempArrs, noOfTemps, temps, eMax)
+    
+    # printing DOS and integrated DOS
+    plotDOSandIntegratedDOS(energyBins, energyDOS, tempArrs, noOfTemps, temps, eMax)
   
   print "Finished."
   
