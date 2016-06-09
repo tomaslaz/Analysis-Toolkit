@@ -16,7 +16,7 @@ DM_Convert_Files - converts files from one format to another. Works with the mos
 
 DM_Coordination_Bonding - analyses systems (xyz format) in terms of avg. bond distance and coordination
 
-DM_DOS - plots DOS (and integrated DOS) graphs
+DM_DOS - plots DOS (and integrated DOS) graphs [Based on the David Mora Fonz's (UCL) implementation]
 
 DM_FHIaims_analysis - analyses FHI-aims simulations in terms of runtime, systems' energies etc
 
