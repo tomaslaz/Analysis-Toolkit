@@ -3,7 +3,7 @@
 """
 A script to plot DOS (integrated)
 
-@author Tomas Lazauskas, 2016
+@author Tomas Lazauskas, David Mora Fonz, 2016
 @web www.lazauskas.net
 @email tomas.lazauskas[a]gmail.com
 """
