@@ -14,11 +14,11 @@ numpy v.1.x (x => 10.1)
 # Scripts
 DM_Convert_Files - converts files from one format to another. Works with the most popular formats, such us XYZ, CAR, and GIN
 
-DM_Coordination_Bonding - analyses systems (xyz format) in terms of avg. bond distance and coordination
+DM_Coordination_Bonding - analyzes systems (xyz format) in terms of avg. bond distance and coordination
 
 DM_DOS - plots DOS (and integrated DOS) graphs [Based on the David Mora Fonz's (UCL) implementation]
 
-DM_FHIaims_analysis - analyses FHI-aims simulations in terms of runtime, systems' energies etc
+DM_FHI_aims_analysis - analyzes FHI-aims simulations in terms of runtime, systems' energies etc.
 
 DM_RDF - plots radial distribution function
 
