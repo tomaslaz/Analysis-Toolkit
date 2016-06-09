@@ -39,9 +39,7 @@ def countLines(fileName):
   Counts the number of lines in a file
   
   """
-  
-  
-  
+
   success = False
   error = ""
   linesCount = 0
@@ -557,7 +555,7 @@ def writeXYZ(system, outputFile):
     
   except:
     success = False
-    error = __name__ + ": Cannot open: " + filePath
+    error = __name__ + ": Cannot open: " + outputFile
     
     return success, error
   
