@@ -86,7 +86,7 @@ def readFHIaimsSystems(fhiaimsDirs):
   """
   
   systemsList = []
-  
+
   for dirName in fhiaimsDirs:
     cwd = os.getcwd()
     
@@ -130,8 +130,9 @@ def saveFiles(systemsList):
     
     nStr = "n%02d" % (systemsList[i].NAtoms)
     
-    fileName = "%s_%03d_%s.xyz" % (nStr, i+1, systemsList[i].name)
-
+    #fileName = "%s_%03d_%s.xyz" % (nStr, i+1, systemsList[i].name)
+    fileName = "%s.xyz" % (systemsList[i].name)
+        
     IO.writeXYZ(systemsList[i], fileName)
     
     hashkeyRadius = Atoms.getRadius(systemsList[i]) + 1.0
