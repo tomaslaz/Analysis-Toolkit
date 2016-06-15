@@ -215,7 +215,7 @@ def readGAStatsFile(filePath):
   
   for line in f:
 
-    if lineCnt > 2:
+    if lineCnt > 0:
       line = line.strip()
       array = line.split(",")
       
