@@ -41,8 +41,11 @@ def convertFile(cluster, outFile, controlFile=None):
   Saves a cluster in to a file according to the file format
   
   """
+  
   error = ""
   success = True
+  
+  #print outFile
   
   if outFile.endswith(".xyz"):
     success, error = IO.writeXYZ(cluster, outFile)
@@ -52,7 +55,10 @@ def convertFile(cluster, outFile, controlFile=None):
     
   elif outFile.endswith(".gin"):
     success, error = IO.writeGIN(cluster, outFile, controlFile=controlFile)
-    
+  
+  elif outFile.endswith(".in"):
+    success, error = IO.writeAimsGeometry(cluster, outFile)
+  
   else:
     error = "Undefined output format"
     success = False
@@ -103,8 +109,11 @@ if __name__ == "__main__":
     
     for fileName in fileList:
       cluster = IO.readSystemFromFileXYZ(fileName)
-        
-      outputFile = fileName[:-3] + outFileName[-3:]
+      
+      if outFileName.endswith(".in"):
+        outputFile = fileName[:-3] + outFileName[-2:]
+      else:
+        outputFile = fileName[:-3] + outFileName[-3:]
       
       ok, error = convertFile(cluster, outputFile, controlFile)
     

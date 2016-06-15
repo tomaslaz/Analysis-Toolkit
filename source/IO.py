@@ -529,6 +529,37 @@ def writeGIN(system, outputFile, controlFile=None):
 
   return success, error
 
+def writeAimsGeometry(system, outputFile):
+  """
+  Writes system as a geometry file.
+  
+  """
+  
+  error = ""
+  success = True
+  
+  if system is None:
+    success = False
+    error = __name__ + ": no data to write"
+    
+    return success, error
+  
+  try:
+    fout = open(outputFile, "w")
+  except:
+    success = False
+    error = __name__ + ": Cannot open: " + filePath
+    
+    return success, error
+  
+  for i in range(system.NAtoms):
+    fout.write("atom %.10f %.10f %.10f %s\n" % (system.pos[3*i], system.pos[3*i+1], system.pos[3*i+2], 
+      system.specieList[system.specie[i]]))
+  
+  fout.close()
+  
+  return success, error
+
 def writeXYZ(system, outputFile):
   """
   Writes system as an XYZ file.
