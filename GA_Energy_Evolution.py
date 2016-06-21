@@ -17,7 +17,7 @@ import time
 # Number of structres to be presented on the graph
 lowEnergyCnt = 20
 # Energy range to be presented on the graph
-energyRange = 10.0
+energyRange = 5.0
 
 # Settings below should not be changed if you are not sure what they are for
 #---------------------------------------------------------------------------
@@ -105,7 +105,7 @@ def getFileList(dirPath=None):
 
     for fileName in files:
 
-      if fileName.startswith("ga") and fileName.endswith(".csv"):
+      if fileName.startswith(_statsPrefix) and fileName.endswith(_statsSubfix):
         fileNameLen = len(fileName)
 
         gaItNo = int(fileName[prefixLen:fileNameLen-subfixLen])
@@ -207,7 +207,7 @@ def plotGASimStatistics(statistics):
 
   ax1.yaxis.set_ticks(np.arange(ystart, yend, energyRange/25.0))
 
-  plt.subplots_adjust(left=0.13, bottom=0.11, top=0.98, right=0.97)
+  plt.subplots_adjust(left=0.15, bottom=0.11, top=0.98, right=0.97)
 
   plt.grid()
 
@@ -304,7 +304,7 @@ def readGAStatsFile(gaIter, filePath, prevStats):
 
   return gaIterStat
 
-def getZipFileList():
+def getStatsFileList():
   """
   Looks for zippped files and unzips them. Returns a list of directories.
 
@@ -328,13 +328,19 @@ def getZipFileList():
         if (not os.path.isfile(analysisFilePath)):
 
           cmdLine = "gzip -d < %s | tar xf -" % (fileName)
-
           os.system(cmdLine)
 
           cmdLine = "cp -rf %s %s" % (os.path.join(dirName, stepNo, analysisFile), analysisFilePath)
-
           os.system(cmdLine)
-
+    
+      elif fileName.startswith(_statsPrefix) and fileName.endswith(_statsSubfix):
+        stepNo = fileName.split(".")[0][len(_statsPrefix):]
+        
+        analysisFilePath = os.path.join(cwd, _analyzeKLMCDir, fileName)
+        
+        cmdLine = "cp -rf %s %s" % (os.path.join(stepNo, fileName), analysisFilePath)
+        os.system(cmdLine)
+        
   cmdLine = "rm -rf %s" % (dirName)
   os.system(cmdLine)
 
@@ -344,11 +350,8 @@ if __name__ == "__main__":
 
   checkDirectory(_analyzeKLMCDir, createMd=1)
 
-  unzipFlag = 1
-
-  if unzipFlag:
-    getZipFileList()
+  getStatsFileList()
 
   gaItNoList, filesList = getFileList(dirPath=_analyzeKLMCDir)
-
+    
   analyseGARun(gaItNoList, filesList)
