@@ -93,8 +93,8 @@ def countMixAtoms(fileName):
       regionRead = False
     
     elif regionRead and regionSt:
-    
-      atomsCnt += 1
+      if "#" not in line:
+        atomsCnt += 1
     
     if (("fractional" in line) or ("cartesian" in line)):
       regionSt = True
@@ -191,7 +191,7 @@ def readSystemFromFileGIN(fileName, outputMode=False):
   system = None
   
   success, error, NAtoms = countMixAtoms(fileName)
-  
+    
   if not success:
     if outputMode:
       return system, error, header, footer
@@ -275,6 +275,7 @@ def readSystemFromFileGIN(fileName, outputMode=False):
         speciesSt = True
         
         array = line.split()
+
         speciesCnt = int(array[1])
         
     elif (speciesSt and (speciesCnt > 0)):
@@ -296,28 +297,32 @@ def readSystemFromFileGIN(fileName, outputMode=False):
       line = line.strip()
       array = line.split()
       
-      # reading the specie
-      sym = array[0].strip()
       
-      if sym not in system.specieList:
-        system.addSpecie(sym)
-      
-      specInd = system.specieIndex(sym)
-      system.specieCount[specInd] += 1
-      system.specie[atomsCnt] = specInd
-      
-      # positions
-      for j in range(3):
-        system.pos[atomsCnt*3 + j] = float(array[j+2])
-      
-      # charge 
-      try:
-        system.charge[atomsCnt] = float(array[5])
+      if "#" not in line:
+                
+        #print line
+        # reading the specie
+        sym = array[0].strip()
         
-      except:
-        system.charge[atomsCnt] = 0.0
-      
-      atomsCnt += 1
+        if sym not in system.specieList:
+          system.addSpecie(sym)
+        
+        specInd = system.specieIndex(sym)
+        system.specieCount[specInd] += 1
+        system.specie[atomsCnt] = specInd
+        
+        # positions
+        for j in range(3):
+          system.pos[atomsCnt*3 + j] = float(array[j+2])
+        
+        # charge 
+        try:
+          system.charge[atomsCnt] = float(array[5])
+          
+        except:
+          system.charge[atomsCnt] = 0.0
+        
+        atomsCnt += 1
       
     elif ("fractional" in line):
       

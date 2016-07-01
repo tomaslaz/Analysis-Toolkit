@@ -16,6 +16,7 @@ from optparse import OptionParser
 
 import source.Atoms as Atoms
 import source.IO as IO
+import source.Fhiaims as Fhiaims
 
 def cmdLineArgs():
   """
@@ -116,7 +117,10 @@ if __name__ == "__main__":
         outputFile = fileName[:-3] + outFileName[-3:]
       
       ok, error = convertFile(cluster, outputFile, controlFile)
-    
+  
+  elif inFileName == ".output":
+     print "Not implemented yet."
+     
   else:
     
     if inFileName.endswith(".xyz"):
@@ -128,6 +132,10 @@ if __name__ == "__main__":
     elif inFileName.endswith(".gin"):
       cluster, error = IO.readSystemFromFileGIN(inFileName)
     
+    # FHI-aims output file
+    elif inFileName.endswith(".output"):
+      _, _, cluster = Fhiaims._readAimsStructure("geometry.in", inFileName)     
+     
     else:
       print "Unrecognised input file ", inFileName, " format"
       sys.exit()
