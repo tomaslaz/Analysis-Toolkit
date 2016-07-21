@@ -7,7 +7,7 @@ Input/Output module.
 """
 
 import os
-
+import glob
 import System
 
 def checkDirectory(dirPath, createMd=0):
@@ -106,6 +106,19 @@ def countMixAtoms(fileName):
   success = True
   return success, error, atomsCnt
 
+def lookForFiles(extension):
+  """
+  Looks for files with a specific extension and returns the last one (according to the file system)
+  
+  """
+  
+  csvFile = None
+  
+  for file in glob.glob("*.%s" % (extension)):
+    csvFile = file
+  
+  return csvFile
+  
 def readSystemFromFileCAR(fileName):
     """
     Reads in the structure of a system from a CAR file.
