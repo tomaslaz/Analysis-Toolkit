@@ -40,23 +40,61 @@ def plot(structCnt1, energyArr1, hashkeys1, label1,
   """
   
   """
-
-  f, (ax1, ax2) = plt.subplots(1, 2)
   
-  x = np.zeros(structCnt1, )
+#   fig = plt.figure()
+#   
+#   ax1 = fig.add_subplot(1,1,1)
+#   ax1.plot([(1, 2), (3, 4)], [(4, 3), (2, 3)])
+#   
+#   ax2 = fig.add_subplot(1,2,2)
+#   ax2.plot([(7, 2), (5, 3)], [(1, 6), (9, 5)])
+#   
+#   
+#   
+
+  
+
+  plt.xkcd()
+
+  fig, axes = plt.subplots(nrows=1, ncols=2, sharex=False, sharey=False)
+  
+  
+  
+  x = np.zeros(structCnt1, np.int16)
+  axes[0].scatter(x, energyArr1[:structCnt1], s=500)
   
   my_xticks = [label1]
-  ax1.scatter(x, energyArr1, s=500)
-  #ax1.xticks(x, my_xticks)
+  plt.sca(axes[0])
+  plt.xticks(x, my_xticks)
   
-  x = np.zeros(structCnt2, )
+  
+  x = np.zeros(structCnt2, np.int16)
+  axes[1].scatter(x, energyArr2[:structCnt2], s=500)
+  
   
   my_xticks = [label2]
-  ax2.scatter(x, energyArr2, s=500)
-  #ax2.xticks(x, my_xticks)
+  plt.sca(axes[1])
+  plt.xticks(x, my_xticks)
   
   
   plt.show()
+
+#   f, (ax1, ax2) = plt.subplots(1, 2)
+#   
+#   
+#   
+#   
+#   ax1.scatter(x, energyArr1, s=500)
+#   #
+#   
+#   x = np.zeros(structCnt2, )
+#   
+#   my_xticks = [label2]
+#   ax2.scatter(x, energyArr2, s=500)
+#   #ax2.xticks(x, my_xticks)
+#   
+#   
+#   
 
 def readDMTopFiles(energiesFile, hashkeysFile, structureLimit):
   """

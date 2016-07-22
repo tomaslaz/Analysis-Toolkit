@@ -20,6 +20,8 @@ DM_Coordination_Bonding - analyzes systems (xyz format) in terms of avg. bond di
 
 DM_DOS - plots DOS (and integrated DOS) graphs [Based on the David Mora Fonz's (UCL) implementation].
 
+![myimage-alt-tag](exampleImages/DM_DOS.pdf)
+
 DM_FHI_aims_analysis - analyzes FHI-aims simulations in terms of runtime, systems' energies etc.
 
 DM_RDF - plots radial distribution function.
