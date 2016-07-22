@@ -12,7 +12,7 @@ Matplotlib v.1.x (x => 5.0)
 numpy v.1.x (x => 10.1)
 
 # Scripts
-DM_Comparison - compare unique structures in terms of their energy ranking between different levels of theory (IPs (GULP) and DFT (FHIaims)) (Being developed)
+### DM_Comparison - compare unique structures in terms of their energy ranking between different levels of theory (IPs (GULP) and DFT (FHIaims))
 
 ### DM_Convert_Files 
 Converts files from one format to another. Works with the most popular formats, such us XYZ, CAR, and GIN.
