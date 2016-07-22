@@ -12,6 +12,7 @@ A script to compare unique structures in terms of their energy ranking between d
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.lines as lines
 
 import source.IO as IO
 
@@ -41,60 +42,44 @@ def plot(structCnt1, energyArr1, hashkeys1, label1,
   
   """
   
-#   fig = plt.figure()
-#   
-#   ax1 = fig.add_subplot(1,1,1)
-#   ax1.plot([(1, 2), (3, 4)], [(4, 3), (2, 3)])
-#   
-#   ax2 = fig.add_subplot(1,2,2)
-#   ax2.plot([(7, 2), (5, 3)], [(1, 6), (9, 5)])
-#   
-#   
-#   
-
-  
-
   plt.xkcd()
 
   fig, axes = plt.subplots(nrows=1, ncols=2, sharex=False, sharey=False)
   
-  
-  
-  x = np.zeros(structCnt1, np.int16)
-  axes[0].scatter(x, energyArr1[:structCnt1], s=500)
+  # Plot 1
+  x1 = np.zeros(structCnt1, np.int16)
+  y1 = energyArr1[:structCnt1]
+  axes[0].scatter(x1, y1, s=500)
   
   my_xticks = [label1]
   plt.sca(axes[0])
-  plt.xticks(x, my_xticks)
+  plt.xticks(x1, my_xticks)
   
+  # Plot 2
+  x2 = np.zeros(structCnt2, np.int16)
+  y2 = energyArr2[:structCnt2]
   
-  x = np.zeros(structCnt2, np.int16)
-  axes[1].scatter(x, energyArr2[:structCnt2], s=500)
-  
+  axes[1].scatter(x2, y2, s=500)
   
   my_xticks = [label2]
   plt.sca(axes[1])
-  plt.xticks(x, my_xticks)
+  plt.xticks(x2, my_xticks)
+  
+  # Joining plot 1 - plot 2
+  transFigure = fig.transFigure.inverted()
+  
+  i = 0
+  
+  coord1 = transFigure.transform(axes[0].transData.transform([x1[i], y1[i]]))
+  coord2 = transFigure.transform(axes[1].transData.transform([x2[i], y2[i]]))
+  
+  line = lines.Line2D((coord1[0],coord2[0]),(coord1[1],coord2[1]),
+                                 transform=fig.transFigure)
+  fig.lines = line,
+
   
   
   plt.show()
-
-#   f, (ax1, ax2) = plt.subplots(1, 2)
-#   
-#   
-#   
-#   
-#   ax1.scatter(x, energyArr1, s=500)
-#   #
-#   
-#   x = np.zeros(structCnt2, )
-#   
-#   my_xticks = [label2]
-#   ax2.scatter(x, energyArr2, s=500)
-#   #ax2.xticks(x, my_xticks)
-#   
-#   
-#   
 
 def readDMTopFiles(energiesFile, hashkeysFile, structureLimit):
   """
