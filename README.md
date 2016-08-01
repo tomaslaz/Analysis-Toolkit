@@ -13,7 +13,8 @@ numpy v.1.x (x => 10.1)
 
 # Scripts
 
-### DM_Comparison (Being developed) - compare unique structures in terms of their energy ranking between different levels of theory (IPs (GULP) and DFT (FHIaims))
+### DM_Comparison 
+(Being developed) compare unique structures in terms of their energy ranking between different levels of theory (IPs (GULP) and DFT (FHIaims))
 
 ![Comparison example](exampleImages/DM_Comparison.png)
 
