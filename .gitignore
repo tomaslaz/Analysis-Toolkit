@@ -14,6 +14,7 @@ DM_Coordination_Bonding_DB.py
 .pydevproject
 
 # Distribution / packaging
+.DS_Store
 .settings/
 .Python
 env/
