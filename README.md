@@ -13,7 +13,7 @@ numpy v.1.x (x => 10.1)
 
 # Scripts
 
-### DA_FHIaims_geometry_stability.py
+### DA_FHIaims_geometry_stability
 (Being developed) Analyses a geometry with FHIaims - pushes a system in the direction of a chosen eigenvector and performs FHIaims single point evaluation.
 
 ### DM_Comparison 
