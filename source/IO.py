@@ -245,6 +245,8 @@ def readSystemFromFileGIN(fileName, outputMode=False):
   speciesCnt = 0
   
   getCellParams = False
+    
+  coordTypeRead = False
   
   for line in f:
     
@@ -254,7 +256,7 @@ def readSystemFromFileGIN(fileName, outputMode=False):
         
       elif (regionRead and not regionSt):
         header += line
-      
+        
     if getCellParams:
       line = line.strip()
       array = line.split()
@@ -296,12 +298,19 @@ def readSystemFromFileGIN(fileName, outputMode=False):
       
       line = line.strip()
       array = line.split()
-
-      try:
-        system.gulpSpecies[array[0].strip()]
-        system.gulpSpecies[array[0].strip()] += array[1].strip() + "," + array[2].strip() + ";"
-      except:
-        system.gulpSpecies[array[0].strip()] = array[1].strip() + "," +  array[2].strip() + ";"
+      
+      if len(array) > 2:
+        try:
+          system.gulpSpecies[array[0].strip()]
+          system.gulpSpecies[array[0].strip()] += array[1].strip() + "," + array[2].strip() + ";"
+        except:
+          system.gulpSpecies[array[0].strip()] = array[1].strip() + "," +  array[2].strip() + ";"
+      else:
+        try:
+          system.gulpSpecies[array[0].strip()]
+          system.gulpSpecies[array[0].strip()] += array[1].strip() + ";"
+        except:
+          system.gulpSpecies[array[0].strip()] = array[1].strip() + ";"
         
       speciesCnt -= 1
     
@@ -309,7 +318,6 @@ def readSystemFromFileGIN(fileName, outputMode=False):
 
       line = line.strip()
       array = line.split()
-      
       
       if "#" not in line:
                 
@@ -347,8 +355,7 @@ def readSystemFromFileGIN(fileName, outputMode=False):
       regionSt = True
       regionReached = True
       
-    
-    if atomsCnt == NAtoms:
+    if atomsCnt == NAtoms and atomsCnt > 0:
       regionSt = False
       regionRead = False
 
@@ -477,7 +484,7 @@ def writeCAR(system, outputFile):
   
   return success, error
 
-def writeGIN(system, outputFile, controlFile=None):
+def writeGIN(system, outputFile, controlFile=None, outputXYZ=False):
   """
   Writes system as a GIN file.
   
@@ -543,8 +550,12 @@ def writeGIN(system, outputFile, controlFile=None):
      
   fout.write(footer)
   
-  fout.close()
+  # adding output to xyz
+  if outputXYZ:
+    fout.write("\noutput xyz %s" % (outputFile[:-4]))
 
+  fout.close()
+    
   return success, error
 
 def writeAimsGeometry(system, outputFile):

@@ -41,7 +41,7 @@ class System(object):
     self.cog = np.empty(3, np.float64)
     self.momentOfInertia = np.zeros([3, 3], np.float64)
     
-    dt = np.dtype((str, 2))
+    dt = np.dtype((str, 5))
     self.specieList = np.empty(0, dt)
     self.specieCount = np.empty(0, np.int32)
     

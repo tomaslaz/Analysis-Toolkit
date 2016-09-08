@@ -55,8 +55,8 @@ def convertFile(cluster, outFile, controlFile=None):
     success, error = IO.writeCAR(cluster, outFile)
     
   elif outFile.endswith(".gin"):
-    success, error = IO.writeGIN(cluster, outFile, controlFile=controlFile)
-  
+    success, error = IO.writeGIN(cluster, outFile, controlFile=controlFile, outputXYZ=False)
+    
   elif outFile.endswith(".in"):
     success, error = IO.writeAimsGeometry(cluster, outFile)
   
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     fileList = glob.glob("*.car")
     
     for fileName in fileList:
-      
+            
       cluster = IO.readSystemFromFileCAR(fileName)
        
       outputFile = fileName[:-3] + outFileName[-3:]
