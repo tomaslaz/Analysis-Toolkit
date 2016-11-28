@@ -7,6 +7,7 @@ Input/Output module.
 """
 
 import os
+import sys
 import glob
 import System
 
@@ -148,7 +149,7 @@ def readSystemFromFileCAR(fileName):
       if ("end" in line):
         break
       
-      if (i >= 5):
+      if (i >= 6):
         totAtomCnt += 1
       
     f.close()
@@ -168,11 +169,11 @@ def readSystemFromFileCAR(fileName):
       if ("end" in line):
         break
       
-      if (i >= 5):
+      if (i >= 6):
         array = line.split()
-              
+        
         sym = array[7].strip()
-         
+                 
         if sym not in system.specieList:
             system.addSpecie(sym)
        
@@ -184,7 +185,7 @@ def readSystemFromFileCAR(fileName):
          
         for j in range(3):
             system.pos[atomCnt*3 + j] = float(array[j+1])
-        
+                
         system.charge[atomCnt] = float(array[8])
         atomCnt += 1
     
@@ -394,8 +395,12 @@ def readSystemFromFileXYZ(fileName):
     # additional info
     line = f.readline().strip()
     
-    # size ?
-    array = line.split()
+    # reading energy if it is a result from ...
+    if "SCF Done" in line:
+      energy = float(line.split()[2].strip()[:-1])
+      
+      system.totalEnergy = energy
+      
 
     # atoms and their positions
     i = 0
@@ -625,7 +630,7 @@ def writeXYZ(system, outputFile):
     
   fout.write("%s\n" % (metaData))
   for i in range(system.NAtoms):
-    
+        
     fout.write("%s %.10f %.10f %.10f %.2f\n" % (system.specieList[system.specie[i]], 
       system.pos[3*i], system.pos[3*i+1], system.pos[3*i+2], system.charge[i]))
   
