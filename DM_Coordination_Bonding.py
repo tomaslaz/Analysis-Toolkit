@@ -17,10 +17,12 @@ import sys
 import numpy as np
 from optparse import OptionParser
 
-import source.Atoms as Atoms
-import source.IO as IO
-import source.System as System
-import source.Utilities as Utilities
+sys.path.append("./source")
+
+import Atoms as Atoms
+import IO as IO
+import System as System
+import Utilities as Utilities
             
 class Connectivity(object):
   """
