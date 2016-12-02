@@ -133,7 +133,7 @@ if __name__ == "__main__":
       cluster, error = IO.readSystemFromFileGIN(inFileName)
     
     # FHI-aims output file
-    elif inFileName.endswith(".output"):
+    elif (inFileName.endswith(".out") or inFileName.endswith(".output")):
       _, _, cluster = Fhiaims._readAimsStructure("geometry.in", inFileName)     
      
     else:
