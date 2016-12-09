@@ -17,6 +17,7 @@ import subprocess
 import IO
 import System
 
+_const_nice_day_line = "Have a nice day."
 
 def _readAimsStructure(geometryFile, outputFile):
   """
@@ -46,6 +47,7 @@ def _readAimsOutput(inputFile, system):
   
   error = ""
   success = True
+  have_nice_day = False
   
   readAtoms = False
   readCompleted = False
@@ -114,7 +116,6 @@ def _readAimsOutput(inputFile, system):
         success = False
         error = __name__ + ": the number of atoms does not match the original number of atoms"
       
-      
     if ((len(fields) > 5) and (' '.join(fields[1:4]) == "Total energy uncorrected")):
       energy = float(fields[5])
     
@@ -127,7 +128,16 @@ def _readAimsOutput(inputFile, system):
     if ((len(fields) > 5) and (' '.join(fields[1:4]) == "Total time :")):
       runTime = float(fields[6])
     
+    # Checks whether the have a nice day is in the output file. It indicates that the simulation was successful.
+    if _const_nice_day_line in line:
+      have_nice_day = True
+    
   fin.close()
+  
+  if not have_nice_day:
+    system.totalEnergy = 99999999.99
+    success = False
+    error = __name__ + ": it seems that we are not having a good day"
   
   if not success:
     return success, error
