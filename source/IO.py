@@ -107,6 +107,16 @@ def countMixAtoms(fileName):
   success = True
   return success, error, atomsCnt
 
+def get_file_list(extension="*"):
+  """
+  Returns a list of files with a specific extension
+  
+  """
+  
+  file_list = glob.glob("*.%s" % (extension))
+  
+  return file_list
+  
 def lookForFiles(extension):
   """
   Looks for files with a specific extension and returns the last one (according to the file system)
