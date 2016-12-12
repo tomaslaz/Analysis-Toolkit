@@ -116,6 +116,25 @@ def get_file_list(extension="*"):
   file_list = glob.glob("*.%s" % (extension))
   
   return file_list
+
+def get_dir_list(file_name=None):
+  """
+  Get a list of directories which contain file_name file.
+  
+  """
+  
+  dir_list = []
+  
+  for root, dirs, files in os.walk("./"):
+    
+    if file_name is not None:
+      if file_name in files:
+        
+        dir_list.append(root)
+    else:
+      dir_list.append(root)
+        
+  return dir_list
   
 def lookForFiles(extension):
   """

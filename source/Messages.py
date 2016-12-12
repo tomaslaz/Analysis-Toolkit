@@ -25,6 +25,10 @@ class bcolors:
         self.ENDC = ''
 
 def error( caller, message, indent=0, verbose=1):
+  """
+  Prints an error message in a predefined format
+  
+  """
   
   if verbose == 0:
     return
@@ -36,7 +40,11 @@ def error( caller, message, indent=0, verbose=1):
   print "[%s]: %s%s%s >> %s%s" % (now, bcolors.FAIL, ind, caller, message, bcolors.ENDC)
 
 def log( caller, message, indent=0, verbose=1):
-    
+  """
+  Prints a log message in a predefined format
+  
+  """
+  
   if verbose == 0:
     return
    
@@ -47,6 +55,10 @@ def log( caller, message, indent=0, verbose=1):
   print "[%s]: %s%s >> %s" % (now, ind, caller, message)
 
 def printAuthor(verbose=1):
+  """
+  Prints the authors name and the year
+  
+  """
   
   if verbose == 0:
     return
