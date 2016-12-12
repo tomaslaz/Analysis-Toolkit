@@ -7,7 +7,6 @@ Messages module.
 """
 
 import datetime
-import progressbar
 
 class bcolors:
     HEADER = '\033[95m'
@@ -36,13 +35,6 @@ def error( caller, message, indent=0, verbose=1):
       ind += "  "
   print "[%s]: %s%s%s >> %s%s" % (now, bcolors.FAIL, ind, caller, message, bcolors.ENDC)
 
-
-def initialiseProgressbar(maxval):
-    
-  pbar = progressbar.ProgressBar(widgets=[progressbar.Percentage(), progressbar.Bar()], maxval=maxval).start()
-  
-  return pbar
-
 def log( caller, message, indent=0, verbose=1):
     
   if verbose == 0:
@@ -59,4 +51,4 @@ def printAuthor(verbose=1):
   if verbose == 0:
     return
     
-  print bcolors.WARNING +"Written by" + bcolors.ENDC + " " + bcolors.OKGREEN + "Tomas Lazauskas"  + bcolors.ENDC + " " + bcolors.FAIL + "2015" + bcolors.ENDC
+  print bcolors.WARNING +"Written by" + bcolors.ENDC + " " + bcolors.OKGREEN + "Tomas Lazauskas"  + bcolors.ENDC + " " + bcolors.FAIL + "2016" + bcolors.ENDC

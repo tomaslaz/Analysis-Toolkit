@@ -10,6 +10,7 @@ import os
 from optparse import OptionParser
 
 import source.IO as IO
+import source.Messages as Messages
 
 # a directory where systems in the xyz format and control.in file should be put
 _input_directory = "input"
@@ -169,4 +170,6 @@ if __name__ == "__main__":
   options, args = cmd_line_args()
   
   prepare_directories(options, args)
+  
+  Messages.printAuthor()
   
