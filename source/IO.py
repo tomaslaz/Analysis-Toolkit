@@ -664,5 +664,5 @@ def writeXYZ(system, outputFile):
       system.pos[3*i], system.pos[3*i+1], system.pos[3*i+2], system.charge[i]))
   
   fout.close()
-  
+    
   return success, error
