@@ -76,16 +76,17 @@ def generateStatistics(systemlist, unique=False):
   else:
     f = open("%s/Stats.csv" % (_uniqueDir), "w")
   
-  f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", "Time", "Tot.Time", 
-          "H-L", "VBM", "VBMOcc", "VBMSpinChannel", "CBM", "CBMOcc", "CBMSpinChannel", "SpinN", "SpinS", "SpinJ"))
+  f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", "Time", "Tot.Time", 
+          "H-L", "VBM", "VBMOcc", "VBMSpinChannel", "CBM", "CBMOcc", "CBMSpinChannel", "SpinN", "SpinS", "SpinJ","Size"))
   
   systemCnt = 0
+  
   for system in systemlist:
-    f.write("%s,%f,%s,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" % (system.name, system.totalEnergy, system.hashkey,
+    f.write("%s,%f,%s,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" % (system.name, system.totalEnergy, system.hashkey,
                                      system.noOfcores, system.runTime, system.noOfcores*system.runTime,
                                      system.homo_lumo_gap, system.vbm, system.vbm_occ_num, system.vbm_spin_chan, 
                                      system.cbm, system.cbm_occ_num, system.cbm_spin_chan, 
-                                     system.spin_N, system.spin_S, system.spin_J))
+                                     system.spin_N, system.spin_S, system.spin_J, float(system.NAtoms)))
     
     runTimes[systemCnt] = system.runTime
     
