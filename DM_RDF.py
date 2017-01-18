@@ -141,35 +141,42 @@ class RDF(object):
     pairs = []
     pairsIdx = {}
     
-    
     pairsCnt = 0
     
-    for i in range(self.specieListLen-1):
-      for j in xrange(i+1, self.specieListLen):
-        pairName =  "%s-%s" % (self.specieList[i], self.specieList[j])
-        pairNameInv = "%s-%s" % (self.specieList[j], self.specieList[i])
-        
-        foundPair = False
-        if setPairsArrLen > 0:
-          for k in range(setPairsArrLen):
-            if pairName == setPairsArr[k] or pairNameInv == setPairsArr[k]:
-              foundPair = True
-              break
-        
-        if not foundPair:
-          continue
+    if setPairsArrLen > 0:
+      for k in range(setPairsArrLen):
+        for i in range(self.specieListLen-1):
+          for j in xrange(i+1, self.specieListLen):
+                        
+            pairName =  "%s-%s" % (self.specieList[i], self.specieList[j])
+            pairNameInv = "%s-%s" % (self.specieList[j], self.specieList[i])
             
-        pairsIdx[pairName] = pairsCnt
-        pairsCnt += 1
-        
-        pair = Pair(self.specieList[i], self.specieList[j], self.maxRdfDist)
-        pairs.append(pair)
-        
+            if pairName == setPairsArr[k] or pairNameInv == setPairsArr[k]:
+              pairsIdx[pairName] = pairsCnt
+              pairsCnt += 1
+                
+              pair = Pair(self.specieList[i], self.specieList[j], self.maxRdfDist)
+              pairs.append(pair)
+    
+    else:
+      for i in range(self.specieListLen-1):
+        for j in xrange(i+1, self.specieListLen):
+                      
+          pairName =  "%s-%s" % (self.specieList[i], self.specieList[j])
+          pairNameInv = "%s-%s" % (self.specieList[j], self.specieList[i])
+          
+          pairsIdx[pairName] = pairsCnt
+          pairsCnt += 1
+            
+          pair = Pair(self.specieList[i], self.specieList[j], self.maxRdfDist)
+          pairs.append(pair)
+                      
     for i in range(self.specieListLen):
       
       pairName =  "%s-%s" % (self.specieList[i], self.specieList[i])
       
       foundPair = False
+      
       if setPairsArrLen > 0:
         for k in range(setPairsArrLen):
           if pairName == setPairsArr[k]:
@@ -262,7 +269,7 @@ class RDF(object):
     fig = plt.figure(figsize=(9, 6))
     ax = fig.add_subplot(1,1,1)
   
-    plt.subplots_adjust(left=0.02, bottom=0.11, top=0.95, right=0.95)
+    plt.subplots_adjust(left=0.02, bottom=0.13, top=0.95, right=0.95)
     plt.grid()
     
     labels = []
@@ -271,14 +278,14 @@ class RDF(object):
     for i in range(self.NPairs):   
       label = self.pairs[i].pairName
             
-      serie, = ax.plot(self.rdist, self.pairs[i].gr, c=self._colours[i], label=label, linewidth=2.0)
+      serie, = ax.plot(self.rdist, self.pairs[i].gr, c=self._colours[i], label=label, linewidth=2.5)
       
       labels.append(label)
       series.append(serie)
       
-    plt.legend(series, labels, loc=1)
+    plt.legend(series, labels, loc=1, fontsize=22)
   
-    ax.set_xlabel(r'r($\AA$)', fontsize=18)
+    ax.set_xlabel(r'r($\AA$)', fontsize=22)
     ax.set_xlim([0, self.__rdfCutOff])
     ax.xaxis.set_ticks(np.arange(0, self.__rdfCutOff+1, 1.0))
     
@@ -287,7 +294,7 @@ class RDF(object):
     #ax.set_ylim([10**-7, 10**-3])
     ax.yaxis.set_ticks([])
     
-    fig.savefig('%s.png' % (self.system.name))
+    fig.savefig('%s.png' % (self.system.name), dpi=300, bbox_inches='tight')
         
   def __rdfBoxes(self):
     """
