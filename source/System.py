@@ -62,11 +62,15 @@ class System(object):
     # homo-lumo
     self.homo_lumo_gap = _const_def_value
     
-    self.vmb = _const_def_value
+    # homo
+    self.vmb = _const_def_value 
+    
     self.vbm_occ_num = _const_def_value
     self.vbm_spin_chan = _const_def_value
     
+    # lumo
     self.cbm = _const_def_value
+    
     self.cbm_occ_num = _const_def_value
     self.cbm_spin_chan = _const_def_value
     

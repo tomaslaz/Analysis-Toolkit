@@ -76,8 +76,11 @@ def generateStatistics(systemlist, unique=False):
   else:
     f = open("%s/Stats.csv" % (_uniqueDir), "w")
   
-  f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", "Time", "Tot.Time", 
-          "H-L", "VBM", "VBMOcc", "VBMSpinChannel", "CBM", "CBMOcc", "CBMSpinChannel", "SpinN", "SpinS", "SpinJ","Size"))
+  f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", 
+          "Time", "Tot.Time", "HOMO", "LUMO", "H-L", 
+          "VBM", "VBMOcc", "VBMSpinChannel", 
+          "CBM", "CBMOcc", "CBMSpinChannel", 
+          "SpinN", "SpinS", "SpinJ","Size"))
   
   systemCnt = 0
   
