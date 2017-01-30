@@ -77,7 +77,7 @@ def generateStatistics(systemlist, unique=False):
     f = open("%s/Stats.csv" % (_uniqueDir), "w")
   
   f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", 
-          "Time", "Tot.Time", "HOMO", "LUMO", "H-L", 
+          "Time", "Tot.Time", "H-L", 
           "VBM", "VBMOcc", "VBMSpinChannel", 
           "CBM", "CBMOcc", "CBMSpinChannel", 
           "SpinN", "SpinS", "SpinJ","Size"))
