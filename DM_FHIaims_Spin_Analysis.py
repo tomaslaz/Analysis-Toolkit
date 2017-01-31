@@ -27,7 +27,7 @@ _aims_control = "control.in"
 _aims_geometry = "geometry.in"
 # default_initial_moment keyword in the control.in file
 _aims_keyword_def_ini_moment = "default_initial_moment"
-# fhiaims execution command
+# fhiaims execution command (as an example)
 _aims_exe_cmd = "source /opt/intel/composer_xe_2015/mkl/bin/mklvars.sh intel64; mpirun -n 8 /Users/Tomas/Software/fhi-aims.160328/bin/aims.160328_1.mpi.x > fhiaims.out"
 
 def cmd_line_args():
@@ -52,8 +52,8 @@ def cmd_line_args():
   parser.add_option("-x", "--execute", dest="execute", action="store_true", default=False, 
     help="Executes the simulations")
   
-  parser.add_option("-l", "--analyse", dest="analyse", action="store_true", default=False, 
-    help="Analyses the simulations")
+#   parser.add_option("-l", "--analyse", dest="analyse", action="store_true", default=False, 
+#     help="Analyses the simulations")
   
   parser.disable_interspersed_args()
       
