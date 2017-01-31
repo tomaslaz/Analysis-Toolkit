@@ -1,5 +1,5 @@
 # KLMC Analysis Tool Kit
-# Author: Tomas Lazauskas, 2015-2016
+# Author: Tomas Lazauskas, 2015-2017
 # www: www.lazauskas.net
 
 A set of scripts to pre/post-process data for/from KLMC simulations.
