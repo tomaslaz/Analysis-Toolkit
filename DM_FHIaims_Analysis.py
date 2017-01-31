@@ -14,6 +14,7 @@ import os
 import sys
 
 import numpy as np
+from optparse import OptionParser
 
 import source.Atoms as Atoms
 import source.Fhiaims as FHIaims
@@ -24,6 +25,25 @@ _fhiaimsOutFile = "FHIaims.out"
 _outputDir = "output"
 _topDir = "tops"
 _uniqueDir = "unique"
+
+def cmd_line_args():
+  """
+  Handles command line arguments and options.
+  
+  """
+  
+  usage = "usage: %prog "
+  
+  parser = OptionParser(usage=usage)
+    
+  parser.add_option("-r", "--relaxed", dest="relaxed", action="store_true", default=False, 
+    help="Whether geometry relaxation was used.")
+    
+  parser.disable_interspersed_args()
+      
+  (options, args) = parser.parse_args()
+  
+  return options, args
 
 def getFileList(dirPath=None):
   """
@@ -46,7 +66,7 @@ def generateStatistics(systemlist, unique=False):
   Generates statistics about the FHI-aims simulations
     
   """
-  
+    
   noOfSystems = len(systemlist)
   sumOfCores = 0
   runTimes = np.zeros(noOfSystems, np.float64)
@@ -56,13 +76,20 @@ def generateStatistics(systemlist, unique=False):
   else:
     f = open("%s/Stats.csv" % (_uniqueDir), "w")
   
-  f.write("%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", "Time", "Tot.Time"))
+  f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", 
+          "Time", "Tot.Time", "H-L", 
+          "VBM", "VBMOcc", "VBMSpinChannel", 
+          "CBM", "CBMOcc", "CBMSpinChannel", 
+          "SpinN", "SpinS", "SpinJ","Size"))
   
   systemCnt = 0
+  
   for system in systemlist:
-    
-    f.write("%s,%f,%s,%d,%f,%f\n" % (system.name, system.totalEnergy, system.hashkey,
-                                     system.noOfcores, system.runTime, system.noOfcores*system.runTime))
+    f.write("%s,%f,%s,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" % (system.name, system.totalEnergy, system.hashkey,
+                                     system.noOfcores, system.runTime, system.noOfcores*system.runTime,
+                                     system.homo_lumo_gap, system.vbm, system.vbm_occ_num, system.vbm_spin_chan, 
+                                     system.cbm, system.cbm_occ_num, system.cbm_spin_chan, 
+                                     system.spin_N, system.spin_S, system.spin_J, float(system.NAtoms)))
     
     runTimes[systemCnt] = system.runTime
     
@@ -79,7 +106,7 @@ def generateStatistics(systemlist, unique=False):
   print "Max run time: ", np.max(runTimes)
   print "Stdev run time: ", np.std(runTimes)
   
-def readFHIaimsSystems(fhiaimsDirs):
+def readFHIaimsSystems(fhiaimsDirs, relaxed=False):
   """
   Reads in the FHI-aims systems.
   
@@ -94,7 +121,7 @@ def readFHIaimsSystems(fhiaimsDirs):
     #systemName = dirName[len(_outputDir)+1:-2].strip()
     systemName = dirName.strip()
    
-    success, error, system = FHIaims._readAimsStructure(_fhiaimsGeometryFile, _fhiaimsOutFile)
+    success, error, system = FHIaims._readAimsStructure(_fhiaimsGeometryFile, _fhiaimsOutFile, relaxed=relaxed)
     
     if success:
       system.name = systemName
@@ -133,7 +160,7 @@ def saveFiles(systemsList):
     #fileName = "%s_%03d_%s.xyz" % (nStr, i+1, systemsList[i].name)
     fileName = "%s.xyz" % (systemsList[i].name)
         
-    IO.writeXYZ(systemsList[i], fileName)
+    success_, error_ = IO.writeXYZ(systemsList[i], fileName)
     
     hashkeyRadius = Atoms.getRadius(systemsList[i]) + 1.0
 
@@ -176,11 +203,14 @@ def sortSystems(systemsList):
   
 if __name__ == "__main__":
   
+  # reading the command line arguments and options
+  options, _ = cmd_line_args()
+  
   # looks for FHI-aims simulations in the output directory
   fhiaimsDirs = getFileList()
     
   # reads in the FHI-aims systems
-  systems = readFHIaimsSystems(fhiaimsDirs)
+  systems = readFHIaimsSystems(fhiaimsDirs, options.relaxed)
   
   # sort the systems according to energy
   sortSystems(systems)

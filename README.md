@@ -32,14 +32,18 @@ Plots DOS (and integrated DOS) graphs [Based on the David Mora Fonz's (UCL) impl
 
 ![DOS example](exampleImages/DM_DOS.png)
 
-### DM_FHI_aims_analysis 
+### DM_FHIaims_analysis 
 Analyses FHI-aims simulations in terms of runtime, systems' energies etc.
+
+### DM_FHIaims_Spin_Analysis 
+A script to prepare and execute FHIaims spin polarized simulations. 
+
+Reads in structures in xyz format, prepares geometry.in and control.in files by varying the default_initial_moment keyword. The script can also run the prepared simulations one by one. 
 
 ### DM_RDF
 Plots radial distribution function.
 
 ![RDF example](exampleImages/DM_RDF.png)
-
 ### GA_Energy_Evolution 
 Plots the energy evolution graph of the n lowest energy structures during a KLMC GA simulation.
 

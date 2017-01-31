@@ -10,6 +10,8 @@ System module.
 import math
 import numpy as np
 
+_const_def_value = -9999999999.9
+
 class System(object):
   """
   A class to save the systems.
@@ -51,6 +53,26 @@ class System(object):
     
     self.noOfcores = 0
     self.runTime = 0.0
+    
+    # spin polarization
+    self.spin_N = _const_def_value
+    self.spin_S = _const_def_value
+    self.spin_J = _const_def_value
+    
+    # homo-lumo
+    self.homo_lumo_gap = _const_def_value
+    
+    # homo
+    self.vmb = _const_def_value 
+    
+    self.vbm_occ_num = _const_def_value
+    self.vbm_spin_chan = _const_def_value
+    
+    # lumo
+    self.cbm = _const_def_value
+    
+    self.cbm_occ_num = _const_def_value
+    self.cbm_spin_chan = _const_def_value
     
   def addAtom(self, sym, pos, charge):
     """
