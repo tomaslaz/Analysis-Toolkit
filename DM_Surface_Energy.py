@@ -11,6 +11,7 @@ import sys
 
 from optparse import OptionParser
 
+import source.IO as IO
 from source.Messages import log
 
 # verbose level: 0 - off, 1 - on
@@ -47,3 +48,5 @@ if __name__ == "__main__":
   
   message = "reading file: %s" % (file_name)
   log(__name__, message, verbose=_verbose)
+  
+  system = IO.readSystemFromFileXYZ(file_name)
