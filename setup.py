@@ -14,7 +14,7 @@ CC = ""
 CCFLAGS = ""
 CCLINKFLAGS = ""
 
-# Operating system
+# Operating system: MacOS
 if os.uname()[0] == "Darwin":
 
     CC = "gcc "
@@ -59,7 +59,7 @@ def main():
   os.chdir("thirdparty")
   os.chdir("arvo_c")
   
-  command = "%s %s -o %s %s" % (CC, CCFLAGS, "arvo_c", "arvo_c.c")
+  command = "%s %s -o %s %s %s " % (CC, CCFLAGS, "arvo_c", "arvo_c.c", CCLINKFLAGS)
   run_command(command)
     
 def run_command(command, check_status=True):

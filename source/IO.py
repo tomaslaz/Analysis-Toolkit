@@ -470,6 +470,42 @@ def readSystemFromFileXYZ(fileName):
     
     return system
 
+def writeATS(system, outputFile):
+  """
+  Writes system as an ATS file.
+  
+  """
+  
+  error = ""
+  success = True
+  
+  if system is None:
+    success = False
+    error = __name__ + ": no data to write"
+    
+    return success, error
+  
+  if (len(system.specieList) < 1):
+    success = False
+    error = __name__ + ": no data to write"
+    
+    return success, error
+  
+  try:
+    fout = open(outputFile, "w")
+    
+  except:
+    success = False
+    error = __name__ + ": Cannot open: " + outputFile
+    
+    return success, error
+  
+  
+
+  fout.close()
+    
+  return success, error
+  
 def writeCAR(system, outputFile):
   """
   Writes system as a CAR file.

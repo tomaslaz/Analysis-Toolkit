@@ -10,6 +10,7 @@ System module.
 import math
 import numpy as np
 
+_const_zero_value = 0.0
 _const_def_value = -9999999999.9
 
 class System(object):
@@ -73,6 +74,9 @@ class System(object):
     
     self.cbm_occ_num = _const_def_value
     self.cbm_spin_chan = _const_def_value
+    
+    # surface energy
+    self.sruface_energy = _const_zero_value
     
   def addAtom(self, sym, pos, charge):
     """
@@ -164,6 +168,16 @@ class System(object):
     self.momentOfInertia[2][0] = moi[4]
     self.momentOfInertia[2][1] = moi[5]
   
+  def calc_surface_energy(self):
+    """
+    Calculates surface energy using arvo_c thirdparty code
+    
+    """
+    
+    # prepare a temporary file
+    
+    
+    
   def findNN(self, atomIdx, rdfCutOffSq):
     
     cntrx = self.pos[3*atomIdx+0]
