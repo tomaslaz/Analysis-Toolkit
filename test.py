@@ -37,6 +37,11 @@ class Test_DM_Surface_Energy(unittest.TestCase):
     """
     Testing coordinate transformation
     """
+    # metallic radius of Ti
+    radius = 1.47
+    
+    # calculating the surface energy
+    self.system.calc_surface_energy(radius)
       
     self.assertEqual(1, 1)
 

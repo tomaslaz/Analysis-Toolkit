@@ -6,12 +6,16 @@ File module.
 @email tomas.lazauskas[a]gmail.com
 """
 
-def writeATS(system, outputFile):
+def writeATS(system, outputFile, radius):
   """
   Writes system as an ATS file.
   
   """
   
+  # TODO: Need a way set the surface radius for a each atom. Probably add it as 
+  #       as a new column in the atoms.in file.
+  
+  atoms_cnt = 0
   error = ""
   success = True
   
@@ -36,8 +40,15 @@ def writeATS(system, outputFile):
     
     return success, error
   
+  group_name = "LE"
   
-
+  for i in range(system.NAtoms):
+    atoms_cnt += 1
+    
+    fout.write("%16f %16f %16f %5f %8s %d \n" % 
+               (system.pos[3*i], system.pos[3*i+1], system.pos[3*i+2], 
+                radius, group_name, atoms_cnt))
+    
   fout.close()
     
   return success, error

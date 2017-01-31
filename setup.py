@@ -59,9 +59,9 @@ def main():
   os.chdir("thirdparty")
   os.chdir("arvo_c")
   
-  command = "%s %s -o %s %s %s " % (CC, CCFLAGS, "arvo_c", "arvo_c.c", CCLINKFLAGS)
+  command = "%s %s -o %s %s %s " % (CC, "", "arvo_c", "arvo_c.c", "")
   run_command(command)
-    
+      
 def run_command(command, check_status=True):
   
   print "%50s ::  %s" %  (os.getcwd()[-50:], command)

@@ -9,9 +9,14 @@ System module.
 
 import math
 import numpy as np
+import os
+
+import File
+import Utilities
 
 _const_zero_value = 0.0
 _const_def_value = -9999999999.9
+_const_path_to_arvo = "thirdparty/arvo_c/arvo_c"
 
 class System(object):
   """
@@ -76,7 +81,13 @@ class System(object):
     self.cbm_spin_chan = _const_def_value
     
     # surface energy
-    self.sruface_energy = _const_zero_value
+    self.surface_energy = _const_zero_value
+    
+    # geometrical properties with arvo
+    self.arvo_calc = False
+    self.arvo_volume = _const_zero_value
+    self.arvo_area = _const_zero_value
+    self.arvo_spheres = _const_zero_value
     
   def addAtom(self, sym, pos, charge):
     """
@@ -168,16 +179,49 @@ class System(object):
     self.momentOfInertia[2][0] = moi[4]
     self.momentOfInertia[2][1] = moi[5]
   
-  def calc_surface_energy(self):
+  def calc_geo_measures(self, radius):
+    """
+    Calculates geometrical measures: volume, area
+    
+    """
+    
+    _temp_file = Utilities.get_random_name()
+    _temp_file = "temp"
+    
+    # TODO: Need a way set the surface radius for a each atom. Probably add it as 
+    #       as a new column in the atoms.in file.
+    
+    # prepare a temporary file
+    File.writeATS(self, _temp_file, radius)
+    
+    command = "%s protein=%s" % ("./thirdparty/arvo_c/arvo_c", _temp_file)
+    output, stderr, status = Utilities.run_sub_process(command)
+    
+    # if the execution of the was successful:
+    if not status:
+      
+      output_array = output.split()
+      
+      self.arvo_calc = True
+      self.arvo_volume = np.float64(output_array[1])
+      self.arvo_area = np.float64(output_array[3])
+      self.arvo_spheres = np.int16(output_array[6])
+  
+    os.unlink(_temp_file)
+    
+  def calc_surface_energy(self, radius):
     """
     Calculates surface energy using arvo_c thirdparty code
     
     """
     
-    # prepare a temporary file
+    # calculate the geometrical measures
+    self.calc_geo_measures(radius)
     
+    if self.arvo_calc:
     
-    
+      self.surface_energy = self.totalEnergy / self.arvo_area
+   
   def findNN(self, atomIdx, rdfCutOffSq):
     
     cntrx = self.pos[3*atomIdx+0]
