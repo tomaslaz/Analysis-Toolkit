@@ -24,7 +24,7 @@ class bcolors:
         self.FAIL = ''
         self.ENDC = ''
 
-def error( caller, message, indent=0, verbose=1):
+def error(caller, message, indent=0, verbose=1):
   """
   Prints an error message in a predefined format
   
@@ -39,7 +39,7 @@ def error( caller, message, indent=0, verbose=1):
       ind += "  "
   print "[%s]: %s%s%s >> %s%s" % (now, bcolors.FAIL, ind, caller, message, bcolors.ENDC)
 
-def log( caller, message, indent=0, verbose=1):
+def log(caller, message, indent=0, verbose=1):
   """
   Prints a log message in a predefined format
   
