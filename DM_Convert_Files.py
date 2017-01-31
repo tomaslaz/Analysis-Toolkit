@@ -15,6 +15,7 @@ import numpy as np
 from optparse import OptionParser
 
 import source.Atoms as Atoms
+import source.File as File
 import source.IO as IO
 import source.Fhiaims as Fhiaims
 
@@ -49,16 +50,16 @@ def convertFile(cluster, outFile, controlFile=None):
   #print outFile
   
   if outFile.endswith(".xyz"):
-    success, error = IO.writeXYZ(cluster, outFile)
+    success, error = File.writeXYZ(cluster, outFile)
     
   elif outFile.endswith(".car"):
-    success, error = IO.writeCAR(cluster, outFile)
+    success, error = File.writeCAR(cluster, outFile)
     
   elif outFile.endswith(".gin"):
-    success, error = IO.writeGIN(cluster, outFile, controlFile=controlFile, outputXYZ=False)
+    success, error = File.writeGIN(cluster, outFile, controlFile=controlFile, outputXYZ=False)
     
   elif outFile.endswith(".in"):
-    success, error = IO.writeAimsGeometry(cluster, outFile)
+    success, error = File.writeAimsGeometry(cluster, outFile)
   
   else:
     error = "Undefined output format"

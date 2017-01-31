@@ -18,6 +18,7 @@ from optparse import OptionParser
 
 import source.Atoms as Atoms
 import source.Fhiaims as FHIaims
+import source.File as File
 import source.IO as IO
 
 _fhiaimsGeometryFile = "geometry.in"
@@ -160,7 +161,7 @@ def saveFiles(systemsList):
     #fileName = "%s_%03d_%s.xyz" % (nStr, i+1, systemsList[i].name)
     fileName = "%s.xyz" % (systemsList[i].name)
         
-    success_, error_ = IO.writeXYZ(systemsList[i], fileName)
+    success_, error_ = File.writeXYZ(systemsList[i], fileName)
     
     hashkeyRadius = Atoms.getRadius(systemsList[i]) + 1.0
 
