@@ -17,6 +17,8 @@ import subprocess
 import IO
 import System
 
+import numpy as np
+
 _const_def_value = -9999999999.9
 _const_control_in = "control.in"
 _const_geometry_in = "geometry.in"
@@ -30,6 +32,8 @@ _const_spin_N = "| N = N_up - N_down"
 _const_spin_S = "| S                 :"
 _const_spin_J = "| J                 :"
 
+_const_eigenvalues = "Writing Kohn-Sham eigenvalues."
+
 _const_vbm = "Highest occupied state (VBM)"
 _const_cbm = "Lowest unoccupied state (CBM)"
 _const_occ_num = "Occupation number"
@@ -37,7 +41,7 @@ _const_spin_chan = "Spin channel"
 
 _const_homo_lumo = "Overall HOMO-LUMO gap:"
 
-def _readAimsStructure(geometryFile, outputFile, relaxed=True):
+def _readAimsStructure(geometryFile, outputFile, relaxed=True, eigenvalues=False):
   """
   Reads in FHI-aims structure
     
@@ -61,7 +65,7 @@ def _readAimsStructure(geometryFile, outputFile, relaxed=True):
     if not success:
       return success, error, system
     
-    success, error = _readAimsOutput(outputFile, system, relaxed=relaxed)
+    success, error = _readAimsOutput(outputFile, system, relaxed=relaxed, eigenvalues=eigenvalues)
   
   return success, error, system
 
@@ -112,7 +116,7 @@ def _read_aims_geometry(system, input_file=_const_geometry_in):
   
   return success, error
 
-def _readAimsOutput(inputFile, system, relaxed=True):
+def _readAimsOutput(inputFile, system, relaxed=True, eigenvalues=False):
   """
   Reads in FHI-aims output as a system.
   """
@@ -123,6 +127,9 @@ def _readAimsOutput(inputFile, system, relaxed=True):
   
   readAtoms = False
   readCompleted = False
+  readEigenvalues = False
+  
+  eigen_values_array = []
   
   atomsLineCnt = 0
   
@@ -192,7 +199,7 @@ def _readAimsOutput(inputFile, system, relaxed=True):
         system.charge[atomsLineCnt-1] = 0.0
         
       atomsLineCnt += 1
-    
+      
     if ((len(fields) > 1) and (fields[0] == "Version")):
       version = fields[1]
         
@@ -227,6 +234,9 @@ def _readAimsOutput(inputFile, system, relaxed=True):
     
     if _const_vbm in line:
       vbm = float(fields[5])
+      
+      # stop reading eigenvalues
+      readEigenvalues = False
     
     if _const_cbm in line:
       cbm = float(fields[5])
@@ -250,6 +260,15 @@ def _readAimsOutput(inputFile, system, relaxed=True):
       if _const_spin_chan in line:
         cbm_spin_chan = float(fields[3])
     
+    
+    # reading the eigenvalues
+    if (eigenvalues and readEigenvalues and (system is not None)):
+      
+      if len(fields) == 4:
+        #print eigen_values_array len(fields), fields, 
+        
+        eigen_values_array.append(fields[3])
+
     # Checking whether geometry relaxation was performed
     if relaxed:
       if ((len(fields) > 2) and (' '.join(fields[0:3]) == "Final atomic structure:")):
@@ -265,8 +284,17 @@ def _readAimsOutput(inputFile, system, relaxed=True):
     if _const_nice_day_line in line:
       have_nice_day = True
     
+    # Start reading eigenvalues
+    if _const_eigenvalues in line:
+      readEigenvalues = True
+      eigen_values_array = []
+    
   fin.close()
-          
+  
+  # saving the eigenvalues
+  if eigenvalues:
+    system.eigenvalues = np.array(eigen_values_array, np.float128)
+  
   if not have_nice_day:
     system.totalEnergy = 99999999.99
     success = False

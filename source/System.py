@@ -91,6 +91,9 @@ class System(object):
     self.arvo_area = _const_zero_value
     self.arvo_spheres = _const_zero_value
     
+    # eigenvalues
+    self.eigenvalues = None
+    
   def addAtom(self, sym, pos, charge):
     """
     Add an atom to the system
