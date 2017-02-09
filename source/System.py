@@ -56,6 +56,8 @@ class System(object):
     self.PBC = np.zeros(3, np.int32)
     
     self.gulpSpecies = {}
+    self.gulpAtomType = ["" for x in range(self.NAtoms)]
+    self.gulpAtomExtraInfo = ["" for x in range(self.NAtoms)]
     
     self.noOfcores = 0
     self.runTime = 0.0

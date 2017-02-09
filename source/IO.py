@@ -102,7 +102,7 @@ def countMixAtoms(fileName):
     
   f.close()
   
-  print "Counting the number of atoms (including vacancies): %d" % (atomsCnt)
+  #print "Counting the number of atoms (including vacancies): %d" % (atomsCnt)
   
   success = True
   return success, error, atomsCnt
@@ -148,7 +148,24 @@ def lookForFiles(extension):
     csvFile = file
   
   return csvFile
+
+def stringInFile(strExpr, fileObject):
+  """
+  Checks if a string is in a file and rewinds the file to the beginning
   
+  """
+  
+  found = False
+  
+  for line in fileObject:
+    if strExpr in line:
+      found = True
+      break
+  
+  fileObject.seek(0, 0)
+  
+  return found
+
 def readSystemFromFileCAR(fileName):
     """
     Reads in the structure of a system from a CAR file.
@@ -348,6 +365,7 @@ def readSystemFromFileGIN(fileName, outputMode=False):
 
       line = line.strip()
       array = line.split()
+      array_len = len(array)
       
       if "#" not in line:
                 
@@ -372,6 +390,14 @@ def readSystemFromFileGIN(fileName, outputMode=False):
           
         except:
           system.charge[atomsCnt] = 0.0
+        
+        system.gulpAtomType[atomsCnt] = array[1][0]
+        
+        extraInfo = ""
+        for j in range(5, array_len):
+          extraInfo = "%s %s" % (extraInfo, array[j])
+        
+        system.gulpAtomExtraInfo[atomsCnt] = extraInfo
         
         atomsCnt += 1
       
@@ -469,3 +495,77 @@ def readSystemFromFileXYZ(fileName):
     system.name = os.path.splitext(os.path.basename(fileName))[0]
     
     return system
+
+def writeGIN(system, outputFile, controlFile=None, outputXYZ=False):
+  """
+  Writes system as a GIN file.
+  
+  """
+  
+  error = ""
+  success = True
+  
+  if (controlFile is None):
+    masterGinFile = "Master.gin"
+  else:
+    masterGinFile = controlFile
+  
+  if system is None:
+    success = False
+    error = __name__ + ": no data to write"
+    
+    return success, error
+  
+  if (not os.path.isfile(masterGinFile)):
+    success = False
+    error = __name__ + ": could not locate Master.gin file"
+
+    return success, error
+    
+  masterSystem, error, header, footer = readSystemFromFileGIN(masterGinFile, outputMode=True)
+  
+  if (masterSystem is None):
+    success = False
+    return success, error
+  
+  try:
+    fout = open(outputFile, "w")
+  except:
+    success = False
+    error = __name__ + ": Cannot open: " + filePath
+     
+    return success, error
+  
+  fout.write(header)
+
+  for i in range(system.NAtoms):
+    tempStr = system.specieList[system.specie[i]]
+    
+#     gulpSpecies = masterSystem.gulpSpecies[tempStr]
+#     
+#     gulpSpeciesArr = gulpSpecies.split(";")
+#     
+#     for j in range(len(gulpSpeciesArr)):
+#       if len(gulpSpeciesArr[j].strip()) > 0:
+#         
+#         gulpSpeciesArr2 = gulpSpeciesArr[j].split(",")
+#                 
+#         type = gulpSpeciesArr2[0].strip()
+#         
+#         try:
+#           charge = float(gulpSpeciesArr2[1].strip())
+#         except:
+#           charge = 0.0
+
+    fout.write("%s %s %13.10f %13.10f %13.10f %s\n" % 
+              (tempStr, system.gulpAtomType[i], system.pos[3*i], system.pos[3*i+1], system.pos[3*i+2], system.gulpAtomExtraInfo[i])) 
+     
+  fout.write(footer)
+  
+  # adding output to xyz
+  if outputXYZ:
+    fout.write("\noutput xyz %s" % (outputFile[:-4]))
+
+  fout.close()
+    
+  return success, error

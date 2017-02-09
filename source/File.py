@@ -6,6 +6,8 @@ File module.
 @email tomas.lazauskas[a]gmail.com
 """
 
+import os
+
 def writeATS(system, outputFile, radius):
   """
   Writes system as an ATS file.
@@ -103,80 +105,6 @@ def writeCAR(system, outputFile):
   
   fout.close()
   
-  return success, error
-
-def writeGIN(system, outputFile, controlFile=None, outputXYZ=False):
-  """
-  Writes system as a GIN file.
-  
-  """
-  
-  error = ""
-  success = True
-  
-  if (controlFile is None):
-    masterGinFile = "Master.gin"
-  else:
-    masterGinFile = controlFile
-  
-  if system is None:
-    success = False
-    error = __name__ + ": no data to write"
-    
-    return success, error
-  
-  if (not os.path.isfile(masterGinFile)):
-    success = False
-    error = __name__ + ": could not locate Master.gin file"
-
-    return success, error
-    
-  masterSystem, error, header, footer = readSystemFromFileGIN(masterGinFile, outputMode=True)
-  
-  if (masterSystem is None):
-    success = False
-    return success, error
-  
-  try:
-    fout = open(outputFile, "w")
-  except:
-    success = False
-    error = __name__ + ": Cannot open: " + filePath
-     
-    return success, error
-  
-  fout.write(header)
-
-  for i in range(system.NAtoms):
-    tempStr = system.specieList[system.specie[i]]
-    
-    gulpSpecies = masterSystem.gulpSpecies[tempStr]
-    
-    gulpSpeciesArr = gulpSpecies.split(";")
-    
-    for j in range(len(gulpSpeciesArr)):
-      if len(gulpSpeciesArr[j].strip()) > 0:
-        
-        gulpSpeciesArr2 = gulpSpeciesArr[j].split(",")
-                
-        type = gulpSpeciesArr2[0].strip()
-        
-        try:
-          charge = float(gulpSpeciesArr2[1].strip())
-        except:
-          charge = 0.0
-
-        fout.write("%s %s %13.10f %13.10f %13.10f %.4f\n" % 
-                  (tempStr, type, system.pos[3*i], system.pos[3*i+1], system.pos[3*i+2], charge)) 
-     
-  fout.write(footer)
-  
-  # adding output to xyz
-  if outputXYZ:
-    fout.write("\noutput xyz %s" % (outputFile[:-4]))
-
-  fout.close()
-    
   return success, error
 
 def writeAimsGeometry(system, outputFile):
