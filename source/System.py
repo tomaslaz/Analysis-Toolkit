@@ -13,6 +13,7 @@ import os
 
 import File
 import Utilities
+from scipy.constants.constants import Rydberg
 
 _const_zero_value = 0.0
 _const_def_value = -9999999999.9
@@ -237,12 +238,33 @@ class System(object):
     neighboursArr = np.zeros(self.NAtoms, np.int32)
     neighboursDistArr = np.zeros(self.NAtoms, np.float64)
     
+    xdim = self.cellDims[0]
+    ydim = self.cellDims[1]
+    zdim = self.cellDims[2]
+    
     for i in range(self.NAtoms):
       if (i != atomIdx):
-        distSq = ((cntrx - self.pos[3*i+0])**2 + 
-                  (cntry - self.pos[3*i+1])**2 + 
-                  (cntrz - self.pos[3*i+2])**2)
-    
+        
+        # distances
+        rx = cntrx - self.pos[3*i+0]
+        ry = cntry - self.pos[3*i+1]
+        rz = cntrz - self.pos[3*i+2]
+        
+        # applying cubic periodic boundary conditions
+        if self.PBC[0]:
+          prev_rx = rx
+          rx = rx - np.round( rx / xdim ) * xdim
+          
+        if self.PBC[1]:
+          prev_ry = ry
+          ry = ry - np.round( ry / ydim ) * ydim
+
+        if self.PBC[2]:
+          prev_rz = rz
+          rz = rz - np.round( rz / zdim ) * zdim
+        
+        distSq = (rx**2 + ry**2 + rz**2)
+        
         if (distSq <= rdfCutOffSq):
           neighboursArr[neighboursCnt] = i
           neighboursDistArr[neighboursCnt] = math.sqrt(distSq)
