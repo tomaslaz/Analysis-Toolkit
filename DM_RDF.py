@@ -85,6 +85,7 @@ class RDF(object):
     
     atomsCount = self._atomsToAnalyseCnt
     
+    # finding the nearest neighbours
     for i in range(atomsCount):
 
       atomIdx = self._atomsToAnalyse[i]
@@ -106,7 +107,11 @@ class RDF(object):
         if pairIdx is not None:
           self.pairs[pairIdx].ndist[boxNum] += 1
                 
-    volume = 1.0
+    if self.system.PBC[0] and self.system.PBC[0] and self.system.PBC[0]:
+      volume = self.system.cellDims[0] * self.system.cellDims[1] * self.system.cellDims[2]
+    else:  
+      volume = 1.0
+    
     rho = atomsCount / volume
     grConst = 4.0 * math.pi * rho * np.sqrt(2*np.pi)
 
@@ -330,7 +335,10 @@ def cmdLineArgs():
   
   parser.add_option("-p", "--pairs", dest="pairs", default="", type="string",
     help="A list of pairs for which RDF is plotted. Default = ''")
-  
+
+  parser.add_option("-c", "--cubic", dest="cubicPBC", default=False, action="store_true",
+    help="Apply cubic periodicity. Default = False")
+
   parser.disable_interspersed_args()
   
   (options, args) = parser.parse_args()
@@ -358,8 +366,10 @@ if __name__ == "__main__":
   
   system = IO.readSystemFromFileXYZ(fileName)
   
-  system.calcCOG()
-  system.moveToCOG()
+  # the system should not be moved if periodic boundaries are applied
+  if not system.PBC[0] and not system.PBC[1] and not system.PBC[2]:
+    system.calcCOG()
+    system.moveToCOG()
     
   systemRDF = RDF(system, options.rdfCutOff, options.rdfCStepsize, options.gausSigma, options.pairs)
   

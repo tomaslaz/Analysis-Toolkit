@@ -11,7 +11,6 @@ import math
 import numpy as np
 import os
 
-import File
 import Utilities
 from scipy.constants.constants import Rydberg
 
