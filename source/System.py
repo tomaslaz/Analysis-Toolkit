@@ -9,8 +9,15 @@ System module.
 
 import math
 import numpy as np
+import os
 
+import File
+import Utilities
+from scipy.constants.constants import Rydberg
+
+_const_zero_value = 0.0
 _const_def_value = -9999999999.9
+_const_path_to_arvo = "thirdparty/arvo_c/arvo_c"
 
 class System(object):
   """
@@ -50,6 +57,8 @@ class System(object):
     self.PBC = np.zeros(3, np.int32)
     
     self.gulpSpecies = {}
+    self.gulpAtomType = ["" for x in range(self.NAtoms)]
+    self.gulpAtomExtraInfo = ["" for x in range(self.NAtoms)]
     
     self.noOfcores = 0
     self.runTime = 0.0
@@ -73,6 +82,18 @@ class System(object):
     
     self.cbm_occ_num = _const_def_value
     self.cbm_spin_chan = _const_def_value
+    
+    # surface energy
+    self.surface_energy = _const_zero_value
+    
+    # geometrical properties with arvo
+    self.arvo_calc = False
+    self.arvo_volume = _const_zero_value
+    self.arvo_area = _const_zero_value
+    self.arvo_spheres = _const_zero_value
+    
+    # eigenvalues
+    self.eigenvalues = None
     
   def addAtom(self, sym, pos, charge):
     """
@@ -164,6 +185,49 @@ class System(object):
     self.momentOfInertia[2][0] = moi[4]
     self.momentOfInertia[2][1] = moi[5]
   
+  def calc_geo_measures(self, radius):
+    """
+    Calculates geometrical measures: volume, area
+    
+    """
+    
+    _temp_file = Utilities.get_random_name()
+    _temp_file = "temp"
+    
+    # TODO: Need a way set the surface radius for a each atom. Probably add it as 
+    #       as a new column in the atoms.in file.
+    
+    # prepare a temporary file
+    File.writeATS(self, _temp_file, radius)
+    
+    command = "%s protein=%s" % ("./thirdparty/arvo_c/arvo_c", _temp_file)
+    output, stderr, status = Utilities.run_sub_process(command)
+    
+    # if the execution of the was successful:
+    if not status:
+      
+      output_array = output.split()
+      
+      self.arvo_calc = True
+      self.arvo_volume = np.float64(output_array[1])
+      self.arvo_area = np.float64(output_array[3])
+      self.arvo_spheres = np.int16(output_array[6])
+  
+    os.unlink(_temp_file)
+    
+  def calc_surface_energy(self, radius):
+    """
+    Calculates surface energy using arvo_c thirdparty code
+    
+    """
+    
+    # calculate the geometrical measures
+    self.calc_geo_measures(radius)
+    
+    if self.arvo_calc:
+    
+      self.surface_energy = self.totalEnergy / self.arvo_area
+   
   def findNN(self, atomIdx, rdfCutOffSq):
     
     cntrx = self.pos[3*atomIdx+0]
@@ -174,12 +238,33 @@ class System(object):
     neighboursArr = np.zeros(self.NAtoms, np.int32)
     neighboursDistArr = np.zeros(self.NAtoms, np.float64)
     
+    xdim = self.cellDims[0]
+    ydim = self.cellDims[1]
+    zdim = self.cellDims[2]
+    
     for i in range(self.NAtoms):
       if (i != atomIdx):
-        distSq = ((cntrx - self.pos[3*i+0])**2 + 
-                  (cntry - self.pos[3*i+1])**2 + 
-                  (cntrz - self.pos[3*i+2])**2)
-    
+        
+        # distances
+        rx = cntrx - self.pos[3*i+0]
+        ry = cntry - self.pos[3*i+1]
+        rz = cntrz - self.pos[3*i+2]
+        
+        # applying cubic periodic boundary conditions
+        if self.PBC[0]:
+          prev_rx = rx
+          rx = rx - np.round( rx / xdim ) * xdim
+          
+        if self.PBC[1]:
+          prev_ry = ry
+          ry = ry - np.round( ry / ydim ) * ydim
+
+        if self.PBC[2]:
+          prev_rz = rz
+          rz = rz - np.round( rz / zdim ) * zdim
+        
+        distSq = (rx**2 + ry**2 + rz**2)
+        
         if (distSq <= rdfCutOffSq):
           neighboursArr[neighboursCnt] = i
           neighboursDistArr[neighboursCnt] = math.sqrt(distSq)

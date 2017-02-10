@@ -11,6 +11,8 @@ Matplotlib v.1.x (x => 5.0)
 
 numpy v.1.x (x => 10.1)
 
+ADUL v.2.0 (For DM_Surface_Energy)
+
 # Scripts
 
 ### DA_FHIaims_geometry_stability
@@ -36,9 +38,12 @@ Plots DOS (and integrated DOS) graphs [Based on the David Mora Fonz's (UCL) impl
 Analyses FHI-aims simulations in terms of runtime, systems' energies etc.
 
 ### DM_FHIaims_Spin_Analysis 
-A script to prepare and execute FHIaims spin polarized simulations. 
+Prepares and executes FHIaims spin polarized simulations. 
 
 Reads in structures in xyz format, prepares geometry.in and control.in files by varying the default_initial_moment keyword. The script can also run the prepared simulations one by one. 
+
+### DM_Surface_Energy
+Calculates cluster's surface energy 
 
 ### DM_RDF
 Plots radial distribution function.

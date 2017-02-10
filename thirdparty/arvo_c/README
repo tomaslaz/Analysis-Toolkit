@@ -1,0 +1,60 @@
+ARVO_C
+~~~~~~~
+
+1) Introduction
+
+The ARVO_C (surface ARea and VOlume) package is a software package based on
+the FORTRAN package of the name ARVO. For details on the algorithm which it
+implements, see the article Busa et. al.: ARVO: A Fortran package for computing
+the solvent accessible surface area and the excluded volume of overlapping
+spheres via analytic equations, Computer Physics Communications, Vol. 165,
+Iss. 1, Pages 59-96. This package is FORTRAN version rewritten into language C
+as this was the first step to parallelization of the program ARVO using OpenCL
+programming language (and GPU computing). The C version preserves original
+functionality of the program and includes several enhancements compared to the
+original. It contains dynamic allocation of memory (compared to static in
+previous version), name of input and output files are taken from command line
+(compared to hard-coded names in previous version) and unlike in the original
+version North Pole Test and rotation of whole protein were used, new approach of
+reduction of radius of spheres where North Pole Test would fail was adopted.
+
+2) Installation
+
+This directory contains two files:
+  README    - this readme file
+  arvo_c.c  - source code of program ARVO_C
+
+To use the program user needs to compile it from source. On Linux based machine
+type
+      gcc -o arvo_c arvo_c.c -lm
+to create executable file arvo_c. For this you need gcc compiler installed and
+appropriate mathematical libraries available (these should be part of gcc
+compiler installation). Installation on other platforms should be also
+straightforward as this source file doesn't use any platform specific parts.
+
+3) Usage
+
+If you run arvo_c without any arguments you will receive a short help how to
+use the program. Minimal command for calculation of volume and area reads
+
+      ./arvo_c protein=protein_file
+
+where protein_file is name of input file as created by input_structure (you can
+also use the short version p=protein_name). All messages and results are
+written to standard output. If you want to save the warnings and results for
+later analysis, than provide the name of output file by using parameter
+log=output_file.
+
+3.1) Test
+
+To test your program, after compiling with commands
+      gcc -o arvo_c arvo_c.c -lm
+run from same directory command
+      ./arvo_c protein=../input/2brd.ats log=../output/2brd.log
+      ./arvo_c p=../input/1eca.ats log=../output/1eca.log
+In directory 'output' (one level higher than current directory) you will
+obtain two files 2brd.log and 1eca.log similar to files with same names
+from directory 'input' (also one level higher). Note that the calculation
+time of the examples on testing machine was about 20s and 10s, respectively
+and during the calculation no information on progress is available.
+
