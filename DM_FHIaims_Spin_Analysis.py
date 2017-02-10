@@ -10,7 +10,6 @@ import os
 from optparse import OptionParser
 
 import source.IO as IO
-import source.File as File
 import source.Messages as Messages
 from source.Messages import log
 
@@ -209,7 +208,7 @@ def write_systems(systems_list, spin_file, main_dir_path):
     os.chdir(system_name)
     
     # writes system as a geometry.in file
-    _, _ = File.writeAimsGeometry(system, _aims_geometry)
+    _, _ = IO.writeAimsGeometry(system, _aims_geometry)
     
     # copies the control.in file
     cmd_line = "cp %s/%s/%s . " % (main_dir_path, _input_directory, _aims_control)
