@@ -7,6 +7,7 @@ System module.
 
 """
 
+import copy
 import math
 import numpy as np
 import os
@@ -71,7 +72,7 @@ class System(object):
     self.homo_lumo_gap = _const_def_value
     
     # homo
-    self.vmb = _const_def_value 
+    self.vbm = _const_def_value 
     
     self.vbm_occ_num = _const_def_value
     self.vbm_spin_chan = _const_def_value
@@ -93,6 +94,8 @@ class System(object):
     
     # eigenvalues
     self.eigenvalues = None
+    self.ev_dos_bins = None
+    self.ev_dos = None
     
   def addAtom(self, sym, pos, charge):
     """
@@ -149,6 +152,45 @@ class System(object):
         self.com[j] += atomMass * self.pos[3*i + j]
 
     self.com = self.com / totMass
+  
+  def calc_ev_dos(self, ev_from=-100, ev_to=20, delta=0.01, sigma=0.1):
+    """
+    Calculates dos of electronic eigenvalues    
+    
+    """
+    
+    success = True
+    error = ""
+    
+    if self.eigenvalues is None:
+      success = False
+      error = "Eigenvalues were not found"
+      
+      return success, error
+    
+    _extraBins=2
+    
+    # get min and max 
+    ev_dos_min = np.float128(ev_from)
+    ev_dos_max = np.float128(ev_to)
+        
+    # number of bins
+    ev_dos_n_bins = np.around(int((ev_dos_max - ev_dos_min) / delta) + _extraBins, decimals=0)
+        
+    # array to hold the ev bin values
+    ev_dos_bins = np.arange(ev_dos_min, np.around(ev_dos_min + ev_dos_n_bins * delta, decimals=4), delta)
+
+    # array for the dos values
+    ev_dos = np.zeros(ev_dos_n_bins, dtype=np.float128) 
+        
+    # calculating DOS
+    for i in range(ev_dos_n_bins):
+      ev_dos[i] = np.sum((1/(sigma*np.pi**0.5)) * np.exp(-(ev_dos_bins[i] - self.eigenvalues)**2 / sigma**2))
+    
+    self.ev_dos_bins = copy.deepcopy(ev_dos_bins)
+    self.ev_dos = copy.deepcopy(ev_dos)
+     
+    return success, error
   
   def calcMOI(self):
     """

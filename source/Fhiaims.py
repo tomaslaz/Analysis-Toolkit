@@ -310,8 +310,8 @@ def _readAimsOutput(inputFile, system, relaxed=True, eigenvalues=False):
   elif system is not None:
     
     system.homo_lumo_gap = homo_lumo_gap
-    
-    system.vbm = vbm
+
+    system.vbm = vbm    
     system.vbm_occ_num =vbm_occ_num
     
     system.cbm = cbm
