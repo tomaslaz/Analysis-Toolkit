@@ -735,12 +735,19 @@ def writeXYZ(system, outputFile):
     error = __name__ + ": Cannot open: " + outputFile
     
     return success, error
-  
-  fout.write("%d\n" % system.NAtoms)
-  
-  metaData = "SCF Done             %.10e;" % (system.totalEnergy)
     
+  fout.write("%d\n" % system.NAtoms)
+    
+  if system.cellDims[0] != 0.0 and system.cellDims[1] != 0.0 and system.cellDims[2] != 0.0:
+    meta_data = "%.10f %.10f %.10f" % (system.cellDims[0], system.cellDims[1], system.cellDims[2])
+    fout.write("%s\n" % (meta_data))
+
+  else:
+    metaData = "SCF Done             %.10e;" % (system.totalEnergy)
+    fout.write("%s\n" % (metaData))
+  
   fout.write("%s\n" % (metaData))
+
   for i in range(system.NAtoms):
         
     fout.write("%s %.10f %.10f %.10f %.2f\n" % (system.specieList[system.specie[i]], 

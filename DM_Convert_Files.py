@@ -81,8 +81,8 @@ if __name__ == "__main__":
   else:
     controlFile = None
     
-  if inFileName[-3:] == outFileName[-3:]:
-    sys.exit("Formats must differ!")
+#   if inFileName[-3:] == outFileName[-3:]:
+#     sys.exit("Formats must differ!")
   
   if inFileName == ".gin":
     fileList = glob.glob("*.gin")
@@ -107,7 +107,7 @@ if __name__ == "__main__":
   
   elif inFileName == ".xyz":
     fileList = glob.glob("*.xyz")
-    
+        
     for fileName in fileList:
       cluster = IO.readSystemFromFileXYZ(fileName)
       
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         outputFile = fileName[:-3] + outFileName[-2:]
       else:
         outputFile = fileName[:-3] + outFileName[-3:]
-      
+            
       ok, error = convertFile(cluster, outputFile, controlFile)
   
   elif inFileName == ".output":
