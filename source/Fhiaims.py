@@ -33,6 +33,8 @@ _const_spin_S = "| S                 :"
 _const_spin_J = "| J                 :"
 
 _const_eigenvalues = "Writing Kohn-Sham eigenvalues."
+_const_evs_up = "Spin-up eigenvalues"
+_const_evs_down = "Spin-down eigenvalues"
 
 _const_vbm = "Highest occupied state (VBM)"
 _const_cbm = "Lowest unoccupied state (CBM)"
@@ -129,7 +131,12 @@ def _readAimsOutput(inputFile, system, relaxed=True, eigenvalues=False):
   readCompleted = False
   readEigenvalues = False
   
+  read_evs_up = False
+  read_evs_down = False
+  
   eigen_values_array = []
+  eigen_values_up_array = []
+  eigen_values_down_array = []
   
   atomsLineCnt = 0
   
@@ -148,6 +155,7 @@ def _readAimsOutput(inputFile, system, relaxed=True, eigenvalues=False):
 
   try:
     fin = open(inputFile, "r")
+    
   except:
     success = False
     error = __name__ + ": Cannot open: " + inputFile
@@ -259,16 +267,35 @@ def _readAimsOutput(inputFile, system, relaxed=True, eigenvalues=False):
       
       if _const_spin_chan in line:
         cbm_spin_chan = float(fields[3])
-    
-    
+        
     # reading the eigenvalues
     if (eigenvalues and readEigenvalues and (system is not None)):
       
+      if read_evs_up and (_const_evs_down in line):
+        read_evs_up = False
+      
+      if read_evs_down and (_const_curr_spin in line):
+        read_evs_down = False
+        readEigenvalues = False
+      
       if len(fields) == 4:
-        #print eigen_values_array len(fields), fields, 
+        if read_evs_up:
+          eigen_values_up_array.append(fields[3])
+          
+        elif read_evs_down:
+          eigen_values_down_array.append(fields[3])
         
-        eigen_values_array.append(fields[3])
-
+        else:
+          eigen_values_array.append(fields[3])
+      
+      # reading in spin ups?
+      if _const_evs_up in line:
+        read_evs_up = True
+        
+      # reading in spin downs?
+      if _const_evs_up in line:
+        read_evs_down = True
+      
     # Checking whether geometry relaxation was performed
     if relaxed:
       if ((len(fields) > 2) and (' '.join(fields[0:3]) == "Final atomic structure:")):
@@ -287,14 +314,25 @@ def _readAimsOutput(inputFile, system, relaxed=True, eigenvalues=False):
     # Start reading eigenvalues
     if _const_eigenvalues in line:
       readEigenvalues = True
+      
       eigen_values_array = []
+      
+      eigen_values_up_array = []
+      eigen_values_down_array = []
     
   fin.close()
   
   # saving the eigenvalues
   if eigenvalues:
-    system.eigenvalues = np.array(eigen_values_array, np.float128)
-  
+    if (len(eigen_values_array) > 0):
+      system.eigenvalues = np.array(eigen_values_array, np.float128)
+    
+    if (len(eigen_values_up_array) > 0) : 
+      system.evs_up = np.array(eigen_values_up_array, np.float128)
+    
+    if (len(eigen_values_down_array) > 0):
+      system.evs_down = np.array(eigen_values_down_array, np.float128)
+    
   if not have_nice_day:
     system.totalEnergy = 99999999.99
     success = False

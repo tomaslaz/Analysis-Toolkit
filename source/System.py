@@ -94,8 +94,13 @@ class System(object):
     
     # eigenvalues
     self.eigenvalues = None
+    self.evs_up = None
+    self.evs_down = None
+    
     self.ev_dos_bins = None
     self.ev_dos = None
+    self.ev_up_dos = None
+    self.ev_down_dos = None
     
   def addAtom(self, sym, pos, charge):
     """
@@ -162,14 +167,14 @@ class System(object):
     success = True
     error = ""
     
-    if self.eigenvalues is None:
+    if ((self.eigenvalues is None) and (self.evs_up is None) and (self.evs_down is None)):
       success = False
-      error = "Eigenvalues were not found"
+      error = "Eigenvalues were not read in"
       
       return success, error
     
-    _extraBins=2
-    
+    _extraBins = 2
+  
     # get min and max 
     ev_dos_min = np.float128(ev_from)
     ev_dos_max = np.float128(ev_to)
@@ -179,16 +184,37 @@ class System(object):
         
     # array to hold the ev bin values
     ev_dos_bins = np.arange(ev_dos_min, np.around(ev_dos_min + ev_dos_n_bins * delta, decimals=4), delta)
-
-    # array for the dos values
-    ev_dos = np.zeros(ev_dos_n_bins, dtype=np.float128) 
-        
-    # calculating DOS
-    for i in range(ev_dos_n_bins):
-      ev_dos[i] = np.sum((1/(sigma*np.pi**0.5)) * np.exp(-(ev_dos_bins[i] - self.eigenvalues)**2 / sigma**2))
-    
     self.ev_dos_bins = copy.deepcopy(ev_dos_bins)
-    self.ev_dos = copy.deepcopy(ev_dos)
+    
+    if (self.eigenvalues is not None):
+      # array for the dos values
+      ev_dos = np.zeros(ev_dos_n_bins, dtype=np.float128) 
+          
+      # calculating DOS
+      for i in range(ev_dos_n_bins):
+        ev_dos[i] = np.sum((1/(sigma*np.pi**0.5)) * np.exp(-(ev_dos_bins[i] - self.eigenvalues)**2 / sigma**2))
+      
+      self.ev_dos = copy.deepcopy(ev_dos)
+    
+    if (self.evs_up is not None):
+      # array for the dos values
+      ev_dos = np.zeros(ev_dos_n_bins, dtype=np.float128) 
+          
+      # calculating DOS
+      for i in range(ev_dos_n_bins):
+        ev_dos[i] = np.sum((1/(sigma*np.pi**0.5)) * np.exp(-(ev_dos_bins[i] - self.evs_up)**2 / sigma**2))
+      
+      self.ev_up_dos = copy.deepcopy(ev_dos)
+    
+    if (self.evs_down is not None):
+      # array for the dos values
+      ev_dos = np.zeros(ev_dos_n_bins, dtype=np.float128) 
+          
+      # calculating DOS
+      for i in range(ev_dos_n_bins):
+        ev_dos[i] = np.sum((1/(sigma*np.pi**0.5)) * np.exp(-(ev_dos_bins[i] - self.evs_down)**2 / sigma**2))
+      
+      self.ev_down_dos = copy.deepcopy(ev_dos)
      
     return success, error
   
