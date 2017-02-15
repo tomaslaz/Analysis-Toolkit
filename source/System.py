@@ -39,6 +39,11 @@ class System(object):
     self.cellDims = np.zeros(3, np.float64)
     self.cellAngles = np.empty(3, np.float64)
     
+    self.cellDims_ini = np.zeros(3, np.float64)
+    self.cellAngles_ini = np.empty(3, np.float64)
+    self.cellDims_final = np.zeros(3, np.float64)
+    self.cellAngles_final = np.empty(3, np.float64)
+    
     self.specie = np.empty(self.NAtoms, np.int32)
     self.pos = np.empty(3*self.NAtoms, np.float64)
     self.minPos = np.empty(3, np.float64)

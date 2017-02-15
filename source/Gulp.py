@@ -5,13 +5,18 @@ GULP module.
 """
 
 import os
+import numpy as np
 
 import IO
 
+_constIniParams = "Cell parameters (Angstroms/Degrees):"
+_constIniParamsCellVol = "Initial cell volume"
 _constOutOptiAchieved = "**** Optimisation achieved ****"
 _constOutFinalCartCoords = "Final cartesian coordinates of atoms :"
 _constOutFinalFracCoords = "Final fractional coordinates of atoms :"
 _constOutFinalEnergy = "Final energy ="
+_constOutFinalParams = "Final cell parameters and derivatives"
+_constOutFinalDerivs = "Final internal derivatives :"
 
 def readGulpOutput(system, fileName):
   """
@@ -41,7 +46,14 @@ def readGulpOutput(system, fileName):
   optiAchievedSection = False
   finalEnergy_eV = None
   
+  iniParamsSectionSt = False
+  iniParamsCount = 0
+  
   finalCoordsSectionSt = False
+  finalParamsSectionSt = False
+  finalParamsSectionBreakCount = 0
+  finalParamsCount = 0
+  
   i = 0
   
   # read in final atom positions
@@ -60,7 +72,15 @@ def readGulpOutput(system, fileName):
           system.energyDefinition = "Gulp"
           
           optiAchievedSection = False
-          
+      
+       # Found the end of the section
+      if _constOutFinalDerivs in line:
+        finalParamsSectionSt = False
+      
+      # Found the end of the section
+      if _constIniParamsCellVol in line:
+        iniParamsSectionSt = False
+      
       if finalCoordsSectionSt:
         array = line.split()
         
@@ -90,10 +110,71 @@ def readGulpOutput(system, fileName):
           if i == system.NAtoms:
             finalCoordsSectionSt = False
                 
+      if finalParamsSectionSt:
+        
+        if "-----" in line:
+          finalParamsSectionBreakCount += 1
+        
+        if finalParamsSectionBreakCount < 2:
+          array = line.split()
+          
+          if len(array) == 6:
+            # new cell dimensions
+            if finalParamsCount == 0:
+              system.cellDims_final[0] = np.float64(array[1])
+              
+            elif finalParamsCount == 1:
+              system.cellDims_final[1] = np.float64(array[1])
+            
+            elif finalParamsCount == 2:
+              system.cellDims_final[2] = np.float64(array[1])
+            
+            # new cell angles:
+            elif finalParamsCount == 3:
+              system.cellAngles_final[0] = np.float64(array[1])
+            
+            elif finalParamsCount == 4:
+              system.cellAngles_final[1] = np.float64(array[1])
+            
+            elif finalParamsCount == 5:
+              system.cellAngles_final[2] = np.float64(array[1])
+
+            finalParamsCount += 1
+        
+        else:
+          finalParamsSectionSt = False
+      
+      if iniParamsSectionSt:
+        array = line.split()
+
+        if len(array) == 6:
+          # new cell dimensions
+          if iniParamsCount == 0:
+            system.cellDims_ini[0] = np.float64(array[2])
+            system.cellAngles_ini[0] = np.float64(array[5])
+            
+          elif iniParamsCount == 1:
+            system.cellDims_ini[1] = np.float64(array[2])
+            system.cellAngles_ini[1] = np.float64(array[5])
+            
+          elif iniParamsCount == 2:
+            system.cellDims_ini[2] = np.float64(array[2])
+            system.cellAngles_ini[2] = np.float64(array[5])
+          
+          iniParamsCount += 1
+
       # Found the beginning of the section
       if ((_constOutFinalCartCoords in line) or (_constOutFinalFracCoords in line)):
         finalCoordsSectionSt = True
       
+      # Found the beginning of the section
+      if _constOutFinalParams in line:
+        finalParamsSectionSt = True
+ 
+       # Found the beginning of the section
+      if _constIniParams in line:
+        iniParamsSectionSt = True
+
       if _constOutOptiAchieved in line:
         optiAchievedSection = True
   
