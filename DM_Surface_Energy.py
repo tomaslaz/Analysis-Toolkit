@@ -16,8 +16,6 @@ from source.Messages import log
 
 # verbose level: 0 - off, 1 - on
 _verbose = 1
-# full path to the compiled adul v2
-_adul_v2_path = "/Users/Tomas/Software/ARVO/arvo_c/arvo_c"
 
 def cmd_line_args():
   """
@@ -44,9 +42,16 @@ if __name__ == "__main__":
   options, args = cmd_line_args()
   
   file_name = args[0]
-  radius = args[1]
+  radius = float(args[1])
   
   message = "reading file: %s" % (file_name)
   log(__name__, message, verbose=_verbose)
   
   system = IO.readSystemFromFileXYZ(file_name)
+  
+  # estimating the geometrical measurements
+  system.calc_geo_measures(radius)
+  
+  message = "Volume: %f, Area: %f, Spheres: %d" % (system.arvo_volume, system.arvo_area, system.arvo_spheres)
+  log(__name__, message, verbose=_verbose)
+  

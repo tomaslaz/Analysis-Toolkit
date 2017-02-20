@@ -270,11 +270,11 @@ class System(object):
     #       as a new column in the atoms.in file.
     
     # prepare a temporary file
-    File.writeATS(self, _temp_file, radius)
+    self._writeATS(_temp_file, radius)
     
-    command = "%s protein=%s" % ("./thirdparty/arvo_c/arvo_c", _temp_file)
+    command = "%s protein=%s" % ("/Users/Tomas/git/KLMC_Analysis/thirdparty/arvo_c/arvo_c", _temp_file)
     output, stderr, status = Utilities.run_sub_process(command)
-    
+        
     # if the execution of the was successful:
     if not status:
       
@@ -447,3 +447,51 @@ class System(object):
         if not PBC[i]:
             self.minPos[i] = self.pos[i::3].min()
             self.maxPos[i] = self.pos[i::3].max()
+  
+  
+  def _writeATS(self, outputFile, radius):
+    """
+    Writes system as an ATS file.
+    
+    """
+    
+    # TODO: Need a way set the surface radius for a each atom. Probably add it as 
+    #       as a new column in the atoms.in file.
+    
+    atoms_cnt = 0
+    error = ""
+    success = True
+    
+    if self is None:
+      success = False
+      error = __name__ + ": no data to write"
+      
+      return success, error
+    
+    if (len(self.specieList) < 1):
+      success = False
+      error = __name__ + ": no data to write"
+      
+      return success, error
+    
+    try:
+      fout = open(outputFile, "w")
+      
+    except:
+      success = False
+      error = __name__ + ": Cannot open: " + outputFile
+      
+      return success, error
+    
+    group_name = "LE"
+    
+    for i in range(self.NAtoms):
+      atoms_cnt += 1
+            
+      fout.write("%16f %16f %16f %5f %8s %d \n" % 
+                 (self.pos[3*i], self.pos[3*i+1], self.pos[3*i+2], 
+                  radius, group_name, atoms_cnt))
+      
+    fout.close()
+      
+    return success, error

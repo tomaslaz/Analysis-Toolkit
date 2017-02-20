@@ -575,53 +575,6 @@ def writeGIN(system, outputFile, controlFile=None, outputXYZ=False):
   fout.close()
     
   return success, error
-
-def writeATS(system, outputFile, radius):
-  """
-  Writes system as an ATS file.
-  
-  """
-  
-  # TODO: Need a way set the surface radius for a each atom. Probably add it as 
-  #       as a new column in the atoms.in file.
-  
-  atoms_cnt = 0
-  error = ""
-  success = True
-  
-  if system is None:
-    success = False
-    error = __name__ + ": no data to write"
-    
-    return success, error
-  
-  if (len(system.specieList) < 1):
-    success = False
-    error = __name__ + ": no data to write"
-    
-    return success, error
-  
-  try:
-    fout = open(outputFile, "w")
-    
-  except:
-    success = False
-    error = __name__ + ": Cannot open: " + outputFile
-    
-    return success, error
-  
-  group_name = "LE"
-  
-  for i in range(system.NAtoms):
-    atoms_cnt += 1
-    
-    fout.write("%16f %16f %16f %5f %8s %d \n" % 
-               (system.pos[3*i], system.pos[3*i+1], system.pos[3*i+2], 
-                radius, group_name, atoms_cnt))
-    
-  fout.close()
-    
-  return success, error
   
 def writeCAR(system, outputFile):
   """
