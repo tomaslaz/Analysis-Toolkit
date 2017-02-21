@@ -23,7 +23,7 @@ def cmd_line_args():
   
   """
   
-  usage = "usage: %prog input_file radius"
+  usage = "usage: %prog input_file radius energy"
   
   parser = OptionParser(usage=usage)
   
@@ -31,7 +31,7 @@ def cmd_line_args():
   
   (options, args) = parser.parse_args()
     
-  if (len(args) != 2):
+  if (len(args) != 3):
     parser.error("incorrect number of arguments")
 
   return options, args
@@ -43,6 +43,7 @@ if __name__ == "__main__":
   
   file_name = args[0]
   radius = float(args[1])
+  n1_bulk_energy = float(args[2])
   
   message = "reading file: %s" % (file_name)
   log(__name__, message, verbose=_verbose)
@@ -53,5 +54,14 @@ if __name__ == "__main__":
   system.calc_geo_measures(radius)
   
   message = "Volume: %f, Area: %f, Spheres: %d" % (system.arvo_volume, system.arvo_area, system.arvo_spheres)
+  log(__name__, message, verbose=_verbose)
+  
+  # estimating the surface energy
+  try:
+    surface_energy = (system.totalEnergy - system.NAtoms * n1_bulk_energy) / system.arvo_area
+  except:
+    surface_energy = 0.0
+  
+  message = "Surface energy (E/A): %f" % (surface_energy)
   log(__name__, message, verbose=_verbose)
   
