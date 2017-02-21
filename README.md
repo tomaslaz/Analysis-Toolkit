@@ -43,7 +43,9 @@ Prepares and executes FHIaims spin polarized simulations.
 Reads in structures in xyz format, prepares geometry.in and control.in files by varying the default_initial_moment keyword. The script can also run the prepared simulations one by one. 
 
 ### DM_Surface_Energy
-Calculates cluster's surface energy 
+Calculates cluster's surface energy. 
+
+Reads in a structure from an xyz file, estimates the area of a cluster using a predefined radius and calculates cluster's surface energy using a provided bulk energy of one atom.
 
 ### DM_RDF
 Plots radial distribution function.
