@@ -134,7 +134,7 @@ def plotDOSandIntegratedDOS(energyBins, energyDOS, tempArrs, noOfTemps, temps, e
   ax1.set_xlabel('Energy (eV)', fontsize=18)
   ax2.set_ylabel('Integrated DOS', fontsize=18)
    
-  fig.savefig('DOSandIntegratedDOS.png')
+  fig.savefig('DOSandIntegratedDOS.png', dpi=300, bbox_inches='tight')
 
 def plotIntegratedDOS(energyBins, tempArrs, noOfTemps, temps, eMax):
   """
@@ -167,7 +167,7 @@ def plotIntegratedDOS(energyBins, tempArrs, noOfTemps, temps, eMax):
   ax1.set_xlabel('Energy (eV)', fontsize=18)
   ax1.set_ylabel('Integrated DOS', fontsize=18)
   
-  fig.savefig('Integrated_DOS.png')
+  fig.savefig('Integrated_DOS.png', dpi=300, bbox_inches='tight')
 
 def roundTo1St(x):
   """
