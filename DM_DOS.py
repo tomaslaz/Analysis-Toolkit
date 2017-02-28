@@ -8,6 +8,7 @@ A script to plot DOS (integrated)
 @email tomas.lazauskas[a]gmail.com
 """
 
+import copy
 import math
 import matplotlib.pyplot as plt
 import numpy as np
@@ -176,11 +177,13 @@ def roundTo1St(x):
   
   return round(x, -int(math.floor(math.log10(abs(x)))))
 
-def runDOS(energies, temps):
+def runDOS(energies_input, temps):
   """
   Calculates and plots DOS
   
   """
+  
+  energies = copy.deepcopy(energies_input)
   
   # getting the number of temperatures
   noOfTemps = len(temps)
