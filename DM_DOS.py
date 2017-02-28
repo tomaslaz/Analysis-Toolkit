@@ -63,7 +63,6 @@ def getTheListOfTemps(tempString):
     except:
       sys.exit("Incorrect temperatures.")
     
-  
     temps[i] = temp
   
   return temps
@@ -180,6 +179,7 @@ def roundTo1St(x):
 def runDOS(energies, temps):
   """
   Calculates and plots DOS
+  
   """
   
   # getting the number of temperatures
