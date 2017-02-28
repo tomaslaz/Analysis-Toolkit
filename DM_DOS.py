@@ -89,7 +89,7 @@ def plotDOS(energyBins, energyDOS, eMax):
   ax1.set_xlabel('Energy (eV)', fontsize=18)
   ax1.set_ylabel('DOS', fontsize=18)
   
-  fig.savefig('DOS.png')
+  fig.savefig('DOS.png', dpi=300, bbox_inches='tight')
 
 def plotDOSandIntegratedDOS(energyBins, energyDOS, tempArrs, noOfTemps, temps, eMax):
   """
@@ -177,21 +177,14 @@ def roundTo1St(x):
   
   return round(x, -int(math.floor(math.log10(abs(x)))))
 
-if __name__ == "__main__":
+def runDOS(energies, temps):
+  """
+  Calculates and plots DOS
+  """
   
-  options, args = cmdLineArgs()
+  # getting the number of temperatures
+  noOfTemps = len(temps)
   
-  # getting the temperatures
-  if options.temps is not None:
-    temps = getTheListOfTemps(options.temps)
-    noOfTemps = len(temps)
-    
-  else:
-    noOfTemps = 0
-    
-  # reading the energies from a file
-  energies = np.loadtxt(args[0])
-    
   # pushing by eMin
   energies -= energies.min()
   
@@ -234,13 +227,28 @@ if __name__ == "__main__":
   # printing DOS graph
   plotDOS(energyBins, energyDOS, eMax)    
 
-  
   if noOfTemps > 0:
     # printing integrated DOS graph
     plotIntegratedDOS(energyBins, tempArrs, noOfTemps, temps, eMax)
     
     # printing DOS and integrated DOS
     plotDOSandIntegratedDOS(energyBins, energyDOS, tempArrs, noOfTemps, temps, eMax)
+
+if __name__ == "__main__":
+  
+  options, args = cmdLineArgs()
+  
+  # getting the temperatures
+  if options.temps is not None:
+    temps = getTheListOfTemps(options.temps)
+  
+  else:
+    temps = []
+    
+  # reading the energies from a file
+  energies = np.loadtxt(args[0])
+  
+  runDOS(energies, temps)
   
   print "Finished."
   
