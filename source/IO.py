@@ -12,6 +12,9 @@ import glob
 import System
 import numpy as np
 
+const_file_ext_xyz = "xyz"
+const_file_ext_out = "out"
+
 def checkDirectory(dirPath, createMd=0):
   """
   Checks if directory exists
