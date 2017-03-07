@@ -13,13 +13,6 @@ _lib = CDLL(os.path.join(os.path.dirname(__file__), "_defects.so"))
 
 ################################################################################
 
-# defectVolumeSeparation prototype
-_lib.defectVolumeSeparation.restype = c_double
-_lib.defectVolumeSeparation.argtypes = [POINTER(c_double), POINTER(c_double), POINTER(c_double), POINTER(c_int), 
-                                        c_int, POINTER(c_int), POINTER(c_double)]
-
-################################################################################
-
 # findDefects prototype
 _lib.findDefects.restype = c_int
 _lib.findDefects.argtypes = [c_int, c_int, c_int, POINTER(c_int), POINTER(c_int), POINTER(c_int), POINTER(c_int), POINTER(c_int), 
@@ -41,3 +34,19 @@ def findDefects(includeVacs, includeInts, includeAnts, defectList, NDefectsByTyp
                             CPtrToInt(specie), CPtrToDouble(pos), refNAtoms, CPtrToChar(specieListRef), CPtrToInt(specieRef), CPtrToDouble(refPos),
                             CPtrToDouble(cellDims), CPtrToInt(PBC), vacancyRadius, inclusionRadius, CPtrToDouble(minPos), CPtrToDouble(maxPos), 
                             verboseLevel, debugDefects)
+
+################################################################################
+
+# atomicSeparation2 prototype
+_lib.atomicSeparation2.restype = c_double
+_lib.atomicSeparation2.argtypes = [c_double, c_double, c_double, c_double, c_double, c_double, c_double, c_double, c_double, c_int, c_int, c_int]
+
+# atomicSeparation2
+def atomicSeparation2(ax, ay, az, bx, by, bz, xdim, ydim, zdim, pbcx, pbcy, pbcz):
+    """
+    Calculate atomic separation squared.
+    
+    """
+    return _lib.atomicSeparation2(ax, ay, az, bx, by, bz, xdim, ydim, zdim, pbcx, pbcy, pbcz)
+
+################################################################################
