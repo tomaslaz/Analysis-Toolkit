@@ -14,13 +14,13 @@
 /*******************************************************************************
  * Search for defects and return the sub-system surrounding them
  *******************************************************************************/
-int findDefects( int includeVacs, int includeInts, int includeAnts, int* defectList,
-                 int* NDefectsByType, int* vacancies, int* interstitials,
-                 int* antisites, int* onAntisites, int inclSpecDim, int* inclSpec, int exclSpecInputDim,
-                 int* exclSpecInput, int exclSpecRefDim, int* exclSpecRef, int NAtoms, char* specieList,
-                 int* specie, double* pos, int refNAtoms, char* specieListRef,
-                 int* specieRef, double* refPos, double *cellDims,
-                 int *PBC, double vacancyRadius, double inclusionRadius, double *minPos, double *maxPos,
+int findDefects( int includeVacs, int includeInts, int includeAnts,
+				 int* defectList, int* NDefectsByType,
+				 int* vacancies, int* interstitials, int* antisites, int* onAntisites,
+				 int inclSpecDim, int* inclSpec, int exclSpecInputDim, int* exclSpecInput, int exclSpecRefDim, int* exclSpecRef,
+				 int NAtoms, char* specieList, int* specie, double* pos,
+				 int refNAtoms, char* specieListRef, int* specieRef, double* refPos,
+				 double *cellDims, int *PBC, double vacancyRadius, double inclusionRadius, double *minPos, double *maxPos,
                  int verboseLevel, int debugDefects)
 {
     int i, exitLoop, k, j, index;

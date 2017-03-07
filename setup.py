@@ -14,14 +14,15 @@ c_flags_set = False
 CC = ""
 CCFLAGS = ""
 CCLINKFLAGS = ""
+INCLUDES = ""
 
 # Operating system: MacOS
 if os.uname()[0] == "Darwin":
 
     CC = "gcc "
     CCFLAGS = "-c -O3 -fPIC "
-    CCLINKFLAGS = "-lm"  
-    
+    #CCLINKFLAGS = "-lm"  
+    CCLINKFLAGS = "-bundle -flat_namespace -undefined suppress "  
     c_flags_set = True
 
 
@@ -130,8 +131,7 @@ def main():
    # first compile non swig C libraries
   for source in EXTC:
     command = "%s %s %s %s" % (CC, CCFLAGS, INCLUDES, source)
-    print command
-    runCommand(command)
+    run_command(command)
 
   print "-------------"
   
@@ -139,8 +139,7 @@ def main():
   for src in CLIBSRC:
     # compile src file
     command = "%s %s %s" % (CC, CCFLAGS, src)
-    print command
-    runCommand(command)
+    run_command(command)
     
     print "-------------"
   
@@ -153,8 +152,7 @@ def main():
       EXTO = ""
         
     command = "%s %s %s %s -o %s" % (CC, CCLINKFLAGS, OBJ[src], EXTO, SOBJ[src])
-    print command
-    runCommand(command)
+    run_command(command)
     
     print "-------------"
   
