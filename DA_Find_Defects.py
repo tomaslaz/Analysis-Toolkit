@@ -11,6 +11,7 @@ from optparse import OptionParser
 import numpy as np
 
 import source.IO as IO
+import source.Defects as Defects
 
 def check_systems(input_system, final_system):
   """
@@ -41,7 +42,7 @@ def cmdLineArgs():
   
   """
   
-  usage = "usage: %prog inputFile outputFile radius"
+  usage = "usage: %prog input_file output_file defect_radius"
   
   parser = OptionParser(usage=usage)
 
@@ -95,8 +96,10 @@ if __name__ == "__main__":
   if success:
     vac_radius = np.float(args[2])
   
+  success, error = Defects.find_defects(input_system, final_system, vac_radius)
+  
   if success:
     print "Finished!"
+    
   else:
     print "ERROR: %s" % (error)
-   
