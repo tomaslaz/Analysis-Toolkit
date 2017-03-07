@@ -66,6 +66,7 @@ def find_defects(input_system, final_system, vac_radius):
   NVac = NDefectsByType[1]
   NInt = NDefectsByType[2]
   NAnt = NDefectsByType[3]
+  
   vacancies.resize(NVac)
   interstitials.resize(NInt)
   antisites.resize(NAnt)
@@ -76,6 +77,7 @@ def find_defects(input_system, final_system, vac_radius):
   # build list of vacancies
   vacSpecie = np.empty(NVac, np.int32)
   vacPos = np.empty(3 * NVac, np.float64)
+    
   for i in xrange(len(vacancies)):
     index = vacancies[i]
     
@@ -84,8 +86,6 @@ def find_defects(input_system, final_system, vac_radius):
     vacPos[3*i+1] = input_system.pos[3*index+1]
     vacPos[3*i+2] = input_system.pos[3*index+2]
     
-    print "Vacancy %d : %s %f %f %f" % (i+1, input_system.specieList[vacSpecie[i]], vacPos[3*i], vacPos[3*i+1], vacPos[3*i+2])
- 
   # build list of interstitials
   intSpecie = np.empty(NInt, np.int32)
   intPos = np.empty(3 * NInt, np.float64)
@@ -98,13 +98,12 @@ def find_defects(input_system, final_system, vac_radius):
     intPos[3*i+1] = final_system.pos[3*index+1]
     intPos[3*i+2] = final_system.pos[3*index+2]
       
-    print "Interstitial %d : %s %f %f %f" % (i+1, final_system.specieList[intSpecie[i]], intPos[3*i], intPos[3*i+1], intPos[3*i+2])
-
   # build list of antisites
   antSpecie = np.empty(NAnt, np.int32)
   antPos = np.empty(3 * NAnt, np.float64)
   onAntPos = np.empty(3*NAnt, np.float64)
   onAntSpecie = np.empty(3 * NAnt, np.int32)
+  
   for i in xrange(len(antisites)):
     index = antisites[i]
     index2 = onAntisites[i]
@@ -119,11 +118,26 @@ def find_defects(input_system, final_system, vac_radius):
     onAntPos[3*i] = final_system.pos[3*index2]
     onAntPos[3*i+1] = final_system.pos[3*index2+1]
     onAntPos[3*i+2] = final_system.pos[3*index2+2]
-    
-    print "Antisite %d : %s on %s : %f %f %f on %f %f %f" % (i+1, 
-      final_system.specieList[onAntSpecie[i]], input_system.specieList[antSpecie[i]],
-      onAntSpecie[3*i], onAntSpecie[3*i+1], onAntSpecie[3*i+2],
-      antPos[3*i], antPos[3*i+1], antPos[3*i+2])
+  
+  final_system.NDef = NDef
+  final_system.NVac = NVac
+  final_system.NInt = NInt
+  final_system.NAnt = NAnt
+  final_system.vacSpecie = copy.deepcopy(vacSpecie)
+  final_system.vacPos = copy.deepcopy(vacPos)
+  final_system.intSpecie = copy.deepcopy(intSpecie)
+  final_system.intPos = copy.deepcopy(intPos)
+  final_system.antSpecie = copy.deepcopy(antSpecie)
+  final_system.antPos = copy.deepcopy(antPos)
+  final_system.onAntPos = copy.deepcopy(onAntPos)
+  final_system.onAntSpecie = copy.deepcopy(onAntSpecie)
+  final_system.vacancies = copy.deepcopy(vacancies)
+  final_system.interstitials = copy.deepcopy(interstitials)
+  final_system.antisites = copy.deepcopy(antisites)
+  final_system.onAntisites = copy.deepcopy(onAntisites)
+  final_system.defectCluster = copy.deepcopy(defectCluster)
+  
+  final_system.printDefectsPositions()
   
   return success, error
 

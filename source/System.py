@@ -107,6 +107,25 @@ class System(object):
     self.ev_up_dos = None
     self.ev_down_dos = None
     
+    # defects
+    self.NDef = None
+    self.NVac = None
+    self.NInt = None
+    self.NAnt = None
+    self.vacancies = None
+    self.interstitials = None
+    self.antisites = None
+    self.onAntisites = None
+    self.defectCluster = None
+    self.vacSpecie = None
+    self.vacPos = None
+    self.intSpecie = None
+    self.intPos = None
+    self.antSpecie = None
+    self.antPos = None
+    self.onAntPos = None
+    self.onAntSpecie = None
+    
   def addAtom(self, sym, pos, charge):
     """
     Add an atom to the system
@@ -375,7 +394,27 @@ class System(object):
     for i in range(self.NAtoms):
       for j in range(3):
         self.pos[3*i + j] -= self.com[j]
+  
+  def printDefectsPositions(self):
+    """
+    Prints the positions of the defects
+    
+    """
+    
+    for i in xrange(len(self.vacancies)):            
+      print "Vacancy %d : %s %f %f %f" % (i+1, self.specieList[self.vacSpecie[i]], 
+                                          self.vacPos[3*i], self.vacPos[3*i+1], self.vacPos[3*i+2])
       
+    for i in xrange(len(self.interstitials)):
+      print "Interstitial %d : %s %f %f %f" % (i+1, self.specieList[self.intSpecie[i]], 
+                                               self.intPos[3*i], self.intPos[3*i+1], self.intPos[3*i+2])
+  
+    for i in xrange(len(self.antisites)):
+      print "Antisite %d : %s on %s : %f %f %f on %f %f %f" % (i+1, 
+        self.specieList[self.onAntSpecie[i]], self.specieList[self.antSpecie[i]],
+        self.onAntSpecie[3*i], self.onAntSpecie[3*i+1], self.onAntSpecie[3*i+2],
+        self.antPos[3*i], self.antPos[3*i+1], self.antPos[3*i+2])
+
   def removeAtom( self, index ):
     """
     Remove an atom from the system
