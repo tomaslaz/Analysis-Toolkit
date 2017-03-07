@@ -72,7 +72,58 @@ def find_defects(input_system, final_system, vac_radius):
   onAntisites.resize(NAnt)
   defectCluster.resize(NDef)
   
-  
+  # saving the positions
+  # build list of vacancies
+  vacSpecie = np.empty(NVac, np.int32)
+  vacPos = np.empty(3 * NVac, np.float64)
+  for i in xrange(len(vacancies)):
+    index = vacancies[i]
     
+    vacSpecie[i] = input_system.specie[index]
+    vacPos[3*i] = input_system.pos[3*index]
+    vacPos[3*i+1] = input_system.pos[3*index+1]
+    vacPos[3*i+2] = input_system.pos[3*index+2]
+    
+    print "Vacancy %d : %s %f %f %f" % (i+1, input_system.specieList[vacSpecie[i]], vacPos[3*i], vacPos[3*i+1], vacPos[3*i+2])
+ 
+  # build list of interstitials
+  intSpecie = np.empty(NInt, np.int32)
+  intPos = np.empty(3 * NInt, np.float64)
+  
+  for i in xrange(len(interstitials)):
+    index = interstitials[i]
+    
+    intSpecie[i] = final_system.specie[index]
+    intPos[3*i] = final_system.pos[3*index]
+    intPos[3*i+1] = final_system.pos[3*index+1]
+    intPos[3*i+2] = final_system.pos[3*index+2]
+      
+    print "Interstitial %d : %s %f %f %f" % (i+1, final_system.specieList[intSpecie[i]], intPos[3*i], intPos[3*i+1], intPos[3*i+2])
+
+  # build list of antisites
+  antSpecie = np.empty(NAnt, np.int32)
+  antPos = np.empty(3 * NAnt, np.float64)
+  onAntPos = np.empty(3*NAnt, np.float64)
+  onAntSpecie = np.empty(3 * NAnt, np.int32)
+  for i in xrange(len(antisites)):
+    index = antisites[i]
+    index2 = onAntisites[i]
+     
+    antSpecie[i] = input_system.specie[index]
+    onAntSpecie[i] = final_system.specie[index2]
+    
+    antPos[3*i] = input_system.pos[3*index]
+    antPos[3*i+1] = input_system.pos[3*index+1]
+    antPos[3*i+2] = input_system.pos[3*index+2]
+    
+    onAntPos[3*i] = final_system.pos[3*index2]
+    onAntPos[3*i+1] = final_system.pos[3*index2+1]
+    onAntPos[3*i+2] = final_system.pos[3*index2+2]
+    
+    print "Antisite %d : %s on %s : %f %f %f on %f %f %f" % (i+1, 
+      final_system.specieList[onAntSpecie[i]], input_system.specieList[antSpecie[i]],
+      onAntSpecie[3*i], onAntSpecie[3*i+1], onAntSpecie[3*i+2],
+      antPos[3*i], antPos[3*i+1], antPos[3*i+2])
+  
   return success, error
 
