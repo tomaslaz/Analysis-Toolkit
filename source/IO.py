@@ -170,6 +170,35 @@ def stringInFile(strExpr, fileObject):
   
   return found
 
+def readSystemFromFile(file_name):
+  """
+  Read a system from a file
+  
+  """
+  
+  system = None
+  error = ""
+  
+  if file_name.endswith(".gin"):
+    system, error = readSystemFromFileGIN(file_name)
+
+  elif file_name.endswith(".car"):
+    system = readSystemFromFileCAR(file_name)
+    
+    if system is None:
+      error = "System cannot be read from file: %s" % (file_name)
+    
+  elif file_name.endswith(".xyz"):
+    system = readSystemFromFileXYZ(file_name)
+    
+    if system is None:
+      error = "System cannot be read from file: %s" % (file_name)
+    
+  else:
+    error = "Unidentified file format"
+  
+  return system, error
+
 def readSystemFromFileCAR(fileName):
     """
     Reads in the structure of a system from a CAR file.

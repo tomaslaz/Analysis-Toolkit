@@ -8,6 +8,7 @@ DM_Coordination_Bonding_DB.py
 
 # C extensions
 *.so
+*.o
 
 #Eclipse
 .project
