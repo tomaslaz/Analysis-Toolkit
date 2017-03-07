@@ -5,6 +5,7 @@ Defects module.
 """
 
 import copy
+import numpy as np
 
 from .c_libs import defects as defects_c
 
@@ -23,13 +24,13 @@ def find_defects(input_system, final_system, vac_radius):
   includeAnts = 1
   
   # make temporary list to store defects
-  defectCluster = np.zeros(currentState.NAtoms, np.int32)
+  defectCluster = np.zeros(final_system.NAtoms, np.int32)
   
   NDefectsByType = np.zeros(4, np.int32)
-  vacancies = np.empty(ref.NAtoms, np.int32)
-  antisites = np.empty(ref.NAtoms, np.int32)
-  onAntisites = np.empty(ref.NAtoms, np.int32)
-  interstitials = np.empty(currentState.NAtoms, np.int32)
+  vacancies = np.empty(input_system.NAtoms, np.int32)
+  antisites = np.empty(input_system.NAtoms, np.int32)
+  onAntisites = np.empty(input_system.NAtoms, np.int32)
+  interstitials = np.empty(final_system.NAtoms, np.int32)
   
   forcedSpeciesList = input_system.specieList
   
@@ -49,7 +50,7 @@ def find_defects(input_system, final_system, vac_radius):
   # checking whether the defects are in the same volume
   defectNeighbourRadius = 10.0
   
-  input_system.minMaxPos()
+  input_system.minMaxPos(PBC)
   
   defects_cnt = defects_c.findDefects(includeVacs, includeInts, includeAnts,
                                       defectCluster, NDefectsByType, 
@@ -65,11 +66,13 @@ def find_defects(input_system, final_system, vac_radius):
   NVac = NDefectsByType[1]
   NInt = NDefectsByType[2]
   NAnt = NDefectsByType[3]
+  vacancies.resize(NVac)
+  interstitials.resize(NInt)
+  antisites.resize(NAnt)
+  onAntisites.resize(NAnt)
+  defectCluster.resize(NDef)
   
-  print NDef
-  print NVac
-  print NInt
-  print NAnt
+  
     
   return success, error
 
