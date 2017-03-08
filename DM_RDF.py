@@ -44,7 +44,7 @@ class RDF(object):
   
   """
   
-  def __init__(self, system, rdfCutOff, rdfStepSize, sigma, pairs):
+  def __init__(self, system, rdfCutOff, rdfStepSize, sigma, pairs, normalize=False):
     """
     Constructor
     
@@ -55,6 +55,7 @@ class RDF(object):
     self.__rdfStepSize = rdfStepSize
     self.__sigma = sigma
     self.__setPairs = pairs
+    self.__normalize = normalize
     
     self.system = system
     
@@ -133,6 +134,21 @@ class RDF(object):
         # averaging the values
         if atomsCount > 0:
           self.pairs[i].gr[j] /= atomsCount
+    
+    # normalising
+    if self.__normalize:
+      gr_max = 0.0
+      
+      # getting the maximum value
+      for i in range(self.NPairs):
+        gr_max_i = np.max(self.pairs[i].gr)
+        
+        if gr_max_i > gr_max:
+          gr_max = gr_max_i
+        
+      if gr_max > 0.0:
+        for i in range(self.NPairs):
+          self.pairs[i].gr /= gr_max
         
   def __createPairs(self, setPairs):
     """
