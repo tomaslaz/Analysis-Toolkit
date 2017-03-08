@@ -7,7 +7,7 @@ Defects module.
 import copy
 import numpy as np
 
-from .c_libs import defects as defects_c
+from c_libs import defects as defects_c
 
 def find_defects(input_system, final_system, vac_radius):
   """
