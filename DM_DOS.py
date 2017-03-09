@@ -135,6 +135,14 @@ def plotDOSandIntegratedDOS(energyBins, energyDOS, tempArrs, noOfTemps, temps, e
   ax2.set_ylabel('Integrated DOS', fontsize=18)
    
   fig.savefig('DOSandIntegratedDOS.png', dpi=300, bbox_inches='tight')
+  
+  # Lets print the integrated dos values:
+  print "-"*33
+  print "Temperature   |   Configurations"
+  print "-"*33
+  for i in range(noOfTemps):
+    print "%11d K | %11f" % (temps[i], tempArrs[len(energyBins)-1, i])
+  print "-"*33  
 
 def plotIntegratedDOS(energyBins, tempArrs, noOfTemps, temps, eMax):
   """
@@ -219,13 +227,16 @@ def runDOS(energies_input, temps):
       # going through the list of temperatures
       for j in range(noOfTemps):
         temp = temps[j]
-         
-        # calculating the integrated DOS       
-        tempArrs[i][j] = ((1.0/(_sigma*np.pi**0.5)) * 
-                          np.sum(((np.pi**0.5/(2*_sigma**-1)) * 
-                                  (scipy.special.erf(1/_sigma * (energyBins[i] - energiesUnique)) - 
-                                   scipy.special.erf(-np.infty))) * 
-                                 np.exp(-(energiesUnique)/(_kB*temp) )))
+        
+        if temp > 0.0:
+          # calculating the integrated DOS       
+          tempArrs[i][j] = ((1.0/(_sigma*np.pi**0.5)) * 
+                            np.sum(((np.pi**0.5/(2*_sigma**-1)) * 
+                                    (scipy.special.erf(1/_sigma * (energyBins[i] - energiesUnique)) - 
+                                     scipy.special.erf(-np.infty))) * 
+                                   np.exp(-(energiesUnique)/(_kB*temp) )))
+        else:
+          tempArrs[i][j] = None
   
   # printing DOS graph
   plotDOS(energyBins, energyDOS, eMax)    
