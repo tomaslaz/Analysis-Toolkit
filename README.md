@@ -18,6 +18,9 @@ ADUL v.2.0 (For DM_Surface_Energy)
 ### DA_FHIaims_geometry_stability
 (Being developed) Analyses a geometry with FHIaims - pushes a system in the direction of a chosen eigenvector and performs FHIaims single point evaluation.
 
+### DA_Find_Defects
+(Being developed) Analyses the change in a system by comparing two xyz files: initial and final configurations.
+
 ### DM_Comparison 
 (Being developed) Compares structures in terms of their energy ranking between different levels of theory (IPs (GULP) and DFT (FHIaims))
 
