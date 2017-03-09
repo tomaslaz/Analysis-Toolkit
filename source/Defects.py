@@ -136,8 +136,6 @@ def find_defects(input_system, final_system, vac_radius):
   final_system.antisites = copy.deepcopy(antisites)
   final_system.onAntisites = copy.deepcopy(onAntisites)
   final_system.defectCluster = copy.deepcopy(defectCluster)
-  
-  final_system.printDefectsPositions()
-  
+    
   return success, error
 

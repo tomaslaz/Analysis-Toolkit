@@ -99,6 +99,9 @@ if __name__ == "__main__":
   success, error = Defects.find_defects(input_system, final_system, vac_radius)
   
   if success:
+    
+    final_system.printDefectsPositions()
+    
     print "Finished!"
     
   else:
