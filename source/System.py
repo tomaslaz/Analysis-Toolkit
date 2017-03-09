@@ -429,7 +429,7 @@ class System(object):
     self.NAtoms -= 1
     
     self.specieCount[specInd] -= 1
-    if self.specieCount[specInd] == 0 and not self.specieListForced:
+    if self.specieCount[specInd] == 0:
         self.removeSpecie(specInd)
   
   def removeSpecie(self, index):

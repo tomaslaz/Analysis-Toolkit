@@ -138,4 +138,3 @@ def find_defects(input_system, final_system, vac_radius):
   final_system.defectCluster = copy.deepcopy(defectCluster)
     
   return success, error
-
