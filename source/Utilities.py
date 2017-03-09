@@ -19,6 +19,29 @@ def distanceSq(pos1x, pos1y, pos1z, pos2x, pos2y, pos2z):
   
   return ((pos1x - pos2x)**2.0 + (pos1y - pos2y)**2.0 + (pos1z - pos2z)**2.0)
 
+def atomicSeparation2(atomPos1, atomPos2, cellDims, PBC):
+  """
+  Return atomic separation squared with accounted periodic boundary conditions
+  
+  """
+  
+  rx = atomPos1[0] - atomPos2[0]
+  ry = atomPos1[1] - atomPos2[1]
+  rz = atomPos1[2] - atomPos2[2]
+  
+  if (PBC[0] == 1):
+    rx = rx - round( rx / cellDims[0] ) * cellDims[0]
+
+  if (PBC[1] == 1):
+    ry = ry - round( ry / cellDims[1] ) * cellDims[1]
+
+  if (PBC[2] == 1):
+    rz = rz - round( rz / cellDims[2] ) * cellDims[2]
+
+  sep2 = rx * rx + ry * ry + rz * rz;
+      
+  return sep2
+
 def get_random_name(n=10):
   """
   Generates a n length random string
