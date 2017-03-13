@@ -121,6 +121,16 @@ def get_file_list(extension="*"):
   
   return file_list
 
+def get_file_list_pre_sub(prefix="*", subfix="*"):
+  """
+  Returns a list of files with specified prefix and/or subfix
+  
+  """
+  
+  file_list = glob.glob("%s*.%s" % (prefix, subfix))
+  
+  return file_list
+
 def get_dir_list(file_name=None):
   """
   Get a list of directories which contain file_name file.
