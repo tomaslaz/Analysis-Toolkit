@@ -2,7 +2,7 @@
 # Author: Tomas Lazauskas, 2015-2017
 # www: www.lazauskas.net
 
-A set of scripts to pre/post-process data for/from KLMC simulations.
+A set of scripts to pre/post-process data for/from FHI-aims/GULP/KLMC simulations.
 
 # Requirements 
 Python v.2.7.x (x => 9)
