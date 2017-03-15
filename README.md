@@ -1,4 +1,4 @@
-# KLMC Analysis Tool Kit
+# Simulations Analysis Tool Kit
 # Author: Tomas Lazauskas, 2015-2017
 # www: www.lazauskas.net
 
