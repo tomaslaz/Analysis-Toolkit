@@ -18,7 +18,22 @@ ADUL v.2.0 (For DM_Surface_Energy)
 ### DA_Thermally_Averaged_Statistics
 Calculates a thermally averaged statistical value of a property. 
 
-Reads in a text file in csv format where the first column is the unique energy and the second column is the property value that will be statistically averaged.
+Usage:
+
+DA_Thermally_Averaged_Statistics.py [options] input_file
+
+Options:
+  -h, --help  show this help message and exit
+  -t TEMPS    List of temperatures, separated by a comma (default t=293)
+  -u          A flag to say whether the input file contains only unique
+              values. Default = False
+
+Summary:
+
+Reads in a text file in csv format, where the first column is the energy and the second column is the property value that will be statistically averaged. If the parameter -u is set, then it is assumed that the file contains only unique energies and property values and a third column having values of occurrences is expected.
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">(E=mc^2)，$$x_{1,2} = \frac{-b \pm \sqrt{b^2-4ac}}{2b}.$$</script>
+
 
 ## Cluster Analysis Scripts
 
