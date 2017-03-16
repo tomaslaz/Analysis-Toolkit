@@ -1,6 +1,6 @@
 # Simulations Analysis Tool Kit
-# Author: Tomas Lazauskas, 2015-2017
-# www.lazauskas.net
+### Tomas Lazauskas, 2015-2017
+### www.lazauskas.net
 
 A set of scripts to pre/post-process data for/from FHI-aims/GULP/KLMC simulations.
 
