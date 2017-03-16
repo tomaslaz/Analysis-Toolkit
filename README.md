@@ -23,10 +23,9 @@ Usage:
 DA_Thermally_Averaged_Statistics.py [options] input_file
 
 Options:
-  -h, --help  show this help message and exit
-  -t TEMPS    List of temperatures, separated by a comma (default t=293)
-  -u          A flag to say whether the input file contains only unique
-              values. Default = False
+-h, --help show this help message and exit
+-t TEMPS List of temperatures, separated by a comma (default t=293)
+-u A flag to say whether the input file contains only unique values. Default = False
 
 Summary:
 
