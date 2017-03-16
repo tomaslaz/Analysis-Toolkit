@@ -1,10 +1,10 @@
 # Simulations Analysis Tool Kit
 # Author: Tomas Lazauskas, 2015-2017
-# www: www.lazauskas.net
+# www.lazauskas.net
 
 A set of scripts to pre/post-process data for/from FHI-aims/GULP/KLMC simulations.
 
-# Requirements 
+## Requirements 
 Python v.2.7.x (x => 9)
 
 Matplotlib v.1.x (x => 5.0)
@@ -13,9 +13,9 @@ numpy v.1.x (x => 10.1)
 
 ADUL v.2.0 (For DM_Surface_Energy)
 
-# Data Analysis Scripts
+## Data Analysis Scripts
 
-## DA_Thermally_Averaged_Statistics
+### DA_Thermally_Averaged_Statistics
 (Being developed) Calculates a thermally averaged statistical value of a property. 
 
 Reads in a text file where the first column is the unique energy and the second column is the property value that will be statistically averaged.
