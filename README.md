@@ -32,6 +32,8 @@ Summary:
 
 Reads in a text file in csv format, where the first column is the energy and the second column is the property value that will be statistically averaged. If the parameter -u is set, then it is assumed that the file contains only unique energies and property values and a third column having values of occurrences is expected.
 
+![Thermally averaged statistics formula](formulas/DA_Thermally_Averaged_Statistics.gif)
+
 <!---
 \left \langle A \right \rangle = \frac{\sum_{i}A_{i} \cdot \exp{\left ( -\Delta E_{i} / kT \right )}}{\sum_{i} \exp{\left ( -\Delta E_{i} / kT \right )}}
 -->
