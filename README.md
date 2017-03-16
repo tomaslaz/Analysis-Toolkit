@@ -15,10 +15,10 @@ ADUL v.2.0 (For DM_Surface_Energy)
 
 ## Data Analysis Scripts
 
-#### DA_Thermally_Averaged_Statistics
-(Being developed) Calculates a thermally averaged statistical value of a property. 
+### DA_Thermally_Averaged_Statistics
+Calculates a thermally averaged statistical value of a property. 
 
-Reads in a text file where the first column is the unique energy and the second column is the property value that will be statistically averaged.
+Reads in a text file in csv format where the first column is the unique energy and the second column is the property value that will be statistically averaged.
 
 ## Cluster Analysis Scripts
 
