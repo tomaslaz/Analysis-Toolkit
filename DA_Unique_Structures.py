@@ -42,10 +42,7 @@ if __name__ == "__main__":
   
   # finding the structures (paths)
   systems_files_list = IO.get_file_list_recursive(args[0])
-  
-  print len(systems_files_list)
-  sys.exit()
-  
+
   # reading in the systems
   systems = IO.read_in_systems(systems_files_list)
   
