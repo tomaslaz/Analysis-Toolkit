@@ -121,6 +121,39 @@ def get_file_list(extension="*"):
   
   return file_list
 
+def get_file_list_recursive(extension="*", file_list=[], dir_path=None, recurs_iter=0, recurs_max=8):
+  """
+  Returns a list of files with a specific extension by analysing directories recursively
+  
+  """
+
+  cwd = os.getcwd()
+  if dir_path is not None:
+    os.chdir(dir_path)
+  
+  dir_path_add = os.getcwd()
+  
+  for root, dirs, files in os.walk("./"):
+    
+    file_list_dir = glob.glob("*.%s" % (extension))
+    
+    # adding directory to the path 
+    for i in range(len(file_list_dir)):
+      file_list_dir[i] = os.path.join(dir_path_add, file_list_dir[i])
+      
+    # joining two lists, python makes it so easy :)
+    file_list = file_list + file_list_dir
+    
+    for dir_recur in dirs:
+      file_list_dir = get_file_list_recursive(extension=extension, file_list=file_list, 
+                                    dir_path=dir_recur, recurs_iter=recurs_iter+1, recurs_max=recurs_max)
+    
+      file_list = file_list + file_list_dir
+        
+  os.chdir(cwd)
+  
+  return file_list
+
 def get_file_list_pre_sub(prefix="*", subfix="*"):
   """
   Returns a list of files with specified prefix and/or subfix
@@ -180,6 +213,32 @@ def stringInFile(strExpr, fileObject):
   
   return found
 
+def read_in_systems(systems_paths_list):
+  """
+  Reads in systems form a list of paths and returns a system list
+  
+  """
+  
+  systems = []
+  systems_paths_cnt = len(systems_paths_list)
+  
+  systems_paths_iter = 1
+  for system_file in systems_paths_list:
+    
+    system, error = readSystemFromFile(system_file)
+    
+    if system is not None:
+      systems.append(system)
+    else:
+      print "error: %s" % (error)
+     
+    if (systems_paths_iter % 1000 == 0):
+      print "Reading %d/%d" % (systems_paths_iter, systems_paths_cnt)
+    
+    systems_paths_iter += 1
+    
+  return systems
+  
 def readSystemFromFile(file_name):
   """
   Read a system from a file

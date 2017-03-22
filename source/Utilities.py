@@ -7,6 +7,7 @@ Utilities module.
 
 """
 
+import copy
 import random
 import string
 import subprocess
@@ -66,3 +67,22 @@ def run_sub_process(command, verbose=0):
   status = process.poll()
   
   return output, stderr, status
+
+def sort_systems(systems_list):
+  """
+  Sorts systems according to their energy
+  
+  """
+  
+  systems_list_len = len(systems_list)
+
+  for i in range(systems_list_len):
+    for j in range(systems_list_len):
+      if systems_list[i].totalEnergy < systems_list[j].totalEnergy:
+        temp = copy.deepcopy(systems_list[i])
+        
+        systems_list[i] = copy.deepcopy(systems_list[j])
+        systems_list[j] = copy.deepcopy(temp)
+    
+    if (i % 100 == 0): print "Sorting %d/%d" % (i+1, systems_list_len)
+      
