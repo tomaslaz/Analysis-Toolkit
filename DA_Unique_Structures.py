@@ -42,7 +42,8 @@ if __name__ == "__main__":
   # reading in the systems
   systems = IO.read_in_systems(systems_files_list)
   
-  # 
+  # getting the hashkeys
+  unique_systems = IO.get_unique_systems_hashkeys(systems)
   
   # finding unique systems
   

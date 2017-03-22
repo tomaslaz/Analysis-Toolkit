@@ -6,6 +6,7 @@ Input/Output module.
 @email tomas.lazauskas[a]gmail.com
 """
 
+import copy
 import os
 import sys
 import glob
@@ -14,6 +15,8 @@ import numpy as np
 
 const_file_ext_xyz = "xyz"
 const_file_ext_out = "out"
+
+import source.Atoms as Atoms
 
 def checkDirectory(dirPath, createMd=0):
   """
@@ -111,6 +114,48 @@ def countMixAtoms(fileName):
   success = True
   return success, error, atomsCnt
 
+def get_unique_systems_hashkeys(systems_list):
+  """
+  Evaluates the hashkeys
+  
+  """
+  
+  system_list_len = len(systems_list)
+  
+  unique_hashkeys = []
+  unique_systems = []
+  unique_cnt = 0
+  
+  system_cnt = 0
+  for system in systems_list:
+    
+    temp_file = "temp.xyz"
+        
+    success_, error_ = writeXYZ(systems_list[system_cnt], temp_file)
+    
+    hashkeyRadius = Atoms.getRadius(systems_list[system_cnt]) + 1.0
+
+    cmdLine = "python ~/git/hkg/hkg.py %s %f" % (temp_file, hashkeyRadius)
+    
+    hashkey = os.popen(cmdLine).read().strip()
+    
+    systems_list[system_cnt].hashkey = copy.deepcopy(hashkey)
+    
+    # saving only unique:
+    if not (hashkey in unique_hashkeys):
+      unique_cnt += 1
+      
+      unique_hashkeys.append(hashkey)
+      unique_systems.append(systems_list[system_cnt])
+    
+    if (system_cnt % 100 == 0): print "Getting the hashkeys %d/%d" % (system_cnt, system_list_len)
+    
+    system_cnt += 1
+        
+    os.remove(temp_file)
+  
+  return unique_systems
+  
 def get_file_list(extension="*"):
   """
   Returns a list of files with a specific extension
