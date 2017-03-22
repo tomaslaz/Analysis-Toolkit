@@ -42,7 +42,10 @@ Formula:
 ### DA_Unique_Structures
 Finds unique structures by examining the working directory (recursively) and reading in systems with the predefined extension. Then examines them using the hashkey and creates a directory with all the unique systems and a statistics file.
 
+Usage: DA_Unique_Structures.py extension
 
+Options:
+  -h, --help  show this help message and exit
 
 ## Cluster Analysis Scripts
 
