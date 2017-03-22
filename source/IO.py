@@ -184,16 +184,15 @@ def get_file_list_recursive(extension="*", file_list=[], dir_path=None, recurs_i
         file_list_dir = get_file_list_recursive(extension=extension, file_list=file_list, 
                                       dir_path=dir_recur, recurs_iter=recurs_iter+1, recurs_max=recurs_max)
       
-        file_list = file_list + file_list_dir
     else:
       file_list_dir = glob.glob("*.%s" % (extension))
-    
+      
       # adding directory to the path 
       for i in range(len(file_list_dir)):
         file_list_dir[i] = os.path.join(dir_path_add, file_list_dir[i])
         
       # joining two lists, python makes it so easy :)
-      file_list = file_list + file_list_dir
+      file_list += file_list_dir
         
   os.chdir(cwd)
     
