@@ -39,6 +39,14 @@ Formula:
 \left \langle A \right \rangle = \frac{\sum_{i}A_{i} \cdot \exp{\left ( -\Delta E_{i} / kT \right )}}{\sum_{i} \exp{\left ( -\Delta E_{i} / kT \right )}}
 -->
 
+### DA_Unique_Structures
+Finds unique structures by examining the working directory (recursively) and reading in systems with the predefined extension. Then examines them using the hashkey and creates a directory with all the unique systems and a statistics file.
+
+Usage: DA_Unique_Structures.py extension
+
+Options:
+  -h, --help  show this help message and exit
+
 ## Cluster Analysis Scripts
 
 ### DM_Surface_Energy 

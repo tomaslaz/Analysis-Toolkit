@@ -7,9 +7,13 @@ Utilities module.
 
 """
 
+import copy
+import os
 import random
 import string
 import subprocess
+
+_systems_stats_file = "Stats.csv"
 
 def distanceSq(pos1x, pos1y, pos1z, pos2x, pos2y, pos2z):
   """
@@ -66,3 +70,48 @@ def run_sub_process(command, verbose=0):
   status = process.poll()
   
   return output, stderr, status
+
+def sort_systems(systems_list):
+  """
+  Sorts systems according to their energy
+  
+  """
+  
+  systems_list_len = len(systems_list)
+
+  for i in range(systems_list_len):
+    for j in range(systems_list_len):
+      if systems_list[i].totalEnergy < systems_list[j].totalEnergy:
+        temp = copy.deepcopy(systems_list[i])
+        
+        systems_list[i] = copy.deepcopy(systems_list[j])
+        systems_list[j] = copy.deepcopy(temp)
+    
+    if (i % 100 == 0): print "Sorting %d/%d" % (i+1, systems_list_len)
+
+def systems_statistics(systems_list, dir_path=None):
+  """
+  Generates statistics about the FHI-aims simulations
+    
+  """
+  
+  if dir_path is None:
+    f = open(_systems_stats_file, "w")
+  else:
+    f = open(os.path.join(dir_path, _systems_stats_file), "w")
+  
+  f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", 
+          "Time", "Tot.Time", "H-L", 
+          "VBM", "VBMOcc", "VBMSpinChannel", 
+          "CBM", "CBMOcc", "CBMSpinChannel", 
+          "SpinN", "SpinS", "SpinJ","Size"))
+  
+  for system in systems_list:
+    f.write("%s,%f,%s,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" % (system.name, system.totalEnergy, system.hashkey,
+                                     system.noOfcores, system.runTime, system.noOfcores*system.runTime,
+                                     system.homo_lumo_gap, system.vbm, system.vbm_occ_num, system.vbm_spin_chan, 
+                                     system.cbm, system.cbm_occ_num, system.cbm_spin_chan, 
+                                     system.spin_N, system.spin_S, system.spin_J, float(system.NAtoms)))
+    
+    
+  f.close()

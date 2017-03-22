@@ -6,6 +6,7 @@ Input/Output module.
 @email tomas.lazauskas[a]gmail.com
 """
 
+import copy
 import os
 import sys
 import glob
@@ -14,6 +15,8 @@ import numpy as np
 
 const_file_ext_xyz = "xyz"
 const_file_ext_out = "out"
+
+import source.Atoms as Atoms
 
 def checkDirectory(dirPath, createMd=0):
   """
@@ -111,6 +114,47 @@ def countMixAtoms(fileName):
   success = True
   return success, error, atomsCnt
 
+def get_unique_systems_hashkeys(systems_list):
+  """
+  Evaluates the hashkeys
+  
+  """
+  
+  system_list_len = len(systems_list)
+  
+  unique_hashkeys = []
+  unique_systems = []
+  unique_cnt = 0
+  
+  system_cnt = 0
+  for system in systems_list:
+    
+    temp_file = "temp.xyz"
+        
+    success_, error_ = writeXYZ(systems_list[system_cnt], temp_file)
+    
+    hashkeyRadius = Atoms.getRadius(systems_list[system_cnt]) + 1.0
+
+    cmdLine = "python ~/git/hkg/hkg.py %s %f" % (temp_file, hashkeyRadius)
+    
+    hashkey = os.popen(cmdLine).read().strip()
+    
+    systems_list[system_cnt].hashkey = copy.deepcopy(hashkey)
+    
+    # saving only unique:
+    if not (hashkey in unique_hashkeys):
+      unique_cnt += 1
+      
+      unique_hashkeys.append(hashkey)
+      unique_systems.append(systems_list[system_cnt])
+    
+    system_cnt += 1
+    if (system_cnt % 100 == 0): print "Getting the hashkeys %d/%d" % (system_cnt, system_list_len)
+    
+    os.remove(temp_file)
+  
+  return unique_systems
+  
 def get_file_list(extension="*"):
   """
   Returns a list of files with a specific extension
@@ -119,6 +163,39 @@ def get_file_list(extension="*"):
   
   file_list = glob.glob("*.%s" % (extension))
   
+  return file_list
+
+def get_file_list_recursive(extension="*", file_list=[], dir_path=None, recurs_iter=0, recurs_max=8):
+  """
+  Returns a list of files with a specific extension by analysing directories recursively
+  
+  """
+
+  cwd = os.getcwd()
+  if dir_path is not None:
+    os.chdir(dir_path)
+  
+  dir_path_add = os.getcwd()
+  
+  for _, dirs, files in os.walk("./"):
+    
+    if len(dirs) > 0:
+      for dir_recur in dirs:
+        file_list_dir = get_file_list_recursive(extension=extension, file_list=file_list, 
+                                      dir_path=dir_recur, recurs_iter=recurs_iter+1, recurs_max=recurs_max)
+      
+    else:
+      file_list_dir = glob.glob("*.%s" % (extension))
+      
+      # adding directory to the path 
+      for i in range(len(file_list_dir)):
+        file_list_dir[i] = os.path.join(dir_path_add, file_list_dir[i])
+        
+      # joining two lists, python makes it so easy :)
+      file_list += file_list_dir
+        
+  os.chdir(cwd)
+    
   return file_list
 
 def get_file_list_pre_sub(prefix="*", subfix="*"):
@@ -180,6 +257,32 @@ def stringInFile(strExpr, fileObject):
   
   return found
 
+def read_in_systems(systems_paths_list):
+  """
+  Reads in systems form a list of paths and returns a system list
+  
+  """
+  
+  systems = []
+  systems_paths_cnt = len(systems_paths_list)
+  
+  systems_paths_iter = 1
+  for system_file in systems_paths_list:
+    
+    system, error = readSystemFromFile(system_file)
+    
+    if system is not None:
+      systems.append(system)
+    else:
+      print "error: %s" % (error)
+     
+    if (systems_paths_iter % 1000 == 0):
+      print "Reading %d/%d" % (systems_paths_iter, systems_paths_cnt)
+    
+    systems_paths_iter += 1
+    
+  return systems
+  
 def readSystemFromFile(file_name):
   """
   Read a system from a file
@@ -544,6 +647,22 @@ def readSystemFromFileXYZ(fileName):
     
     return system
 
+def save_systems_to_xyz(systems_list, dir_path):
+  """
+  Saves systems into xyz files
+  
+  """
+  
+  rank = 1
+  for system in systems_list:
+    
+    file_name = "n%02d_%03d_%s.xyz" % (system.NAtoms, rank, system.name)
+
+    file_path = os.path.join(dir_path, file_name)
+    success_, error_ = writeXYZ(system, file_path)
+  
+    rank += 1
+    
 def writeGIN(system, outputFile, controlFile=None, outputXYZ=False):
   """
   Writes system as a GIN file.
