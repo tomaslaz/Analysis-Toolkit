@@ -148,10 +148,9 @@ def get_unique_systems_hashkeys(systems_list):
       unique_hashkeys.append(hashkey)
       unique_systems.append(systems_list[system_cnt])
     
+    system_cnt += 1
     if (system_cnt % 100 == 0): print "Getting the hashkeys %d/%d" % (system_cnt, system_list_len)
     
-    system_cnt += 1
-        
     os.remove(temp_file)
   
   return unique_systems
@@ -178,25 +177,26 @@ def get_file_list_recursive(extension="*", file_list=[], dir_path=None, recurs_i
   
   dir_path_add = os.getcwd()
   
-  for root, dirs, files in os.walk("./"):
+  for _, dirs, files in os.walk("./"):
     
-    file_list_dir = glob.glob("*.%s" % (extension))
-    
-    # adding directory to the path 
-    for i in range(len(file_list_dir)):
-      file_list_dir[i] = os.path.join(dir_path_add, file_list_dir[i])
+    if len(dirs) > 0:
+      for dir_recur in dirs:
+        file_list_dir = get_file_list_recursive(extension=extension, file_list=file_list, 
+                                      dir_path=dir_recur, recurs_iter=recurs_iter+1, recurs_max=recurs_max)
       
-    # joining two lists, python makes it so easy :)
-    file_list = file_list + file_list_dir
+        file_list = file_list + file_list_dir
+    else:
+      file_list_dir = glob.glob("*.%s" % (extension))
     
-    for dir_recur in dirs:
-      file_list_dir = get_file_list_recursive(extension=extension, file_list=file_list, 
-                                    dir_path=dir_recur, recurs_iter=recurs_iter+1, recurs_max=recurs_max)
-    
+      # adding directory to the path 
+      for i in range(len(file_list_dir)):
+        file_list_dir[i] = os.path.join(dir_path_add, file_list_dir[i])
+        
+      # joining two lists, python makes it so easy :)
       file_list = file_list + file_list_dir
         
   os.chdir(cwd)
-  
+    
   return file_list
 
 def get_file_list_pre_sub(prefix="*", subfix="*"):
@@ -648,6 +648,22 @@ def readSystemFromFileXYZ(fileName):
     
     return system
 
+def save_systems_to_xyz(systems_list, dir_path):
+  """
+  Saves systems into xyz files
+  
+  """
+  
+  rank = 1
+  for system in systems_list:
+    
+    file_name = "n%02d_%03d_%s.xyz" % (system.NAtoms, rank, system.name)
+
+    file_path = os.path.join(dir_path, file_name)
+    success_, error_ = writeXYZ(system, file_path)
+  
+    rank += 1
+    
 def writeGIN(system, outputFile, controlFile=None, outputXYZ=False):
   """
   Writes system as a GIN file.

@@ -12,6 +12,9 @@ from optparse import OptionParser
 import source.IO as IO
 import source.Utilities as Utilities
 
+# constants
+_uniqueDir = "unique"
+
 def cmd_line_args():
   """
   Handles command line arguments and options.
@@ -42,14 +45,15 @@ if __name__ == "__main__":
   # reading in the systems
   systems = IO.read_in_systems(systems_files_list)
   
-  # getting the hashkeys
+  # getting the hashkeys and finding the unique ones
   unique_systems = IO.get_unique_systems_hashkeys(systems)
   
-  # finding unique systems
-  
-  
-  
   # sorting the systems
-  #Utilities.sort_systems(systems)
+  Utilities.sort_systems(unique_systems)
   
-  # 
+  # generating the combined unique top structures and saves them in the unique directory
+  IO.checkDirectory(_uniqueDir, True)
+  
+  IO.save_systems_to_xyz(unique_systems, _uniqueDir)
+  
+  Utilities.systems_statistics(unique_systems, _uniqueDir)
