@@ -16,7 +16,7 @@ import numpy as np
 const_file_ext_xyz = "xyz"
 const_file_ext_out = "out"
 
-import source.Atoms as Atoms
+import Atoms
 
 def checkDirectory(dirPath, createMd=0):
   """
