@@ -28,7 +28,8 @@ _statsSubfix = ".csv"
 
 class GAIterStats:
   """
-  Class to hold statistics from a GA iteration
+  Class to hold statistics from a GA iteration.
+  
   """
 
   def __init__(self, iter, structCnt, lowEnergy, avgEnergy, highEnergy, sigmaEnergy, lowEnergyArr):
