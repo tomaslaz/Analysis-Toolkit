@@ -526,6 +526,8 @@ def readSystemFromFileGIN(fileName, outputMode=False):
         system.specieCount[specInd] += 1
         system.specie[atomsCnt] = specInd
         
+        system.gulpAtomType[atomsCnt] = array[1][0]
+        
         # positions
         for j in range(3):
           system.pos[atomsCnt*3 + j] = float(array[j+2])
@@ -536,9 +538,7 @@ def readSystemFromFileGIN(fileName, outputMode=False):
           
         except:
           system.charge[atomsCnt] = 0.0
-        
-        system.gulpAtomType[atomsCnt] = array[1][0]
-        
+
         extraInfo = ""
         for j in range(5, array_len):
           extraInfo = "%s %s" % (extraInfo, array[j])
