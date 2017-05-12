@@ -36,7 +36,7 @@ def cmd_line_args():
   
   parser = OptionParser(usage=usage)
     
-  parser.add_option("-r", "--relaxed", dest="relaxed", action="store_true", default=False, 
+  parser.add_option("-r", "--relaxed", dest="relaxed", action="store_true", default=True, 
     help="Whether geometry relaxation was used.")
     
   parser.disable_interspersed_args()

@@ -103,14 +103,14 @@ def _read_aims_geometry(system, input_file=_const_geometry_in):
         
       specInd = system.specieIndex(sym)
       system.specieCount[specInd] += 1
-      system.specie[atomsLineCnt-1] = specInd
-      
+      system.specie[atomsLineCnt] = specInd
+    
       # adding pos
       for j in range(3):
-        system.pos[(atomsLineCnt-1)*3 + j] = float(fields[j+1])
-      
+        system.pos[atomsLineCnt*3 + j] = float(fields[j+1])
+            
       # adding charge
-      system.charge[atomsLineCnt-1] = 0.0
+      system.charge[atomsLineCnt] = 0.0
       
       atomsLineCnt += 1
   
