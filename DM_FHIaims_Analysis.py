@@ -113,13 +113,21 @@ def readFHIaimsSystems(fhiaimsDirs, relaxed=False):
   """
   
   systemsList = []
-
+  
+  cnt = 0
+  totalCnt = len(fhiaimsDirs)
   for dirName in fhiaimsDirs:
+    
+    if (cnt % 10 == 0): print "Reading %d/%d" % (cnt+1, totalCnt)
+    
     cwd = os.getcwd()
     
     os.chdir(dirName)
     #systemName = dirName[len(_outputDir)+1:-2].strip()
-    systemName = dirName.strip()
+    
+    nameArray = (dirName.strip()).split("/")
+    nameArrayLen = len(nameArray)
+    systemName = nameArray[nameArrayLen-1]
    
     success, error, system = FHIaims._readAimsStructure(_fhiaimsGeometryFile, _fhiaimsOutFile, relaxed=relaxed)
     
@@ -129,6 +137,7 @@ def readFHIaimsSystems(fhiaimsDirs, relaxed=False):
       systemsList.append(system)
     
     os.chdir(cwd)
+    cnt += 1
   
   return systemsList
 
@@ -139,7 +148,7 @@ def saveFiles(systemsList):
   """
   
   cwd = os.getcwd()
-
+    
   os.system("rm -rf %s" % (_topDir))
   os.system("rm -rf %s" % (_uniqueDir))
   
@@ -178,7 +187,7 @@ def saveFiles(systemsList):
       uniqueSystems.append(systemsList[i])
       
       fileName2 = "%s_%03d_%s.xyz" % (nStr, uniqueCnt, systemsList[i].name)
-      
+            
       os.system("cp %s ../%s/%s" % (fileName, _uniqueDir, fileName2))
   
   os.chdir(cwd)
