@@ -126,6 +126,7 @@ class Connectivity(object):
     
     return avgCoord
   
+  
   def avgCoordNumberBySpecie(self):
     """
     Estimates the average coordination according to the colour (atom type)
@@ -193,7 +194,51 @@ class Connectivity(object):
           bondDist["%s-%s" % (self.vertColors[i], self.vertColors[j])] /= bondCnt["%s-%s" % (self.vertColors[i], self.vertColors[j])]
         
     return bondDist
-
+  
+  def maxCoordNumber(self):
+    """
+    Returns a maximum coordination number of an atom and the number of its occurrences
+    
+    """
+    
+    maxCoord = 0.0
+    noOccur = 0
+    
+    for i in range(self.nVert):
+      vertex = self.vertices[i]
+      vertCoord = vertex.getCoordNumber()
+  
+      if (vertCoord > maxCoord):
+        maxCoord = vertCoord
+        noOccur = 1
+        
+      elif (vertCoord == maxCoord):
+        noOccur += 1
+    
+    return maxCoord, noOccur
+  
+  def minCoordNumber(self):
+    """
+    Returns a minimum coordination number of an atom and the number of its occurrences
+    
+    """
+    
+    minCoord = 10**3
+    noOccur = 0
+    
+    for i in range(self.nVert):
+      vertex = self.vertices[i]
+      vertCoord = vertex.getCoordNumber()
+  
+      if (vertCoord < minCoord):
+        minCoord = vertCoord
+        noOccur = 1
+        
+      elif (vertCoord == minCoord):
+        noOccur += 1
+    
+    return minCoord, noOccur
+  
 class Vertex(object):
   """
   A class to save the data about a vertex
