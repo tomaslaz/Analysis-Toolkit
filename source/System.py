@@ -291,7 +291,7 @@ class System(object):
     # prepare a temporary file
     self._writeATS(_temp_file, radius)
     
-    command = "%s protein=%s" % ("/Users/Tomas/git/KLMC_Analysis/thirdparty/arvo_c/arvo_c", _temp_file)
+    command = "%s protein=%s" % ("/Users/Tomas/git/Analysis-Toolkit/thirdparty/arvo_c/arvo_c", _temp_file)
     output, stderr, status = Utilities.run_sub_process(command)
         
     # if the execution of the was successful:
