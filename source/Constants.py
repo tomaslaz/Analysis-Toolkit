@@ -3,7 +3,7 @@ import os
 # Boltzman constant
 kB = 0.0257/298
 
-verbosity = 1
+verbosity = 0
 
 # Environment
 _sourceDir = os.path.dirname(os.path.abspath(__file__))

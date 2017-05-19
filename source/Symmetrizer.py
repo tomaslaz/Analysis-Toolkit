@@ -30,7 +30,7 @@ class Symmetrizer:
     """
     Destructor
     """
-
+    
     self.__shutdownJVM()
   
   def __init__(self, options=None, args=None, standAlone=True):
@@ -92,9 +92,9 @@ class Symmetrizer:
       self._globJVMSymm = None
       Messages.log(__name__, "JVM shut down!", verbose=1)
       
-      self._clearJVMOutputFiles()
+      self._deleteJVMOutputFiles()
   
-  def _clearJVMOutputFiles(self):
+  def _deleteJVMOutputFiles(self):
     """
     Deletes JVM output files.
     """
@@ -102,6 +102,18 @@ class Symmetrizer:
     try:
       IO.removeFile(self._globJVMOutPath)
       IO.removeFile(self._globJVMErrPath)
+      
+    except:
+      Messages.warning(__name__, "Cannot remove JVM output files!", verbose=2)
+  
+  def _clearJVMOutputFiles(self):
+    """
+    Clears JVM output files.
+    """
+
+    try:
+      open(self._globJVMOutPath, 'w').close()
+      open(self._globJVMErrPath, 'w').close()
       
     except:
       Messages.warning(__name__, "Cannot remove JVM output files!", verbose=2)
@@ -146,7 +158,7 @@ class Symmetrizer:
     
     #TODO: In future this should be done via streams
     success, error, symmetry = _getSymmetryFromFile(self._globJVMOutPath, self._globJVMErrPath)
-        
+    
     self._clearJVMOutputFiles()
     
     return  success, error, symmetry   
