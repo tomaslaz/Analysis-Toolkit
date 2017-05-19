@@ -7,6 +7,7 @@ Messages module.
 """
 
 import datetime
+import Constants
 
 class bcolors:
     HEADER = '\033[95m'
@@ -53,6 +54,17 @@ def log(caller, message, indent=0, verbose=1):
   for _ in xrange(indent):
       ind += "  "
   print "[%s]: %s%s >> %s" % (now, ind, caller, message)
+
+def warning(caller, message, indent=0, verbose=1):
+  
+  if verbose > Constants.verbosity:
+    return
+        
+  now = datetime.datetime.now().strftime("%d/%m/%y, %H:%M:%S")
+  ind = ""
+  for _ in xrange(indent):
+      ind += "  "
+  print "[%s]: %s%s%s >> %s%s" % (now, bcolors.WARNING, ind, caller, message, bcolors.ENDC)
 
 def printAuthor(verbose=1):
   """

@@ -5,19 +5,20 @@ import os
 import jpype
 from jpype import *
 
+import Constants
 import IO
+import Messages
+import timer
 import Utilities
 
 # import sys
 #import constants
 
-__pointGroupFound = "+ POINT GROUP FOUND:"
-__pointGroupStLine = "1."
+_pointGroupFound = "+ POINT GROUP FOUND:"
+_pointGroupStLine = "1."
 
-__tolerance = "0.001"
-__verbose = "0"
-
-
+_tolerance = "0.1"
+_verbose = "0"
 
 class Symmetrizer:
   """
@@ -37,42 +38,37 @@ class Symmetrizer:
     Constructor
     """
     
+    self.cwd = os.getcwd()
+    
     self._globJVMOn = False
     self._globJVMSymm = None
     
-    randomName = utilities.getRandomName(8)
+    randomName = Utilities.get_random_name(8)
     
-    self._globJVMOutPath = "jvm%s.out" % (randomName)
-    self._globJVMErrPath = "jvm%s.err" % (randomName)
+    self._globJVMOutPath =  os.path.join(self.cwd, "jvm%s.out" % (randomName))
+    self._globJVMErrPath =  os.path.join(self.cwd, "jvm%s.err" % (randomName))
     
     self._options = options
     self._args = args
     
-    if standAlone:
-      self._input = self._args[0]
+    self._input = None
     
-      if self._options.aPointG: 
-        self.__startJVM()
-    
-    else:
-      self._input = None
-      
-      self.__startJVM()
+    self.__startJVM()
   
   def __startJVM(self):
     """
     Initializes Java Virtual Machine and loads symmetrizer
     """
     
-    jarpath = os.path.join(constants._sourceDir, constants._symmetrizerPath)
+    jarpath = os.path.join(Constants._sourceDir, Constants._symmetrizerPath)
     
     try:
       jpype.startJVM(jpype.getDefaultJVMPath(), "-ea", "-Djava.class.path=%s" % (jarpath))
       
       self._globJVMOn = True
       self._globJVMSymm = JPackage('net.webmo.symmetry').Main
-      messages.log(__name__, "JVM initialised!", verbose=1)
-      
+      Messages.log(__name__, "JVM initialised!", verbose=1)
+            
       #TODO: In future this should be done via streams
       fs = jpype.JClass("java.io.File")
       ps = jpype.JClass("java.io.PrintStream")
@@ -82,7 +78,7 @@ class Symmetrizer:
     except:
       self._globJVMOn = False
       self._globJVMSymm = None
-      messages.warning(__name__, "Cannot start JVM!", verbose=0)
+      Messages.warning(__name__, "Cannot start JVM!", verbose=0)
           
   def __shutdownJVM(self):
     """
@@ -94,7 +90,7 @@ class Symmetrizer:
       
       self._globJVMOn = False
       self._globJVMSymm = None
-      messages.log(__name__, "JVM shut down!", verbose=1)
+      Messages.log(__name__, "JVM shut down!", verbose=1)
       
       self._clearJVMOutputFiles()
   
@@ -102,72 +98,58 @@ class Symmetrizer:
     """
     Deletes JVM output files.
     """
-    
+
     try:
-      io.removeFile(self._globJVMOutPath)
-      io.removeFile(self._globJVMErrPath)
+      IO.removeFile(self._globJVMOutPath)
+      IO.removeFile(self._globJVMErrPath)
       
     except:
-      messages.warning(__name__, "Cannot remove JVM output files!", verbose=2)
+      Messages.warning(__name__, "Cannot remove JVM output files!", verbose=2)
   
-     
-  def _getSymmetry(self, clusterO):
+  def getSymmetry(self, clusterO):
     """
     Evaluates the symmetry (point group) of a cluster.
     
     """
     
-    return analysis.getSymmetry(self, clusterO)
+    success = True
+    error = ""
+    symmetry = ""
+    
+    if not self._globJVMOn:
+      success = False
+      error = "JVM is has not been initialized"
       
-  @timer.timeit
-  def run(self):
-    """
-    The main run routine
-    """
+      return success, error, symmetry
+    
+    # Saves a cluster in to an xyz file.
+    cwd = os.getcwd()
+    tempClusterFile = "%s/%s.xyz" % (cwd, Utilities.get_random_name(10))
+    
+    success, error = IO.writeXYZ(clusterO, tempClusterFile, scfDone=False)
+    
+    if not success:
+      return success, error, symmetry
+    
+    # Runs the symmetrizer to get the point group
+    try:
+      self._globJVMSymm.main(["-v", _verbose, "-t", _tolerance, tempClusterFile])
+      
+    except:
+      #TODO: catch the Symmetrizer error
+      success = False
+      error = "error while running Symmetrizer"
+       
+      return success, error, symmetry
+    
+    IO.removeFile(tempClusterFile)
+    
+    #TODO: In future this should be done via streams
+    success, error, symmetry = _getSymmetryFromFile(self._globJVMOutPath, self._globJVMErrPath)
         
     self._clearJVMOutputFiles()
-
-def getSymmetry(cluster):
-  """
-  Runs symmetrizer and tries to get the symmetry from the output.
-  
-  """
-  
-  success = True
-  error = ""
-  symmetry = ""
-  
-  if not cluspy._globJVMOn:
-    success = False
-    error = "JVM is has not been initialized"
     
-    return success, error, symmetry
-  
-  # Saves a cluster in to an xyz file.
-  tempClusterFile = "%s.xyz" % utilities.getRandomName(10)
-  
-  success, error = io.writeXYZ(cluster, tempClusterFile)
-  
-  if not success:
-    return success, error, symmetry
-  
-  # Runs the symmetrizer to get the point group
-  try:
-    cluspy._globJVMSymm.main(["-v", __verbose, "-t", __tolerance, tempClusterFile])
-    
-  except:
-    #TODO: catch the Symmetrizer error
-    success = False
-    error = "error while running Symmetrizer"
-    
-    return success, error, symmetry
-  
-  io.removeFile(tempClusterFile)
-  
-  #TODO: In future this should be done via streams
-  success, error, symmetry = _getSymmetryFromFile(cluspy._globJVMOutPath, cluspy._globJVMErrPath)
-  
-  return success, error, symmetry
+    return  success, error, symmetry   
 
 def _getSymmetryFromFile(outFilePath, errFilePath):
   """
@@ -200,11 +182,11 @@ def _getSymmetryFromFile(outFilePath, errFilePath):
     i += 1
     line = line.strip()
     
-    if not startLooking and __pointGroupFound in line:
+    if not startLooking and _pointGroupFound in line:
       startLooking = 1
     
     if startLooking:
-      if __pointGroupStLine in line:
+      if _pointGroupStLine in line:
         
         lineArray = line.split()
 

@@ -240,6 +240,24 @@ def lookForFiles(extension):
   
   return csvFile
 
+def removeFile(filePath):
+  """
+  Deletes a file.
+  
+  """
+  
+  success = True
+  error = ""
+  
+  try:
+    os.unlink(filePath)
+    
+  except:
+    error = "Cannot delete file: %s" % (filePath)
+    success = False
+  
+  return success, error
+
 def stringInFile(strExpr, fileObject):
   """
   Checks if a string is in a file and rewinds the file to the beginning
@@ -824,7 +842,7 @@ def writeAimsGeometry(system, outputFile):
   
   return success, error
 
-def writeXYZ(system, outputFile):
+def writeXYZ(system, outputFile, scfDone=True):
   """
   Writes system as an XYZ file.
   
@@ -861,7 +879,7 @@ def writeXYZ(system, outputFile):
   if system.cellDims[0] != 0.0 and system.cellDims[1] != 0.0 and system.cellDims[2] != 0.0:
     meta_data = "%.10f %.10f %.10f" % (system.cellDims[0], system.cellDims[1], system.cellDims[2])
 
-  elif system.totalEnergy != None and system.totalEnergy != 0.0:
+  elif scfDone and ystem.totalEnergy != None and system.totalEnergy != 0.0:
     metaData = "SCF Done             %.10e;" % (system.totalEnergy)
   
   fout.write("%s\n" % (metaData))
