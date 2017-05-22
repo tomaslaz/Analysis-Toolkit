@@ -17,7 +17,7 @@ import Utilities
 _pointGroupFound = "+ POINT GROUP FOUND:"
 _pointGroupStLine = "1."
 
-_tolerance = "0.1"
+_tolerance = "0.01"
 _verbose = "0"
 
 class Symmetrizer:

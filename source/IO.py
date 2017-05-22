@@ -879,7 +879,7 @@ def writeXYZ(system, outputFile, scfDone=True):
   if system.cellDims[0] != 0.0 and system.cellDims[1] != 0.0 and system.cellDims[2] != 0.0:
     meta_data = "%.10f %.10f %.10f" % (system.cellDims[0], system.cellDims[1], system.cellDims[2])
 
-  elif scfDone and ystem.totalEnergy != None and system.totalEnergy != 0.0:
+  elif scfDone and system.totalEnergy != None and system.totalEnergy != 0.0:
     metaData = "SCF Done             %.10e;" % (system.totalEnergy)
   
   fout.write("%s\n" % (metaData))
