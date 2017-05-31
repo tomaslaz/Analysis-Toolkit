@@ -287,7 +287,11 @@ def read_in_systems(systems_paths_list):
   systems_paths_iter = 1
   for system_file in systems_paths_list:
     
-    system, error = readSystemFromFile(system_file)
+    try:
+      system, error = readSystemFromFile(system_file)
+    except:
+      system = None
+      error = "cannot read in the file"
     
     if system is not None:
       systems.append(system)
