@@ -87,15 +87,18 @@ class System(object):
     
     self.cbm_occ_num = _const_def_value
     self.cbm_spin_chan = _const_def_value
-    
-    # surface energy
-    self.surface_energy = _const_zero_value
-    
+        
     # geometrical properties with arvo
     self.arvo_calc = False
     self.arvo_volume = _const_zero_value
     self.arvo_area = _const_zero_value
     self.arvo_spheres = _const_zero_value
+    self.arvo_surface_energy = _const_zero_value
+    
+    # Delaunay's triangulation
+    self.del_calc = False
+    self.del_area = _const_zero_value
+    self.del_surface_energy = _const_zero_value
     
     # eigenvalues
     self.eigenvalues = None
@@ -276,7 +279,7 @@ class System(object):
     self.momentOfInertia[2][0] = moi[4]
     self.momentOfInertia[2][1] = moi[5]
   
-  def calc_geo_measures(self, radius):
+  def calc_arvo_geo_measures(self, radius):
     """
     Calculates geometrical measures: volume, area
     
@@ -306,19 +309,28 @@ class System(object):
   
     os.unlink(_temp_file)
     
-  def calc_surface_energy(self, radius):
+  def calc_arvo_surface_energy(self, radius):
     """
     Calculates surface energy using arvo_c thirdparty code
     
     """
     
     # calculate the geometrical measures
-    self.calc_geo_measures(radius)
+    self.calc_arvo_geo_measures(radius)
+      
+  def calc_del_area(self):
+    """
+    Calculates surface energy using Delaunay's triangulation
     
-    if self.arvo_calc:
+    """
     
-      self.surface_energy = self.totalEnergy / self.arvo_area
-   
+    delArea = Utilities.delaunay3DArea(self)
+      
+    if delArea is not None:
+      self.del_calc = True
+      
+      self.del_area = delArea
+    
   def findNN(self, atomIdx, rdfCutOffSq):
     
     cntrx = self.pos[3*atomIdx+0]

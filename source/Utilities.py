@@ -12,8 +12,53 @@ import os
 import random
 import string
 import subprocess
+import vtk
 
 _systems_stats_file = "Stats.csv"
+
+def delaunay3DArea(system):
+  """
+  Estimates system's area by summing all the triangles from Delaunay's triangulation
+  
+  """
+  
+  delaunayAlpha = 3.0
+  delaunayTolerance = 2.9
+  
+  clusterPoints = vtk.vtkPoints()
+    
+  for i in range(system.NAtoms):
+    clusterPoints.InsertPoint(i, system.pos[i*3 + 0], system.pos[i*3 + 1], system.pos[i*3 + 2])
+  
+  polyCluster = vtk.vtkPolyData()
+  polyCluster.SetPoints(clusterPoints)
+  
+  delaunayCluster = vtk.vtkDelaunay3D()
+  delaunayCluster.SetInputData(polyCluster)
+#   delaunayCluster.SetTolerance(delaunayTolerance)
+  delaunayCluster.SetAlpha(delaunayAlpha)
+  delaunayCluster.BoundingTriangulationOff()
+  delaunayCluster.Update()
+  
+  clusterSurfaceFilter = vtk.vtkGeometryFilter()
+  clusterSurfaceFilter.SetInputConnection(delaunayCluster.GetOutputPort())
+  clusterSurfaceFilter.Update()
+  
+  mapClipper = vtk.vtkDataSetMapper()
+  mapClipper.SetInputConnection(clusterSurfaceFilter.GetOutputPort())
+  
+  surfaceArea = 0.0
+    
+  clipperPointInput = mapClipper.GetInput()  
+  for i in range(clipperPointInput.GetNumberOfCells()):
+    p1 = clipperPointInput.GetCell(i).GetPoints().GetPoint(0)
+    p2 = clipperPointInput.GetCell(i).GetPoints().GetPoint(1)
+    p3 = clipperPointInput.GetCell(i).GetPoints().GetPoint(2)
+    
+    triangleArea = vtk.vtkTriangle.TriangleArea(p1, p2, p3)
+    surfaceArea += triangleArea
+   
+  return surfaceArea
 
 def distanceSq(pos1x, pos1y, pos1z, pos2x, pos2y, pos2z):
   """
