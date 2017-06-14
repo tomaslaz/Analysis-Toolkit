@@ -36,7 +36,7 @@ def cmd_line_args():
   
   parser = OptionParser(usage=usage)
     
-  parser.add_option("-r", "--relaxed", dest="relaxed", action="store_true", default=True, 
+  parser.add_option("-s", "--single", dest="single", action="store_true", default=False, 
     help="Whether geometry relaxation was used.")
     
   parser.disable_interspersed_args()
@@ -106,7 +106,7 @@ def generateStatistics(systemlist, unique=False):
   print "Max run time: ", np.max(runTimes)
   print "Stdev run time: ", np.std(runTimes)
   
-def readFHIaimsSystems(fhiaimsDirs, relaxed=False):
+def readFHIaimsSystems(fhiaimsDirs, single=False):
   """
   Reads in the FHI-aims systems.
   
@@ -129,12 +129,15 @@ def readFHIaimsSystems(fhiaimsDirs, relaxed=False):
     nameArrayLen = len(nameArray)
     systemName = nameArray[nameArrayLen-1]
    
-    success, error, system = FHIaims._readAimsStructure(_fhiaimsGeometryFile, _fhiaimsOutFile, relaxed=relaxed)
+    success, error, system = FHIaims._readAimsStructure(_fhiaimsGeometryFile, _fhiaimsOutFile, relaxed=(not single))
     
     if success:
       system.name = systemName
       
       systemsList.append(system)
+    
+    else:
+      print "Error reading in [%s]: %s" % (systemName, error)
     
     os.chdir(cwd)
     cnt += 1
@@ -219,7 +222,7 @@ if __name__ == "__main__":
   fhiaimsDirs = getFileList()
     
   # reads in the FHI-aims systems
-  systems = readFHIaimsSystems(fhiaimsDirs, options.relaxed)
+  systems = readFHIaimsSystems(fhiaimsDirs, options.single)
   
   # sort the systems according to energy
   sortSystems(systems)
