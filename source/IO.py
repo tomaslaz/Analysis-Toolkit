@@ -165,6 +165,33 @@ def get_file_list(extension="*"):
   
   return file_list
 
+def get_file_list_recursive_simple(extension="*", file_list=[]):
+  """
+  Returns a list of files with a specific extension by analysing directories recursively
+  
+  """
+
+  cwd = os.getcwd()
+  
+  for root, dirs, files in os.walk("./"):
+    
+    dir_path_add = os.path.join(cwd, root[2:])
+    os.chdir(dir_path_add)
+    
+    # looking for files in a directory
+    file_list_dir = glob.glob("*.%s" % (extension))
+    
+    # adding directory to the path 
+    for i in range(len(file_list_dir)):
+      file_list_dir[i] = os.path.join(dir_path_add, file_list_dir[i])
+       
+    # joining two lists, python makes it so easy :)
+    file_list += file_list_dir
+    
+    os.chdir(cwd)
+        
+  return file_list
+
 def get_file_list_recursive(extension="*", file_list=[], dir_path=None, recurs_iter=0, recurs_max=8):
   """
   Returns a list of files with a specific extension by analysing directories recursively

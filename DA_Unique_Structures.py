@@ -41,7 +41,7 @@ if __name__ == "__main__":
   options, args = cmd_line_args()
   
   # finding the structures (paths)
-  systems_files_list = IO.get_file_list_recursive(extension=args[0])
+  systems_files_list = IO.get_file_list_recursive_simple(extension=args[0])
   
   # reading in the systems
   systems = IO.read_in_systems(systems_files_list)
