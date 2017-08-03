@@ -126,7 +126,6 @@ class Connectivity(object):
     
     return avgCoord
   
-  
   def avgCoordNumberBySpecie(self):
     """
     Estimates the average coordination according to the colour (atom type)
@@ -239,6 +238,21 @@ class Connectivity(object):
     
     return minCoord, noOccur
   
+  def stdCoordination(self):
+    """
+    Estimates the standard deviation 
+    
+    """
+    
+    vertCoord = np.zeros(self.nVert, np.float32)
+    
+    for i in range(self.nVert):
+      vertex = self.vertices[i]
+            
+      vertCoord[i] = vertex.getCoordNumber()
+        
+    return np.std(vertCoord)
+    
 class Vertex(object):
   """
   A class to save the data about a vertex
