@@ -18,12 +18,24 @@ _constOutFinalEnergy = "Final energy ="
 _constOutFinalParams = "Final cell parameters and derivatives"
 _constOutFinalDerivs = "Final internal derivatives :"
 
+# Polymers
+_constIniParamsPoly = "Polymer Cartesian vector"
+_constIniParamsCellParamPoly = "Polymer cell parameter (Angstrom)"
+_constOutFinalParamsPoly = "Final Cartesian polymer vector (Angstroms)"
+_constOutFinalDerivsPoly = "Final polymer cell parameter and derivative"
+
+# System types
+_costSystemBox = 0
+_costSystemPolymer = 1
+
 def readGulpOutput(system, fileName):
   """
   Reads the gulp output and updates atoms' positions and systems energy
   
   """
   
+  system_Type = _costSystemBox
+    
   success = False
   error = ""
     
@@ -36,9 +48,10 @@ def readGulpOutput(system, fileName):
   except:
     error = "Cannot read file [%s]" % (fileName)
     return success, error, system
-  
+    
   # optimisation achieved?
   success = IO.stringInFile(_constOutOptiAchieved, f)
+  success = True
   
   if not success:
     error = "Optimisation has not been achieved"
@@ -60,7 +73,7 @@ def readGulpOutput(system, fileName):
   if success:
     for line in f:
       line = line.strip()
-      
+            
       # Looking for the final energy
       if optiAchievedSection:
         if _constOutFinalEnergy in line:
@@ -74,11 +87,12 @@ def readGulpOutput(system, fileName):
           optiAchievedSection = False
       
        # Found the end of the section
-      if _constOutFinalDerivs in line:
+      if ((_constOutFinalDerivs in line) or (_constOutFinalDerivsPoly in line)):
         finalParamsSectionSt = False
       
       # Found the end of the section
-      if _constIniParamsCellVol in line:
+      
+      if ((_constIniParamsCellVol in line) or (_constIniParamsCellParamPoly in line)):
         iniParamsSectionSt = False
       
       if finalCoordsSectionSt:
@@ -146,34 +160,47 @@ def readGulpOutput(system, fileName):
       
       if iniParamsSectionSt:
         array = line.split()
+                
+        if system_Type == _costSystemPolymer:
 
-        if len(array) == 6:
-          # new cell dimensions
-          if iniParamsCount == 0:
-            system.cellDims_ini[0] = np.float64(array[2])
-            system.cellAngles_ini[0] = np.float64(array[5])
-            
-          elif iniParamsCount == 1:
-            system.cellDims_ini[1] = np.float64(array[2])
-            system.cellAngles_ini[1] = np.float64(array[5])
-            
-          elif iniParamsCount == 2:
+          if len(array) == 3:
+            system.cellDims_ini[0] = np.float64(array[0])
+            system.cellDims_ini[1] = np.float64(array[1])
             system.cellDims_ini[2] = np.float64(array[2])
-            system.cellAngles_ini[2] = np.float64(array[5])
-          
-          iniParamsCount += 1
+                      
+        else:
+        
+          if len(array) == 6:
+            # new cell dimensions
+            if iniParamsCount == 0:
+              system.cellDims_ini[0] = np.float64(array[2])
+              system.cellAngles_ini[0] = np.float64(array[5])
+              
+            elif iniParamsCount == 1:
+              system.cellDims_ini[1] = np.float64(array[2])
+              system.cellAngles_ini[1] = np.float64(array[5])
+              
+            elif iniParamsCount == 2:
+              system.cellDims_ini[2] = np.float64(array[2])
+              system.cellAngles_ini[2] = np.float64(array[5])
+            
+            iniParamsCount += 1
 
       # Found the beginning of the section
       if ((_constOutFinalCartCoords in line) or (_constOutFinalFracCoords in line)):
         finalCoordsSectionSt = True
       
       # Found the beginning of the section
-      if _constOutFinalParams in line:
+      if ((_constOutFinalParams in line) or (_constOutFinalDerivsPoly in line)):
         finalParamsSectionSt = True
  
        # Found the beginning of the section
-      if _constIniParams in line:
+      if (_constIniParams in line):
         iniParamsSectionSt = True
+      
+      if (_constIniParamsPoly in line):
+        iniParamsSectionSt = True
+        system_Type = _costSystemPolymer
 
       if _constOutOptiAchieved in line:
         optiAchievedSection = True
