@@ -12,7 +12,12 @@ import os
 import random
 import string
 import subprocess
-import vtk
+
+try:
+  import vtk
+  vtk_imported = True
+except:
+  vtk_imported = False
 
 _systems_stats_file = "Stats.csv"
 
