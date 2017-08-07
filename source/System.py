@@ -32,6 +32,7 @@ class System(object):
     
   def __init__(self, NAtoms):
     self.name = ""
+    self.path = ""
     self.hashkey = ""
     
     self.totalEnergy = 0.0

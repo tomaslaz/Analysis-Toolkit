@@ -4,8 +4,9 @@ GULP module.
 @author Tomas Lazauskas
 """
 
-import os
+import glob
 import numpy as np
+import os
 
 import IO
 
@@ -69,6 +70,15 @@ def readGulpOutput(system, fileName):
   
   i = 0
   
+  # saving name and path  
+  name_array = fileName.split("/")
+  name_array_len = len(name_array)
+  
+  name_array = name_array[name_array_len-1].split(".")
+
+  system.name = name_array[0]
+  system.path = fileName
+
   # read in final atom positions
   if success:
     for line in f:
