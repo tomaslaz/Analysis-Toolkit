@@ -12,6 +12,7 @@ import math
 import numpy as np
 import os
 
+import Atoms
 import Utilities
 from scipy.constants.constants import Rydberg
 
@@ -500,7 +501,74 @@ class System(object):
             self.minPos[i] = self.pos[i::3].min()
             self.maxPos[i] = self.pos[i::3].max()
   
+  def makeGraphString(self):
+    """
+    Prepares a string which contains information of the system as a graph.
+    
+    """
+    
+    hashkeyRadius = Atoms.getRadius(self) + 1.0
+    
+    radiusSq = hashkeyRadius * hashkeyRadius
+        
+    strLine = "l=1000\nc\nn=%d g\n" % (self.NAtoms)
+
+    for i in range(self.NAtoms):
+        strLine += "%d : " % (i)
+        for j in range(self.NAtoms):
+                        
+            if i == j:
+                continue
+
+            dist = Utilities.atomicSeparation2(self.pos[3*i:3*i+3], self.pos[3*j:3*j+3],
+                 self.cellDims, self.PBC)
+            
+            if dist <= radiusSq:
+              strLine += "%d " % (j)
+
+        if i < self.NAtoms - 1:
+            strLine += ";"
+        else:
+            strLine += "."
+        
+        strLine += "\n"
+        
+    specieListReordered = [x for (_, x) in sorted(zip(self.specieCount, self.specieList))]
+    
+    strLine += "f=["
+    
+    specieTot = len(specieListReordered)
+    specieCnt = 0
+    
+    for specie in specieListReordered:
+        specieCnt += 1
+
+        specieIdx = self.specieIndex(specie)
+        
+        for i in range(self.NAtoms):
+            if self.specie[i] == specieIdx:
+                strLine += "%d," % (i)
+        
+        if specieCnt != specieTot:
+            strLine += "|"
+        
+    strLine += "]\n"
+    strLine += "x\nz\n"
+    
+    return strLine
   
+  def calculateHashkey(self):
+    """
+    Calculates system's hashkey
+    
+    """
+    
+    # obtain system's representation as a graph
+    graphString = self.makeGraphString()
+    
+    # run dreadnaut and get the hashkey
+    self.hashkey = Utilities.runDreadnaut(graphString)
+        
   def _writeATS(self, outputFile, radius):
     """
     Writes system as an ATS file.

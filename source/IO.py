@@ -11,6 +11,7 @@ import os
 import sys
 import glob
 import System
+import time
 import numpy as np
 
 const_file_ext_xyz = "xyz"
@@ -129,18 +130,9 @@ def get_unique_systems_hashkeys(systems_list):
   system_cnt = 0
   for system in systems_list:
     
-    temp_file = "temp.xyz"
-        
-    success_, error_ = writeXYZ(systems_list[system_cnt], temp_file)
-    
-    hashkeyRadius = Atoms.getRadius(systems_list[system_cnt]) + 1.0
-
-    cmdLine = "python ~/git/hkg/hkg.py %s %f" % (temp_file, hashkeyRadius)
-    
-    hashkey = os.popen(cmdLine).read().strip()
-    
-    systems_list[system_cnt].hashkey = copy.deepcopy(hashkey)
-    
+    systems_list[system_cnt].calculateHashkey()
+    hashkey = systems_list[system_cnt].hashkey
+      
     # saving only unique:
     if not (hashkey in unique_hashkeys):
       unique_cnt += 1
@@ -150,9 +142,7 @@ def get_unique_systems_hashkeys(systems_list):
     
     system_cnt += 1
     if (system_cnt % 100 == 0): print "Getting the hashkeys %d/%d" % (system_cnt, system_list_len)
-    
-    os.remove(temp_file)
-  
+      
   return unique_systems
   
 def get_file_list(extension="*"):

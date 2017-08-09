@@ -104,6 +104,14 @@ def get_random_name(n=10):
 
   return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(n))
 
+def getPathToDreadnaut():
+  """
+  Return a path to dreadnaut executable.
+  
+  """
+  #nauty25r9
+  return os.path.join(os.path.abspath(os.path.dirname(__file__)+"/../"), "thirdparty", "nauty25r9", "dreadnaut")
+
 def run_sub_process(command, verbose=0):
   """
   Run command using subprocess module.
@@ -165,3 +173,45 @@ def systems_statistics(systems_list, dir_path=None):
     
     
   f.close()
+  
+def runDreadnaut(graphString):
+   """
+   Runs dreadnaut on the given graph
+   
+   """
+   
+   if graphString is None:
+       return None
+   
+   dreadnaut = getPathToDreadnaut()
+
+   command = "%s << %s" % (dreadnaut, graphString)
+
+   output, stderr, status = run_sub_process(command)
+   
+   if status:
+       print "WARNING: dreadnaut FAILED"
+       print stderr
+       return None
+   
+   array = output.strip().split("\n")
+   line = array[-1].strip()
+       
+   if line[:1] == "[" and line[-1:] == "]":
+       return modifyLineHashkey(line)
+   
+   else:
+       print "WARNING: dreadnaut FAILED"
+       return None
+     
+def modifyLineHashkey(line):
+    """
+    Modifies the hashkey line
+    
+    """
+    
+    line = string.replace(line, " ", "_")
+    line = string.replace(line, "[", "")
+    line = string.replace(line, "]", "")
+    
+    return line
