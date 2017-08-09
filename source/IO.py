@@ -127,14 +127,25 @@ def get_unique_systems_hashkeys(systems_list):
   unique_systems = []
   unique_cnt = 0
   
+  hashkeys_count = np.zeros(system_list_len, np.int16)
+  
   system_cnt = 0
   for system in systems_list:
     
     systems_list[system_cnt].calculateHashkey()
     hashkey = systems_list[system_cnt].hashkey
       
-    # saving only unique:
-    if not (hashkey in unique_hashkeys):
+    try:
+      hashkey_idx = unique_hashkeys.index(hashkey)
+    except:
+      hashkey_idx = -1
+    
+    # storing duplicate numbers
+    if hashkey_idx != -1:
+      hashkeys_count[hashkey_idx] += 1
+      
+    # saving only unique: 
+    else:
       unique_cnt += 1
       
       unique_hashkeys.append(hashkey)
@@ -142,7 +153,10 @@ def get_unique_systems_hashkeys(systems_list):
     
     system_cnt += 1
     if (system_cnt % 100 == 0): print "Getting the hashkeys %d/%d" % (system_cnt, system_list_len)
-      
+  
+  for i in range(unique_cnt):
+    unique_systems[i].hashkey_duplicate_cnt = hashkeys_count[i]
+  
   return unique_systems
   
 def get_file_list(extension="*"):
