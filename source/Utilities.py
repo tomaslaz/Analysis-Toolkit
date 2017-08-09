@@ -158,18 +158,20 @@ def systems_statistics(systems_list, dir_path=None):
   else:
     f = open(os.path.join(dir_path, _systems_stats_file), "w")
   
-  f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", 
+  f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", 
           "Time", "Tot.Time", "H-L", 
           "VBM", "VBMOcc", "VBMSpinChannel", 
           "CBM", "CBMOcc", "CBMSpinChannel", 
-          "SpinN", "SpinS", "SpinJ","Size"))
+          "SpinN", "SpinS", "SpinJ","Size",
+          "DimX", "DimY", "DimZ"))
   
   for system in systems_list:
-    f.write("%s,%f,%s,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" % (system.name, system.totalEnergy, system.hashkey,
+    f.write("%s,%f,%s,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" % (system.name, system.totalEnergy, system.hashkey,
                                      system.noOfcores, system.runTime, system.noOfcores*system.runTime,
                                      system.homo_lumo_gap, system.vbm, system.vbm_occ_num, system.vbm_spin_chan, 
                                      system.cbm, system.cbm_occ_num, system.cbm_spin_chan, 
-                                     system.spin_N, system.spin_S, system.spin_J, float(system.NAtoms)))
+                                     system.spin_N, system.spin_S, system.spin_J, float(system.NAtoms),
+                                     system.cellDims[0], system.cellDims[1], system.cellDims[2]))
     
     
   f.close()
