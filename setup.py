@@ -103,6 +103,16 @@ def clean():
   run_command(command)
   
   os.chdir(cwd)
+  os.chdir("thirdparty")
+  os.chdir("nauty25r9")
+  
+  command = "make clean"
+  run_command(command)
+    
+  command =  "rm -f dreadnaut makefile nauty.h"
+  run_command(command)
+  
+  os.chdir(cwd)
   os.chdir("source")
   os.chdir("c_libs")
   
@@ -121,6 +131,17 @@ def main():
   
   command = "%s %s -o %s %s %s " % (CC, "", "arvo_c", "arvo_c.c", "")
   run_command(command)
+  
+  os.chdir(cwd)
+  os.chdir("thirdparty")
+  
+  os.chdir("nauty25r9")
+  print "-------------"
+  
+  command = "./configure && make nauty"
+  run_command(command)
+  
+  print "-------------"
   
   # c libraries
   os.chdir(cwd)
