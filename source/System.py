@@ -36,6 +36,7 @@ class System(object):
     self.path = ""
     self.hashkey = ""
     self.hashkey_duplicate_cnt = 0
+    self.energyDefinition = None
     
     self.totalEnergy = 0.0
     self.NAtoms = NAtoms
