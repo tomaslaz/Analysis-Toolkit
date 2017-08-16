@@ -15,6 +15,7 @@ _constIniParamsCellVol = "Initial cell volume"
 _constOutOptiAchieved = "**** Optimisation achieved ****"
 _constOutFinalCartCoords = "Final cartesian coordinates of atoms :"
 _constOutFinalFracCoords = "Final fractional coordinates of atoms :"
+_constOutFinalFracCartCoords = "Final fractional/Cartesian coordinates of atoms :"
 _constOutFinalEnergy = "Final energy ="
 _constOutFinalParams = "Final cell parameters and derivatives"
 _constOutFinalDerivs = "Final internal derivatives :"
@@ -109,30 +110,41 @@ def readGulpOutput(system, fileName):
         array = line.split()
         
         if (len(array) == 7):
-          atomSpecie = array[1]
-          atomType =  array[2]
+          no_str = array[0]
 
-          # Do atom speces and types match?
-          if ((not system.specieList[system.specie[i]].lower() == atomSpecie.lower()) or
-              (not system.gulpAtomType[i] == atomType)):
+          try:
+            no_int = np.int16(no_str)
+          except:
+            no_int = -1
             
-            error = "atom types do not match %d : %s != %s" % (i, system.specieList[system.specie[i]], atomSpecie)
-            return False, error
-          
-          # Reading the atom positions
-          posx = float(array[3])
-          posy = float(array[4])
-          posz = float(array[5])
-          
-          # Updating the atom positions
-          system.pos[3*i]   = posx
-          system.pos[3*i+1] = posy
-          system.pos[3*i+2] = posz
-                     
-          i += 1
-          
-          if i == system.NAtoms:
+          if no_int == -1: 
             finalCoordsSectionSt = False
+          else:
+
+            atomSpecie = array[1]
+            atomType =  array[2]
+                        
+            # Do atom speces and types match?
+            if ((not system.specieList[system.specie[i]].lower() == atomSpecie.lower()) or
+                (not system.gulpAtomType[i] == atomType)):
+              
+              error = "atom types do not match %d : %s != %s" % (i, system.specieList[system.specie[i]], atomSpecie)
+              return False, error
+            
+            # Reading the atom positions
+            posx = float(array[3])
+            posy = float(array[4])
+            posz = float(array[5])
+            
+            # Updating the atom positions
+            system.pos[3*i]   = posx
+            system.pos[3*i+1] = posy
+            system.pos[3*i+2] = posz
+                       
+            i += 1
+            
+            if i == system.NAtoms:
+              finalCoordsSectionSt = False
                 
       if finalParamsSectionSt:
         
@@ -197,7 +209,8 @@ def readGulpOutput(system, fileName):
             iniParamsCount += 1
 
       # Found the beginning of the section
-      if ((_constOutFinalCartCoords in line) or (_constOutFinalFracCoords in line)):
+      if ((_constOutFinalCartCoords in line) or (_constOutFinalFracCoords in line) or 
+          (_constOutFinalFracCartCoords in line)):
         finalCoordsSectionSt = True
       
       # Found the beginning of the section
