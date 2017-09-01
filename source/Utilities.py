@@ -216,3 +216,17 @@ def modifyLineHashkey(line):
     line = string.replace(line, "]", "")
     
     return line
+  
+def replace_line(file_path, line_no, new_line):
+  """
+  Replaces a line in a file
+  
+  """
+  
+  with open(file_path) as fin:
+    lines = fin.readlines()
+    lines[line_no] = new_line + "\n"
+
+  with open(file_path, 'w') as fout:
+    for line in lines:
+        fout.write(line)
