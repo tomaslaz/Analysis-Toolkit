@@ -13,6 +13,7 @@ import glob
 import System
 import time
 import numpy as np
+import Gulp
 
 const_file_ext_xyz = "xyz"
 const_file_ext_out = "out"
@@ -335,7 +336,28 @@ def read_in_systems(systems_paths_list):
     systems_paths_iter += 1
     
   return systems
+
+def readGulpOutputPolymerInput(fileName):
+  """
+  Reads input information from a gulp ouput of a polymer simulation
   
+  """
+
+  polymer = None 
+  
+  # counting the number of cores
+  success, error, coreCount = Gulp.readGulpOutputPolymerInputCountCoresShells(fileName)
+  
+  if not success:
+    return success, error, polymer
+  
+  polymer = System.System(coreCount)
+  
+  # reading in the initial polymer coordinates and system parameters
+  success, error = Gulp.readGulpOutputPolymerInput(polymer, fileName)
+  
+  return success, error, polymer
+
 def readSystemFromFile(file_name):
   """
   Read a system from a file

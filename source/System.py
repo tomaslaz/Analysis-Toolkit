@@ -68,6 +68,7 @@ class System(object):
     self.gulpSpecies = {}
     self.gulpAtomType = ["" for x in range(self.NAtoms)]
     self.gulpAtomExtraInfo = ["" for x in range(self.NAtoms)]
+    self.gulpOccupancy = np.empty(self.NAtoms, np.float64)
     
     self.noOfcores = 0
     self.runTime = 0.0

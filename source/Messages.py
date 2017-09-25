@@ -75,4 +75,4 @@ def printAuthor(verbose=1):
   if verbose == 0:
     return
     
-  print bcolors.WARNING +"Written by" + bcolors.ENDC + " " + bcolors.OKGREEN + "Tomas Lazauskas"  + bcolors.ENDC + " " + bcolors.FAIL + "2016" + bcolors.ENDC
+  print bcolors.WARNING +"Written by" + bcolors.ENDC + " " + bcolors.OKGREEN + "Tomas Lazauskas" + bcolors.ENDC + " " + bcolors.FAIL + "2016-2017" + bcolors.ENDC
