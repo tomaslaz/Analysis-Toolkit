@@ -356,6 +356,14 @@ def readGulpOutputPolymerGulpOutput(fileName):
   # reading in the initial polymer coordinates and system parameters
   success, error = Gulp.readGulpOutputPolymerInput(polymer, fileName)
   
+  if not success:
+    return success, error, polymer
+  
+  polymer.iniPos = copy.deepcopy(polymer.pos)
+  
+  # reading the final coordinates and final cell parameter
+  success, error = Gulp.readGulpOutputPolymerOutput(polymer, fileName)
+  
   return success, error, polymer
 
 def readSystemFromFile(file_name):

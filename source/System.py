@@ -50,6 +50,7 @@ class System(object):
     
     self.specie = np.empty(self.NAtoms, np.int32)
     self.pos = np.empty(3*self.NAtoms, np.float64)
+    self.iniPos = np.empty(3*self.NAtoms, np.float64)
     self.minPos = np.empty(3, np.float64)
     self.maxPos = np.empty(3, np.float64)
     
