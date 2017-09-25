@@ -465,6 +465,8 @@ def readGulpOutputPolymerInput(polymer, fileName):
   
   success = True
   
+  iniParamsSectionSt = False
+  
   regionSt = False
   regionRead = True
   
@@ -472,6 +474,30 @@ def readGulpOutputPolymerInput(polymer, fileName):
   
   # counting the number of atoms (cores) in the polymer
   for line in f:
+    
+    # polymer cell parameter
+    if iniParamsSectionSt:
+      
+      lineStriped = line.strip()
+        
+      array = lineStriped.split()
+      arrayLen = len(array)
+      
+      if arrayLen == 3:
+        polymer.cellDims_ini[0] = np.float64(array[2])
+        polymer.cellDims_ini[1] = 0.0
+        polymer.cellDims_ini[2] = 0.0
+        
+        polymer.PBC[0] = 1
+        
+        iniParamsSectionSt = False
+        
+      elif arrayLen != 0:
+        iniParamsSectionSt = False
+            
+    # polymer cell parameter
+    if _constIniParamsCellParamPoly in line:
+      iniParamsSectionSt = True
     
     # reading the coordinates region
     if regionSt:
@@ -528,6 +554,11 @@ def readGulpOutputPolymerInput(polymer, fileName):
       
       break
   
+  if success:
+    # multiplying the fractional coordinate of the polymer with the cell parameter
+    for i in range(polymer.NAtoms):
+      polymer.pos[i*3] *= polymer.cellDims_ini[0]
+    
   return success, error
   
 def readGulpOutputPolymerInputCountCoresShells(fileName):

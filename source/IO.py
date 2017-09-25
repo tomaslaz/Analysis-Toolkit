@@ -337,7 +337,7 @@ def read_in_systems(systems_paths_list):
     
   return systems
 
-def readGulpOutputPolymerInput(fileName):
+def readGulpOutputPolymerGulpOutput(fileName):
   """
   Reads input information from a gulp ouput of a polymer simulation
   
