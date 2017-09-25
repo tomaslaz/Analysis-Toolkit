@@ -21,6 +21,26 @@ except:
 
 _systems_stats_file = "Stats.csv"
 
+def countUniqueStringOccurences(stringList):
+  
+  uniqueStringList = []
+  stringOccurenceCnt = []
+  
+  uniqueCnt = 0
+  for string in stringList:
+
+    if string not in uniqueStringList:
+      uniqueCnt += 1
+      
+      uniqueStringList.append(string)
+      stringOccurenceCnt.append(1)
+    
+    else:
+      idx = uniqueStringList.index(string)
+      stringOccurenceCnt[idx] += 1
+  
+  return uniqueStringList, stringOccurenceCnt
+
 def delaunay3DArea(system):
   """
   Estimates system's area by summing all the triangles from Delaunay's triangulation

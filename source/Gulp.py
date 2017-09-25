@@ -4,6 +4,7 @@ GULP module.
 @author Tomas Lazauskas
 """
 
+import copy
 import glob
 import numpy as np
 import os
@@ -245,7 +246,6 @@ def readGulpOutputPolymerOutput(polymer, fileName):
   
   """
   
-
   success = False
   error = ""
     
@@ -371,6 +371,7 @@ def readGulpOutputPolymerOutput(polymer, fileName):
             finalParamsCount += 1
         
         else:
+          
           finalParamsSectionSt = False
           
       # Found the beginning of the section
@@ -395,7 +396,10 @@ def readGulpOutputPolymerOutput(polymer, fileName):
     # multiplying the fractional coordinate of the polymer with the cell parameter
     for i in range(polymer.NAtoms):
       polymer.pos[i*3] *= polymer.cellDims_final[0]
-  
+    
+    polymer.cellDims = copy.deepcopy(polymer.cellDims_final)
+    polymer.cellAngles = copy.deepcopy(polymer.cellAngles_final)
+    
   success = True
   return success, error
 
@@ -482,23 +486,23 @@ def readGulpOutputPolymerInput(polymer, fileName):
           polymer.gulpAtomType[atomsCnt] = lineArr[2]
           
           # reading coordinates
-          if atomsCnt == 0:
+          if lineLen == 8:
             for j in range(3):
               polymer.pos[atomsCnt*3 + j] = float(lineArr[j+3])
-          else:
+          elif lineLen == 11:
             for j in range(3):
               polymer.pos[atomsCnt*3 + j] = float(lineArr[j*2+3])
           
           # reading charge
-          if atomsCnt == 0:
+          if lineLen == 8:
             polymer.charge[atomsCnt] = float(lineArr[6])
-          else:
+          elif lineLen == 11:
             polymer.charge[atomsCnt] = float(lineArr[9])
           
           # reading occupancy
-          if atomsCnt == 0:
+          if lineLen == 8:
             polymer.gulpOccupancy[atomsCnt] = float(lineArr[7])
-          else:
+          elif lineLen == 11:
             polymer.gulpOccupancy[atomsCnt] = float(lineArr[10])
             
           atomsCnt += 1
@@ -517,6 +521,9 @@ def readGulpOutputPolymerInput(polymer, fileName):
     # multiplying the fractional coordinate of the polymer with the cell parameter
     for i in range(polymer.NAtoms):
       polymer.pos[i*3] *= polymer.cellDims_ini[0]
+      
+    polymer.cellDims = copy.deepcopy(polymer.cellDims_ini)
+    polymer.cellAngles = copy.deepcopy(polymer.cellAngles_ini)
     
   return success, error
   
