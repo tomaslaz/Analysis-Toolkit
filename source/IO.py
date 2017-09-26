@@ -290,23 +290,6 @@ def removeFile(filePath):
   
   return success, error
 
-def stringInFile(strExpr, fileObject):
-  """
-  Checks if a string is in a file and rewinds the file to the beginning
-  
-  """
-  
-  found = False
-  
-  for line in fileObject:
-    if strExpr in line:
-      found = True
-      break
-  
-  fileObject.seek(0, 0)
-  
-  return found
-
 def read_in_systems(systems_paths_list):
   """
   Reads in systems form a list of paths and returns a system list

@@ -10,7 +10,7 @@ import numpy as np
 import os
 import sys
 
-import IO
+import Utilities
 
 _constIniParams = "Cell parameters (Angstroms/Degrees):"
 _constIniParamsCellVol = "Initial cell volume"
@@ -61,7 +61,7 @@ def readGulpOutput(system, fileName):
     return success, error, system
     
   # optimisation achieved?
-  success = IO.stringInFile(_constOutOptiAchieved, f)
+  success = Utilities.stringInFile(_constOutOptiAchieved, f)
   success = True
   
   if not success:
@@ -260,7 +260,7 @@ def readGulpOutputPolymerOutput(polymer, fileName):
     return success, error, polymer
     
   # optimisation achieved?
-  success = IO.stringInFile(_constOutOptiAchieved, f)
+  success = Utilities.stringInFile(_constOutOptiAchieved, f)
   success = True
   
   if not success:

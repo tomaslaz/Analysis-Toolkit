@@ -167,6 +167,23 @@ def sort_systems(systems_list):
     
     if (i % 100 == 0): print "Sorting %d/%d" % (i+1, systems_list_len)
 
+def stringInFile(strExpr, fileObject):
+  """
+  Checks if a string is in a file and rewinds the file to the beginning
+  
+  """
+  
+  found = False
+  
+  for line in fileObject:
+    if strExpr in line:
+      found = True
+      break
+  
+  fileObject.seek(0, 0)
+  
+  return found
+
 def systems_statistics(systems_list, dir_path=None):
   """
   Generates statistics about the FHI-aims simulations
