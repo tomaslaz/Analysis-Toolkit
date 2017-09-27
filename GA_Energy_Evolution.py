@@ -206,7 +206,7 @@ def plotGASimStatistics(statistics):
 
   ax1.set_ylim([ystart, yend])
 
-  ax1.yaxis.set_ticks(np.arange(ystart, yend, energyRange/11.0))
+  ax1.yaxis.set_ticks(np.round(np.arange(ystart, yend, energyRange/10.0),3))
 
   plt.subplots_adjust(left=0.15, bottom=0.11, top=0.98, right=0.97)
 
