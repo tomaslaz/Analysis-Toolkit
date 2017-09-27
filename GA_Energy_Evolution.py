@@ -213,7 +213,7 @@ def plotGASimStatistics(statistics):
 
   plt.grid()
 
-  fig.savefig('GA_top_analysis.png')
+  fig.savefig('GA_top_analysis.pdf')
 
 def readGAStatsFile(gaIter, filePath, prevStats):
   """
