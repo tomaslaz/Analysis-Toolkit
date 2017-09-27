@@ -17,7 +17,7 @@ import time
 # Number of structres to be presented on the graph
 lowEnergyCnt = 20
 # Energy range to be presented on the graph
-energyRange = 5.0
+energyRange = 1.0
 
 # Settings below should not be changed if you are not sure what they are for
 #---------------------------------------------------------------------------
@@ -188,7 +188,7 @@ def plotGASimStatistics(statistics):
   ax1.plot(x, la, c='r', linewidth=3.0)
 
   ax1.set_xlabel('GA iteration', fontsize=18)
-  ax1.set_ylabel('Energy (eV)', fontsize=18)
+  ax1.set_ylabel(r'$E$ (eV)', fontsize=18)
 
   ystart, yend = ax1.get_ylim()
 
@@ -206,7 +206,7 @@ def plotGASimStatistics(statistics):
 
   ax1.set_ylim([ystart, yend])
 
-  ax1.yaxis.set_ticks(np.arange(ystart, yend, energyRange/25.0))
+  ax1.yaxis.set_ticks(np.arange(ystart, yend, energyRange/11.0))
 
   plt.subplots_adjust(left=0.15, bottom=0.11, top=0.98, right=0.97)
 
