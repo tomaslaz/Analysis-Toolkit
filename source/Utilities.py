@@ -8,6 +8,7 @@ Utilities module.
 """
 
 import copy
+import math
 import os
 import random
 import string
@@ -275,7 +276,7 @@ def calculateVibrationalEntropy(eigenValues, temperature):
   Calculates the vibrational entropy Svib of a set of harmonic vibrations
   """
 
-  const = temperature * boltzmanConst
+  const = temperature * Constants.kB
   
   # Expression from DOI:10.1016/j.cplett.2008.01.018
   sum = 0.0
@@ -287,6 +288,6 @@ def calculateVibrationalEntropy(eigenValues, temperature):
           
     sum += math.log(valueSinh)
     
-  vibEnergy = sum*boltzmanConst*temperature
+  vibEnergy = sum * Constants.kB * temperature
   
   return vibEnergy
