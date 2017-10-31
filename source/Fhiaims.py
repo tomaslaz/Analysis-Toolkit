@@ -43,6 +43,13 @@ _const_spin_chan = "Spin channel"
 
 _const_homo_lumo = "Overall HOMO-LUMO gap:"
 
+_const_ZPE = "Cumulative ZPE "
+_const_without_six = "without first six eigenmodes"
+_const_all_freq = "List of all frequencies found:"
+
+_const_total_energy = "| Total energy of the DFT / Hartree-Fock s.c.f. calculation      :"
+_const_no_atoms = "Number of atoms"
+
 def _readAimsStructure(geometryFile, outputFile, relaxed=True, eigenvalues=False):
   """
   Reads in FHI-aims structure
@@ -375,3 +382,89 @@ def _readAimsOutput(inputFile, system, relaxed=True, eigenvalues=False):
     error = __name__ + ": data has not been read from: " + inputFile
   
   return success, error
+
+def _readAimsFrequenciesFile(fileName):
+  """
+  Reads in FHI-aims frequencies file 
+  
+  """
+  
+  cZPE = 0.0
+  wZPE = 0.0
+  
+  result = None
+
+  if not checkFile(fileName):    
+    return result
+  
+  try:
+    fin = open(fileName, "r")
+    
+  except:
+    return result
+    
+  sectionStarted = False
+  sectionEnded = False
+  lineCnt = 0
+  
+  eigenValues = []
+  
+  for line in fin:
+    line = line.strip()
+        
+    if _const_ZPE in line:
+      cZPE = float(line.split()[4])
+    
+    if _const_without_six in line:
+      wZPE = float(line.split()[6])
+      
+    if _const_all_freq in line:
+      sectionStarted = True
+    
+    if sectionStarted and not sectionEnded:
+      
+      if len(line) == 0:
+        sectionEnded = True
+    
+    if sectionStarted and not sectionEnded:
+    
+      if lineCnt > 1:
+        array = line.split()
+        
+        eigenValues.append(array[1])
+      
+      lineCnt += 1
+    
+  fin.close()
+  
+  result = np.array(eigenValues[6:], np.float64)
+  
+  return result, cZPE, wZPE
+
+def _readAimsOutputEnergyAtoms(inputFile):
+  """
+  Reads in FHI-aims output as a system.
+  
+  """
+  
+  energy = None
+
+  try:
+    fin = open(inputFile, "r")
+    
+  except:    
+    return energy
+  
+  for line in fin:
+    
+    fields = line.strip().split()
+  
+    if _const_total_energy in line:
+      energy = float(fields[11])
+      
+    if ((len(fields) > 5) and (' '.join(fields[1:4]) == _const_no_atoms)):
+      noOfAtoms = int(fields[5])
+      
+  fin.close()
+  
+  return energy, noOfAtoms
