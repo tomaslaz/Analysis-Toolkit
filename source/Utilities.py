@@ -21,6 +21,8 @@ except:
 
 _systems_stats_file = "Stats.csv"
 
+import Constants
+
 def countUniqueStringOccurences(stringList):
   
   uniqueStringList = []
@@ -267,3 +269,24 @@ def replace_line(file_path, line_no, new_line):
   with open(file_path, 'w') as fout:
     for line in lines:
         fout.write(line)
+        
+def calculateVibrationalEntropy(eigenValues, temperature):
+  """
+  Calculates the vibrational entropy Svib of a set of harmonic vibrations
+  """
+
+  const = temperature * boltzmanConst
+  
+  # Expression from DOI:10.1016/j.cplett.2008.01.018
+  sum = 0.0
+  for i in range(len(eigenValues)):
+      
+    value = (planckConst * ( Constants.lightSpeedConts*eigenValues[i] )) / (2.0 * const)
+        
+    valueSinh = 2.0 * math.sinh(value)
+          
+    sum += math.log(valueSinh)
+    
+  vibEnergy = sum*boltzmanConst*temperature
+  
+  return vibEnergy

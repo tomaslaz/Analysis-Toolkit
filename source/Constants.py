@@ -1,7 +1,11 @@
 import os
 
 # Boltzman constant
-kB = 0.0257/298
+kB = 8.6173324 * 0.00001 # eV/K
+planckConst = 4.13566766225 * (10**(-15))
+reducedPlanckConst = 6.582119514 * (10**(-16))
+avogadroConst = 6.022140857* (10**(23))
+lightSpeedConts = 29979245800 # cm/s
 
 verbosity = 0
 
