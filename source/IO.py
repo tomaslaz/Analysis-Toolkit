@@ -407,7 +407,7 @@ def readSystemFromFileCAR(fileName):
       if ("end" in line):
         break
       
-      if (i >= 6):
+      if (i >= 5):
         totAtomCnt += 1
       
     f.close()
@@ -427,7 +427,7 @@ def readSystemFromFileCAR(fileName):
       if ("end" in line):
         break
       
-      if (i >= 6):
+      if (i >= 5):
         array = line.split()
         
         sym = array[7].strip()
