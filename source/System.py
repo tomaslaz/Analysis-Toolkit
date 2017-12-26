@@ -324,13 +324,13 @@ class System(object):
     # calculate the geometrical measures
     self.calc_arvo_geo_measures(radius)
       
-  def calc_del_area(self):
+  def calc_del_area(self, radius=None, render=False):
     """
     Calculates surface energy using Delaunay's triangulation
     
     """
     
-    delArea = Utilities.delaunay3DArea(self)
+    delArea = Utilities.delaunay3DArea(self, radius=radius, render=render)
       
     if delArea is not None:
       self.del_calc = True

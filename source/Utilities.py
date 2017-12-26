@@ -44,14 +44,17 @@ def countUniqueStringOccurences(stringList):
   
   return uniqueStringList, stringOccurenceCnt
 
-def delaunay3DArea(system):
+def delaunay3DArea(system, radius=None, render=False):
   """
   Estimates system's area by summing all the triangles from Delaunay's triangulation
   
   """
-  
-  delaunayAlpha = 3.0
-  delaunayTolerance = 2.9
+  if radius is None:
+    delaunayAlpha = 2.0
+  else:
+    delaunayAlpha = radius
+    
+  delaunayTolerance = 1.0
   
   clusterPoints = vtk.vtkPoints()
     
@@ -85,7 +88,41 @@ def delaunay3DArea(system):
     
     triangleArea = vtk.vtkTriangle.TriangleArea(p1, p2, p3)
     surfaceArea += triangleArea
-   
+  
+  if render:
+    
+    # Shrink the result to help see it better.
+    shrink = vtk.vtkShrinkFilter()
+    shrink.SetInputConnection(delaunayCluster.GetOutputPort())
+    shrink.SetShrinkFactor(0.9)
+    
+    map = vtk.vtkDataSetMapper()
+    map.SetInputConnection(shrink.GetOutputPort())
+    
+    triangulation = vtk.vtkActor()
+    triangulation.SetMapper(map)
+    triangulation.GetProperty().SetColor(1, 0, 0)
+    
+    
+    ren = vtk.vtkRenderer()
+    renWin = vtk.vtkRenderWindow()
+    renWin.AddRenderer(ren)
+    iren = vtk.vtkRenderWindowInteractor()
+    iren.SetRenderWindow(renWin)
+    
+    # Add the actors to the renderer, set the background and size
+    ren.AddActor(triangulation)
+    ren.SetBackground(1, 1, 1)
+    renWin.SetSize(250, 250)
+    renWin.Render()
+    
+    cam1 = ren.GetActiveCamera()
+    cam1.Zoom(1.5)
+    
+    iren.Initialize()
+    renWin.Render()
+    iren.Start()
+  
   return surfaceArea
 
 def distanceSq(pos1x, pos1y, pos1z, pos2x, pos2y, pos2z):
