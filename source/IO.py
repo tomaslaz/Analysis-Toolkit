@@ -378,6 +378,93 @@ def readSystemFromFile(file_name):
   
   return system, error
 
+def readSystemFromFileARC(fileName):
+    """
+    Reads in the structure of a system from an ARC file.
+    
+    """
+    
+    system = None
+    
+    if not os.path.isfile(fileName):
+        print "File [%s] doesn't exist." % (fileName)
+        return system
+    
+    try:
+        f = open(fileName)
+    except:
+        print "Cannot read file [%s]" % (fileName)
+        return system
+    
+    i = 0
+    totAtomCnt = 0
+    
+    for line in f:
+      
+      i += 1
+      line = line.strip()
+      
+      if ("end" in line):
+        break
+      
+      if (i > 5):
+        totAtomCnt += 1
+      
+    f.close()
+    
+    system = System.System(totAtomCnt)
+    
+    f = open(fileName)
+    
+    i = 0
+    atomCnt = 0
+    
+    for line in f:
+      
+      i += 1
+      line = line.strip()
+      
+      if ("end" in line):
+        break
+      
+      if (i > 5):
+        array = line.split()
+        
+        sym = array[7].strip()
+        
+        if sym not in system.specieList:
+          system.addSpecie(sym)
+       
+        specInd = system.specieIndex(sym)
+         
+        system.specieCount[specInd] += 1
+         
+        system.specie[atomCnt] = specInd
+         
+        for j in range(3):
+          system.pos[atomCnt*3 + j] = float(array[j+1])
+        
+        system.charge[atomCnt] = float(array[8])
+        atomCnt += 1
+      
+      # reading in lattice parameters
+      elif (i == 5):
+        array = line.split()
+        
+        # cell dimensions
+        system.cellDims[0] = float(array[1])
+        system.cellDims[1] = float(array[2])
+        system.cellDims[2] = float(array[3])
+        
+        # cell angles
+        system.cellAngles[0] = array[4]
+        system.cellAngles[1] = array[5]
+        system.cellAngles[2] = array[6]
+        
+    f.close()
+
+    return system
+
 def readSystemFromFileCAR(fileName):
     """
     Reads in the structure of a system from a CAR file.
