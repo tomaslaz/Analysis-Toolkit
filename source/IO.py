@@ -414,6 +414,9 @@ def readSystemFromFileARC(fileName):
     
     system = System.System(totAtomCnt)
     
+    # Adding system name
+    system.name = os.path.splitext(os.path.basename(fileName))[0]
+    
     f = open(fileName)
     
     i = 0

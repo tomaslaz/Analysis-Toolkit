@@ -309,7 +309,7 @@ class RDF(object):
     ax.set_xlabel(r'r($\AA$)', fontsize=22)
     ax.set_xlim([0, self.__rdfCutOff])
     ax.xaxis.set_ticks(np.arange(0, self.__rdfCutOff+1, 1.0))
-    
+        
     #ax.set_yscale('log')
     #ax.set_ylabel(r'g(r)', fontsize=18)
     #ax.set_ylim([10**-7, 10**-3])
@@ -352,8 +352,8 @@ def cmdLineArgs():
   parser.add_option("-p", "--pairs", dest="pairs", default="", type="string",
     help="A list of pairs for which RDF is plotted. Default = ''")
 
-  parser.add_option("-c", "--cubic", dest="cubicPBC", default=False, action="store_true",
-    help="Apply cubic periodicity. Default = False")
+  #parser.add_option("-c", "--cubic", dest="cubicPBC", default=False, action="store_true",
+  #  help="Apply cubic periodicity. Default = False")
 
   parser.disable_interspersed_args()
   
@@ -376,14 +376,28 @@ if __name__ == "__main__":
   
   options, args = cmdLineArgs()
   
-  fileName = args[0]
+  filePath = args[0]
   
-  print "Reading: ", fileName
+  print "Reading: ", filePath
   
-  system = IO.readSystemFromFileXYZ(fileName)
+  # splitting file path
+  fileName, fileExtension = os.path.splitext(filePath)
+
+  # reading in the system
+  if (fileExtension.lower() == ".xyz"):
+    system = IO.readSystemFromFileXYZ(filePath)
+  
+  elif (fileExtension.lower() == ".arc"):
+    system = IO.readSystemFromFileARC(filePath)
+    
+  else:
+    print "Unknown file format."
+    sys.exit()
+    
   
   # the system should not be moved if periodic boundaries are applied
   if not system.PBC[0] and not system.PBC[1] and not system.PBC[2]:
+    print "System is periodic, moving to the center of geometry"
     system.calcCOG()
     system.moveToCOG()
     
