@@ -107,7 +107,7 @@ if __name__ == "__main__":
   if success:
     
     # reading in the data file
-    data_array = np.loadtxt(data_file, delimiter=',')
+    data_array = np.genfromtxt(data_file, delimiter=',')
     
     # calculating the statistics
     calculate_thermaly_averaged_statistics(data_array, temps, options.unique)
