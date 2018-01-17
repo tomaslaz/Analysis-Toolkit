@@ -92,12 +92,14 @@ if __name__ == "__main__":
   
   if success:
     success, error = check_systems(input_system, final_system)
-  
+    
   if success:
     vac_radius = np.float(args[2])
-  
-  success, error = Defects.find_defects(input_system, final_system, vac_radius)
-  
+    success, error = Defects.find_defects(input_system, final_system, vac_radius)
+    
+  else:
+    print "Error: " + error
+    
   if success:
     
     final_system.printDefectsPositions()
