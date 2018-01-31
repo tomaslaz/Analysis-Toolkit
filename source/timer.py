@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import time                                                
-from cat import messages
+import Messages
 
 def timeit(method):
   
