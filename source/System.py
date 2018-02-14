@@ -59,6 +59,7 @@ class System(object):
     self.com = np.empty(3, np.float64)
     self.cog = np.empty(3, np.float64)
     self.momentOfInertia = np.zeros([3, 3], np.float64)
+    self.avgDistToCog = np.zeros(1, np.float64)
     
     dt = np.dtype((str, 5))
     self.specieList = np.empty(0, dt)
@@ -171,6 +172,28 @@ class System(object):
         self.cog[j] += self.pos[3*i + j]
 
     self.cog = self.cog / self.NAtoms
+  
+  def calcAvgDistToCOG(self):
+    """
+    Calculates average distance to COG
+    
+    """
+    
+    self.avgDistToCog = 0.0
+    
+    self.calcCOG()
+    
+    distTotSum = 0.0
+    
+    for i in range(self.NAtoms): 
+      
+      distSq = 0.0
+      for j in range(3):
+        distSq += (self.pos[3*i + j] - self.cog[j])**2
+      
+      distTotSum += math.sqrt(distSq)
+    
+    self.avgDistToCog = distTotSum / np.float64(self.NAtoms)
     
   def calcCOM(self):
       
