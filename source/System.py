@@ -173,7 +173,7 @@ class System(object):
 
     self.cog = self.cog / self.NAtoms
   
-  def calcAvgDistToCOG(self):
+  def calcAvgDistToCOG(self, squared=False):
     """
     Calculates average distance to COG
     
@@ -191,7 +191,10 @@ class System(object):
       for j in range(3):
         distSq += (self.pos[3*i + j] - self.cog[j])**2
       
-      distTotSum += math.sqrt(distSq)
+      if not squared:
+        distTotSum += math.sqrt(distSq)
+      else:
+        distTotSum += distSq
     
     self.avgDistToCog = distTotSum / np.float64(self.NAtoms)
     
