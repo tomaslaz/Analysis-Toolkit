@@ -50,6 +50,8 @@ _const_all_freq = "List of all frequencies found:"
 _const_total_energy = "| Total energy of the DFT / Hartree-Fock s.c.f. calculation      :"
 _const_no_atoms = "Number of atoms"
 
+_const_total_energy_corrected = "Total energy corrected "
+
 def _readAimsStructure(geometryFile, outputFile, relaxed=True, eigenvalues=False):
   """
   Reads in FHI-aims structure
@@ -468,3 +470,40 @@ def _readAimsOutputEnergyAtoms(inputFile):
   fin.close()
   
   return energy, noOfAtoms
+
+def getRelaxStepsEnergies(outputFile):
+  """
+  Counts the number of relaxation steps
+  
+  """
+  
+  relax_steps = []
+  error = None
+  success = IO.checkFile(outputFile)
+  
+  if not success:
+    error = __name__ + ": Cannot locate: " + outputFile
+    return success, error, relax_steps
+
+  try:
+    fout = open(outputFile, "r")
+    
+  except:
+    success = False
+    error = __name__ + ": Cannot open: " + outputFile
+    return success, error, relax_steps
+  
+  for line in fout:
+    # checks if the run was successful
+    if _const_nice_day_line in line:
+      success = True
+    
+    # reads in energy
+    if _const_total_energy_corrected in line:
+      energy = np.float128((line.split(":")[1]).split("eV")[0].strip())
+      
+      relax_steps.append(energy)
+
+  fout.close()
+  
+  return success, error, relax_steps
