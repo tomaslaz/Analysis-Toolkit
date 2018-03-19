@@ -116,7 +116,7 @@ def countMixAtoms(fileName):
   success = True
   return success, error, atomsCnt
 
-def get_unique_systems_hashkeys(systems_list):
+def get_unique_systems_hashkeys(systems_list, hashkeyRadius=None):
   """
   Evaluates the hashkeys
   
@@ -133,7 +133,7 @@ def get_unique_systems_hashkeys(systems_list):
   system_cnt = 0
   for system in systems_list:
     
-    systems_list[system_cnt].calculateHashkey()
+    systems_list[system_cnt].calculateHashkey(hashkeyRadius=hashkeyRadius)
     hashkey = systems_list[system_cnt].hashkey
       
     try:
@@ -145,6 +145,12 @@ def get_unique_systems_hashkeys(systems_list):
     if hashkey_idx != -1:
       hashkeys_count[hashkey_idx] += 1
       
+      prevEnergy = unique_systems[hashkey_idx].totalEnergy
+      currentEnergy = systems_list[system_cnt].totalEnergy
+      
+      if currentEnergy < prevEnergy:
+        unique_systems[hashkey_idx] = copy.deepcopy(systems_list[system_cnt])
+        
     # saving only unique: 
     else:
       unique_cnt += 1

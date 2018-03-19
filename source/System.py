@@ -531,13 +531,14 @@ class System(object):
             self.minPos[i] = self.pos[i::3].min()
             self.maxPos[i] = self.pos[i::3].max()
   
-  def makeGraphString(self):
+  def makeGraphString(self, hashkeyRadius=None):
     """
     Prepares a string which contains information of the system as a graph.
     
     """
     
-    hashkeyRadius = Atoms.getRadius(self) + 1.0
+    if hashkeyRadius is None:
+      hashkeyRadius = Atoms.getRadius(self) + 1.0
     
     radiusSq = hashkeyRadius * hashkeyRadius
         
@@ -587,14 +588,14 @@ class System(object):
     
     return strLine
   
-  def calculateHashkey(self):
+  def calculateHashkey(self, hashkeyRadius=None):
     """
     Calculates system's hashkey
     
     """
     
     # obtain system's representation as a graph
-    graphString = self.makeGraphString()
+    graphString = self.makeGraphString(hashkeyRadius=hashkeyRadius)
     
     # run dreadnaut and get the hashkey
     self.hashkey = Utilities.runDreadnaut(graphString)
