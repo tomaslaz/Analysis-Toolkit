@@ -47,7 +47,9 @@ if __name__ == "__main__":
   systems = IO.read_in_systems(systems_files_list)
   
   # getting the hashkeys and finding the unique ones
-  unique_systems = IO.get_unique_systems_hashkeys(systems)
+  # 2.98
+  # GaAs - 2.899
+  unique_systems = IO.get_unique_systems_hashkeys(systems, 2.899)
   
   # sorting the systems
   Utilities.sort_systems(unique_systems)
