@@ -119,7 +119,7 @@ if __name__ == "__main__":
       ok, error = convertFile(cluster, outputFile, controlFile)
   
   elif inFileName == ".output":
-     print "Not implemented yet."
+     print ("Not implemented yet.")
      
   else:
     
@@ -137,14 +137,14 @@ if __name__ == "__main__":
       _, _, cluster = Fhiaims._readAimsStructure("geometry.in", inFileName)     
      
     else:
-      print "Unrecognised input file ", inFileName, " format"
+      print ("Unrecognised input file ", inFileName, " format")
       sys.exit()
       
     ok, error = convertFile(cluster, outFileName, controlFile)
     
     if ok:
-      print "Finished!"
+      print ("Finished!")
     
     else:
-      print "Error: ", error
+      print ("Error: ", error)
       

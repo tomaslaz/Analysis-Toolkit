@@ -49,7 +49,7 @@ if __name__ == "__main__":
   # getting the hashkeys and finding the unique ones
   # 2.98
   # GaAs - 2.899
-  unique_systems = IO.get_unique_systems_hashkeys(systems, 2.899)
+  unique_systems = IO.get_unique_systems_hashkeys(systems, 3.34)
   
   # sorting the systems
   Utilities.sort_systems(unique_systems)

@@ -12,6 +12,7 @@ import math
 import os
 import random
 import string
+import sys
 import subprocess
 
 try:
@@ -22,7 +23,7 @@ except:
 
 _systems_stats_file = "Stats.csv"
 
-import Constants
+from . import Constants
 
 def countUniqueStringOccurences(stringList):
   
@@ -181,7 +182,7 @@ def run_sub_process(command, verbose=0):
   """
   
   if verbose:
-    print command
+    print (command)
   
   process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   output, stderr = process.communicate()
@@ -205,7 +206,7 @@ def sort_systems(systems_list):
         systems_list[i] = copy.deepcopy(systems_list[j])
         systems_list[j] = copy.deepcopy(temp)
     
-    if (i % 100 == 0): print "Sorting %d/%d" % (i+1, systems_list_len)
+    if (i % 100 == 0): print ("Sorting %d/%d" % (i+1, systems_list_len))
 
 def stringInFile(strExpr, fileObject):
   """
@@ -253,34 +254,36 @@ def systems_statistics(systems_list, dir_path=None):
   f.close()
   
 def runDreadnaut(graphString):
-   """
-   Runs dreadnaut on the given graph
-   
-   """
-   
-   if graphString is None:
-       return None
-   
-   dreadnaut = getPathToDreadnaut()
+  """
+  Runs dreadnaut on the given graph
+  
+  """
+  
+  if graphString is None:
+      return None
+  
+  dreadnaut = getPathToDreadnaut()
+  
+  command = "%s << %s" % (dreadnaut, graphString)
 
-   command = "%s << %s" % (dreadnaut, graphString)
-
-   output, stderr, status = run_sub_process(command)
+  output, stderr, status = run_sub_process(command)
+  
+  output_string = output.decode("utf-8") 
+    
+  if status:
+      print ("WARNING: dreadnaut FAILED")
+      print (stderr)
+      return None
    
-   if status:
-       print "WARNING: dreadnaut FAILED"
-       print stderr
-       return None
-   
-   array = output.strip().split("\n")
-   line = array[-1].strip()
-       
-   if line[:1] == "[" and line[-1:] == "]":
-       return modifyLineHashkey(line)
-   
-   else:
-       print "WARNING: dreadnaut FAILED"
-       return None
+  array = output_string.strip().split("\n")
+  line = array[-1].strip()
+      
+  if line[:1] == "[" and line[-1:] == "]":
+      return modifyLineHashkey(line)
+  
+  else:
+      print ("WARNING: dreadnaut FAILED")
+      return None
      
 def modifyLineHashkey(line):
     """
@@ -288,9 +291,9 @@ def modifyLineHashkey(line):
     
     """
     
-    line = string.replace(line, " ", "_")
-    line = string.replace(line, "[", "")
-    line = string.replace(line, "]", "")
+    line = line.replace(" ", "_")
+    line = line.replace("[", "")
+    line = line.replace("]", "")
     
     return line
   

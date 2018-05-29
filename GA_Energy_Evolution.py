@@ -198,7 +198,7 @@ def plotGASimStatistics(statistics):
   ystart = miny
   yend   = maxy
 
-  #lenStats = 2500
+  lenStats = 1800
 
   ax1.set_xlim([0, lenStats])
 

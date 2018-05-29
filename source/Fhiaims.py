@@ -14,8 +14,8 @@ import shutil
 import socket
 import subprocess
 
-import IO
-import System
+from . import IO
+from . import System
 
 import numpy as np
 

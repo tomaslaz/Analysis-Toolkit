@@ -12,8 +12,8 @@ import math
 import numpy as np
 import os
 
-import Atoms
-import Utilities
+from .import Atoms
+from . import Utilities
 from scipy.constants.constants import Rydberg
 
 _const_zero_value = 0.0
@@ -446,18 +446,18 @@ class System(object):
     """
     
     for i in xrange(len(self.vacancies)):            
-      print "Vacancy %d : %s %f %f %f" % (i+1, self.specieList[self.vacSpecie[i]], 
-                                          self.vacPos[3*i], self.vacPos[3*i+1], self.vacPos[3*i+2])
+      print ("Vacancy %d : %s %f %f %f" % (i+1, self.specieList[self.vacSpecie[i]], 
+                                          self.vacPos[3*i], self.vacPos[3*i+1], self.vacPos[3*i+2]))
       
     for i in xrange(len(self.interstitials)):
-      print "Interstitial %d : %s %f %f %f" % (i+1, self.specieList[self.intSpecie[i]], 
-                                               self.intPos[3*i], self.intPos[3*i+1], self.intPos[3*i+2])
+      print ("Interstitial %d : %s %f %f %f" % (i+1, self.specieList[self.intSpecie[i]], 
+                                               self.intPos[3*i], self.intPos[3*i+1], self.intPos[3*i+2]))
   
     for i in xrange(len(self.antisites)):
-      print "Antisite %d : %s on %s : %f %f %f on %f %f %f" % (i+1, 
+      print ("Antisite %d : %s on %s : %f %f %f on %f %f %f" % (i+1, 
         self.specieList[self.onAntSpecie[i]], self.specieList[self.antSpecie[i]],
         self.onAntSpecie[3*i], self.onAntSpecie[3*i+1], self.onAntSpecie[3*i+2],
-        self.antPos[3*i], self.antPos[3*i+1], self.antPos[3*i+2])
+        self.antPos[3*i], self.antPos[3*i+1], self.antPos[3*i+2]))
 
   def removeAtom( self, index ):
     """

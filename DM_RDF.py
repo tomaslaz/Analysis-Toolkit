@@ -9,13 +9,14 @@ A script to calculate the radial distribution function
 
 """
 
+from __future__ import print_function
+
 import copy
 import math
 import os
 import sys
 
 import matplotlib
-matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -40,6 +41,18 @@ class Pair(object):
     self.pairName = "%s-%s" % (self.el1, self.el2)
     self.ndist = np.zeros(maxRdfDist, np.int32)
     self.gr = np.zeros(maxRdfDist, np.float64)
+  
+  def __cmp__(self, other):
+    """
+    Comparison
+    
+    """
+    
+    return cmp(self.pairName, other.pairName)
+  
+  def __lt__(self, other):
+    
+    return self.pairName < other.pairName
 
 class RDF(object):
   """
@@ -47,7 +60,7 @@ class RDF(object):
   
   """
   
-  def __init__(self, system, rdfCutOff, rdfStepSize, sigma, pairs, normalize=False):
+  def __init__(self, system, rdfCutOff, rdfStepSize, sigma, pairs, colours=None, normalize=False):
     """
     Constructor
     
@@ -79,7 +92,7 @@ class RDF(object):
     
     self.__findAtomsToAnalyse()
     
-    self.__generateColours()
+    self.__generateColours(colours)
       
   def _calcRDF(self):
     """
@@ -161,7 +174,7 @@ class RDF(object):
     
     setPairsArr = setPairs.split(",")
     setPairsArrLen = len(setPairsArr)
-        
+    
     pairs = []
     pairsIdx = {}
     
@@ -169,8 +182,9 @@ class RDF(object):
     
     if setPairsArrLen > 0:
       for k in range(setPairsArrLen):
-        for i in range(self.specieListLen-1):
-          for j in xrange(i+1, self.specieListLen):
+        
+        for i in range(self.specieListLen):
+          for j in range(i, self.specieListLen):
                         
             pairName =  "%s-%s" % (self.specieList[i], self.specieList[j])
             pairNameInv = "%s-%s" % (self.specieList[j], self.specieList[i])
@@ -181,10 +195,10 @@ class RDF(object):
                 
               pair = Pair(self.specieList[i], self.specieList[j], self.maxRdfDist)
               pairs.append(pair)
-    
+              
     else:
-      for i in range(self.specieListLen-1):
-        for j in xrange(i+1, self.specieListLen):
+      for i in range(self.specieListLen):
+        for j in range(self.specieListLen):
                       
           pairName =  "%s-%s" % (self.specieList[i], self.specieList[j])
           pairNameInv = "%s-%s" % (self.specieList[j], self.specieList[i])
@@ -194,33 +208,10 @@ class RDF(object):
             
           pair = Pair(self.specieList[i], self.specieList[j], self.maxRdfDist)
           pairs.append(pair)
-                      
-    for i in range(self.specieListLen):
-      
-      pairName =  "%s-%s" % (self.specieList[i], self.specieList[i])
-      
-      foundPair = False
-      
-      if setPairsArrLen > 0:
-        for k in range(setPairsArrLen):
-          if pairName == setPairsArr[k]:
-            foundPair = True
-            break
-      
-      if not foundPair:
-        continue
-      
-      pairsIdx[pairName] = pairsCnt
-      pairsCnt += 1
-          
-      pair = Pair(self.specieList[i], self.specieList[i], self.maxRdfDist)
-      pairs.append(pair)
     
     if pairsCnt < 1:
       sys.exit("Could not match the pairs in the system.")
-    
-    pairs.sort()
-    
+        
     # self.NPairs = self.specieListLen + int(math.floor(((self.specieListLen-1)*self.specieListLen)/2))
     self.NPairs = pairsCnt 
     
@@ -276,14 +267,21 @@ class RDF(object):
       
     return pairIdx
   
-  def __generateColours(self):
+  def __generateColours(self, colours):
     """
     Generate a list of colours for plotting
     
     """
     
-    self._colours = ['b', 'r', 'g', 'y', 'c', 'm', 'darkblue', 'sienna', 'indigo', 'orange', 'grey', 'brown']
-
+    if ((colours == None) or (colours == "")):
+      self._colours = ['b', 'r', 'g', 'y', 'c', 'm', 'darkblue', 'sienna', 'indigo', 'orange', 'grey', 'brown']
+      
+    else:
+      self._colours = colours.split(",")
+      
+      if len(self._colours) != self.NPairs:
+        sys.exit("The list of colours do not match the list of pairs")
+          
   def _plotRDF(self):
     """
     Plotting RDF for all pairs
@@ -354,6 +352,9 @@ def cmdLineArgs():
   
   parser.add_option("-p", "--pairs", dest="pairs", default="", type="string",
     help="A list of pairs for which RDF is plotted. Default = ''")
+  
+  parser.add_option("-c", "--colours", dest="colours", default=None, type="string",
+    help="A list of colours to be used for plotting. Default = ''")
 
   #parser.add_option("-c", "--cubic", dest="cubicPBC", default=False, action="store_true",
   #  help="Apply cubic periodicity. Default = False")
@@ -381,7 +382,7 @@ if __name__ == "__main__":
   
   filePath = args[0]
   
-  print "Reading: ", filePath
+  print ("Reading: ", filePath)
   
   # splitting file path
   fileName, fileExtension = os.path.splitext(filePath)
@@ -394,20 +395,21 @@ if __name__ == "__main__":
     system = IO.readSystemFromFileARC(filePath)
     
   else:
-    print "Unknown file format."
+    print ("Unknown file format.")
     sys.exit()
     
   
   # the system should not be moved if periodic boundaries are applied
   if not system.PBC[0] and not system.PBC[1] and not system.PBC[2]:
-    print "System is periodic, moving to the center of geometry"
+    print ("System is periodic, moving to the center of geometry")
     system.calcCOG()
     system.moveToCOG()
     
-  systemRDF = RDF(system, options.rdfCutOff, options.rdfCStepsize, options.gausSigma, options.pairs)
+  systemRDF = RDF(system, options.rdfCutOff, options.rdfCStepsize, options.gausSigma, 
+                  options.pairs, options.colours)
   
   systemRDF._calcRDF()
   
   systemRDF._plotRDF()
   
-  print "Finished."
+  print ("Finished.")

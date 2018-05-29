@@ -21,7 +21,7 @@ import source.Fhiaims as FHIaims
 import source.IO as IO
 
 _fhiaimsGeometryFile = "geometry.in"
-_fhiaimsOutFile = "FHIaims.out"
+_fhiaimsOutFile = "fhiaims.out"
 _outputDir = "output"
 _topDir = "tops"
 _uniqueDir = "unique"
@@ -100,11 +100,11 @@ def generateStatistics(systemlist, unique=False):
   
   avgCores = sumOfCores / noOfSystems
   
-  print "Avg. number of cores: ", avgCores
-  print "Avg. run time: ", np.average(runTimes)
-  print "Min run time: ", np.min(runTimes)
-  print "Max run time: ", np.max(runTimes)
-  print "Stdev run time: ", np.std(runTimes)
+  print ("Avg. number of cores: ", avgCores)
+  print ("Avg. run time: ", np.average(runTimes))
+  print ("Min run time: ", np.min(runTimes))
+  print ("Max run time: ", np.max(runTimes))
+  print ("Stdev run time: ", np.std(runTimes))
   
 def readFHIaimsSystems(fhiaimsDirs, single=False):
   """
@@ -118,7 +118,7 @@ def readFHIaimsSystems(fhiaimsDirs, single=False):
   totalCnt = len(fhiaimsDirs)
   for dirName in fhiaimsDirs:
     
-    if (cnt % 10 == 0): print "Reading %d/%d" % (cnt+1, totalCnt)
+    if (cnt % 10 == 0): print ("Reading %d/%d" % (cnt+1, totalCnt))
     
     cwd = os.getcwd()
     
@@ -137,7 +137,7 @@ def readFHIaimsSystems(fhiaimsDirs, single=False):
       systemsList.append(system)
     
     else:
-      print "Error reading in [%s]: %s" % (systemName, error)
+      print ("Error reading in [%s]: %s" % (systemName, error))
     
     os.chdir(cwd)
     cnt += 1
@@ -237,5 +237,5 @@ if __name__ == "__main__":
   # generating unique statistics
   generateStatistics(uniqueSystems, True)
   
-  print "Finished."
+  print ("Finished.")
   

@@ -36,9 +36,9 @@ def error(caller, message, indent=0, verbose=1):
         
   now = datetime.datetime.now().strftime("%d/%m/%y, %H:%M:%S")
   ind = ""
-  for _ in xrange(indent):
+  for _ in range(indent):
       ind += "  "
-  print "[%s]: %s%s%s >> %s%s" % (now, bcolors.FAIL, ind, caller, message, bcolors.ENDC)
+  print ("[%s]: %s%s%s >> %s%s" % (now, bcolors.FAIL, ind, caller, message, bcolors.ENDC))
 
 def log(caller, message, indent=0, verbose=1):
   """
@@ -51,9 +51,9 @@ def log(caller, message, indent=0, verbose=1):
    
   now = datetime.datetime.now().strftime("%d/%m/%y, %H:%M:%S")
   ind = ""
-  for _ in xrange(indent):
+  for _ in range(indent):
       ind += "  "
-  print "[%s]: %s%s >> %s" % (now, ind, caller, message)
+  print ("[%s]: %s%s >> %s" % (now, ind, caller, message))
 
 def warning(caller, message, indent=0, verbose=1):
   
@@ -62,9 +62,9 @@ def warning(caller, message, indent=0, verbose=1):
         
   now = datetime.datetime.now().strftime("%d/%m/%y, %H:%M:%S")
   ind = ""
-  for _ in xrange(indent):
+  for _ in range(indent):
       ind += "  "
-  print "[%s]: %s%s%s >> %s%s" % (now, bcolors.WARNING, ind, caller, message, bcolors.ENDC)
+  print ("[%s]: %s%s%s >> %s%s" % (now, bcolors.WARNING, ind, caller, message, bcolors.ENDC))
 
 def printAuthor(verbose=1):
   """
@@ -75,4 +75,5 @@ def printAuthor(verbose=1):
   if verbose == 0:
     return
     
-  print bcolors.WARNING +"Written by" + bcolors.ENDC + " " + bcolors.OKGREEN + "Tomas Lazauskas" + bcolors.ENDC + " " + bcolors.FAIL + "2016-2017" + bcolors.ENDC
+  print (bcolors.WARNING +"Written by" + bcolors.ENDC + " " + bcolors.OKGREEN + "Tomas Lazauskas" + 
+         bcolors.ENDC + " " + bcolors.FAIL + "2016-2017" + bcolors.ENDC)

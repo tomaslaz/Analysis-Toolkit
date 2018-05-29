@@ -10,15 +10,15 @@ import copy
 import os
 import sys
 import glob
-import System
 import time
 import numpy as np
-import Gulp
+
+from . import System
+from . import Gulp
+from . import Atoms
 
 const_file_ext_xyz = "xyz"
 const_file_ext_out = "out"
-
-import Atoms
 
 def checkDirectory(dirPath, createMd=0):
   """
@@ -159,7 +159,7 @@ def get_unique_systems_hashkeys(systems_list, hashkeyRadius=None):
       unique_systems.append(systems_list[system_cnt])
     
     system_cnt += 1
-    if (system_cnt % 100 == 0): print "Getting the hashkeys %d/%d" % (system_cnt, system_list_len)
+    if (system_cnt % 100 == 0): print ("Getting the hashkeys %d/%d" % (system_cnt, system_list_len))
   
   for i in range(unique_cnt):
     unique_systems[i].hashkey_duplicate_cnt = hashkeys_count[i]
@@ -317,10 +317,10 @@ def read_in_systems(systems_paths_list):
     if system is not None:
       systems.append(system)
     else:
-      print "error: %s" % (error)
+      print ("error: %s" % (error))
      
     if (systems_paths_iter % 1000 == 0):
-      print "Reading %d/%d" % (systems_paths_iter, systems_paths_cnt)
+      print ("Reading %d/%d" % (systems_paths_iter, systems_paths_cnt))
     
     systems_paths_iter += 1
     
@@ -393,13 +393,13 @@ def readSystemFromFileARC(fileName):
     system = None
     
     if not os.path.isfile(fileName):
-        print "File [%s] doesn't exist." % (fileName)
+        print ("File [%s] doesn't exist." % (fileName))
         return system
     
     try:
         f = open(fileName)
     except:
-        print "Cannot read file [%s]" % (fileName)
+        print ("Cannot read file [%s]" % (fileName))
         return system
     
     i = 0
@@ -483,13 +483,13 @@ def readSystemFromFileCAR(fileName):
     system = None
     
     if not os.path.isfile(fileName):
-        print "File [%s] doesn't exist." % (fileName)
+        print ("File [%s] doesn't exist." % (fileName))
         return system
     
     try:
         f = open(fileName)
     except:
-        print "Cannot read file [%s]" % (fileName)
+        print ("Cannot read file [%s]" % (fileName))
         return system
     
     i = 0
@@ -629,8 +629,8 @@ def readSystemFromFileGIN(fileName, outputMode=False):
       system.PBC[2] = 1
       
       #TODO: extend to not only cubic systems
-      if ((system.cellAngles[0] <> 90.0) or (system.cellAngles[1] <> 90.0) or (system.cellAngles[2] <> 90.0)):
-        print " : At the moment we can deal only with cubic cells. Please contact if you want to use different systems"
+      if ((system.cellAngles[0] != 90.0) or (system.cellAngles[1] != 90.0) or (system.cellAngles[2] != 90.0)):
+        print (" : At the moment we can deal only with cubic cells. Please contact if you want to use different systems")
         
       else:
         sys.exit(__name__ +" : Cannot determine cell type")
@@ -740,13 +740,13 @@ def readSystemFromFileXYZ(fileName):
     system = None
     
     if not os.path.isfile(fileName):
-        print "File [%s] doesn't exist." % (fileName)
+        print ("File [%s] doesn't exist." % (fileName))
         return system
     
     try:
         f = open(fileName)
     except:
-        print "Cannot read file [%s]" % (fileName)
+        print ("Cannot read file [%s]" % (fileName))
         return system
     
     line = f.readline().strip()
@@ -932,7 +932,7 @@ def writeCAR(system, outputFile):
   
   fout.write("%s\n" % "!BIOSYM archive 3")
  
-  if (system.PBC[0] <> 0 or system.PBC[0] <> 0 or system.PBC[0] <> 0):
+  if (system.PBC[0] != 0 or system.PBC[0] != 0 or system.PBC[0] != 0):
     success = False
     error = __name__ + ": PBC are not implemented for CAR"
   
