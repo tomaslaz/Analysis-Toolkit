@@ -16,6 +16,7 @@ import numpy as np
 from . import System
 from . import Gulp
 from . import Atoms
+from . import Fhiaims
 
 const_file_ext_xyz = "xyz"
 const_file_ext_out = "out"
@@ -378,7 +379,25 @@ def readSystemFromFile(file_name):
     
     if system is None:
       error = "System cannot be read from file: %s" % (file_name)
+  
+  elif file_name.endswith(".out"):
     
+    print ("Trying to read [%s]." % (file_name))
+    
+    cwd = os.getcwd()
+        
+    # changing into fhiaims simulation dir
+    os.chdir(os.path.dirname(file_name))
+    
+    # getting fhiaims output file name
+    aims_output_file = os.path.basename(file_name)
+        
+    success, error, system = Fhiaims._readAimsStructure(Fhiaims._const_geometry_in, 
+                                                        aims_output_file, 
+                                                        relaxed=False, eigenvalues=False)
+    
+    os.chdir(cwd)
+      
   else:
     error = "Unidentified file format"
   
