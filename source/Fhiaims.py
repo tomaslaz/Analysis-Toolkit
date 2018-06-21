@@ -143,6 +143,9 @@ def _readAimsOutput(inputFile, system, relaxed=True, eigenvalues=False):
   read_evs_up = False
   read_evs_down = False
   
+  initial_energy_read = False
+  initial_energy = 0.0
+  
   eigen_values_array = []
   eigen_values_up_array = []
   eigen_values_down_array = []
@@ -229,6 +232,10 @@ def _readAimsOutput(inputFile, system, relaxed=True, eigenvalues=False):
         
     if ((len(fields) > 5) and (' '.join(fields[1:4]) == "Total energy uncorrected")):
       energy = float(fields[5])
+      
+      if not initial_energy_read:
+        initial_energy = copy.copy(energy)
+        initial_energy_read = True
     
     # reset values
     if _const_scf_iter in line:
@@ -373,6 +380,7 @@ def _readAimsOutput(inputFile, system, relaxed=True, eigenvalues=False):
   
       system.cbm_spin_chan = cbm_spin_chan
     
+    system.totalEnergy_initial = initial_energy
     system.totalEnergy = energy
     system.energyDefinition = "FHI-aims_" + version
     

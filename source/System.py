@@ -38,6 +38,7 @@ class System(object):
     self.hashkey_duplicate_cnt = 0
     self.energyDefinition = None
     
+    self.totalEnergy_initial = 0.0
     self.totalEnergy = 0.0
     self.NAtoms = NAtoms
     self.cellDims = np.zeros(3, np.float64)

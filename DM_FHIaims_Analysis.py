@@ -21,7 +21,7 @@ import source.Fhiaims as FHIaims
 import source.IO as IO
 
 _fhiaimsGeometryFile = "geometry.in"
-_fhiaimsOutFile = "fhiaims.out"
+_fhiaimsOutFile = "FHIaims.out"
 _outputDir = "output"
 _topDir = "tops"
 _uniqueDir = "unique"
@@ -76,7 +76,8 @@ def generateStatistics(systemlist, unique=False):
   else:
     f = open("%s/Stats.csv" % (_uniqueDir), "w")
   
-  f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", "Energy", "Hashkey", "Cores", 
+  f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("System", 
+          "Ini_Energy", "Energy", "Hashkey", "Cores", 
           "Time", "Tot.Time", "H-L", 
           "VBM", "VBMOcc", "VBMSpinChannel", 
           "CBM", "CBMOcc", "CBMSpinChannel", 
@@ -85,11 +86,12 @@ def generateStatistics(systemlist, unique=False):
   systemCnt = 0
   
   for system in systemlist:
-    f.write("%s,%f,%s,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" % (system.name, system.totalEnergy, system.hashkey,
-                                     system.noOfcores, system.runTime, system.noOfcores*system.runTime,
-                                     system.homo_lumo_gap, system.vbm, system.vbm_occ_num, system.vbm_spin_chan, 
-                                     system.cbm, system.cbm_occ_num, system.cbm_spin_chan, 
-                                     system.spin_N, system.spin_S, system.spin_J, float(system.NAtoms)))
+    f.write("%s,%f,%f,%s,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" % (system.name, 
+      system.totalEnergy_initial, system.totalEnergy, system.hashkey,
+      system.noOfcores, system.runTime, system.noOfcores*system.runTime,
+      system.homo_lumo_gap, system.vbm, system.vbm_occ_num, system.vbm_spin_chan, 
+      system.cbm, system.cbm_occ_num, system.cbm_spin_chan, 
+      system.spin_N, system.spin_S, system.spin_J, float(system.NAtoms)))
     
     runTimes[systemCnt] = system.runTime
     
