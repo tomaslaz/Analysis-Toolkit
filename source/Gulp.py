@@ -10,7 +10,8 @@ import numpy as np
 import os
 import sys
 
-from . import Utilities
+# import Utilities
+import Utilities
 
 _constIniParams = "Cell parameters (Angstroms/Degrees):"
 _constIniParamsCellVol = "Initial cell volume"

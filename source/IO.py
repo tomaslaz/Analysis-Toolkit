@@ -13,10 +13,13 @@ import glob
 import time
 import numpy as np
 
-from . import System
-from . import Gulp
-from . import Atoms
-from . import Fhiaims
+# import System
+# import Gulp
+# import Atoms
+import System
+import Gulp
+import Atoms
+#import Fhiaims
 
 const_file_ext_xyz = "xyz"
 const_file_ext_out = "out"

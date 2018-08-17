@@ -23,7 +23,8 @@ except:
 
 _systems_stats_file = "Stats.csv"
 
-from . import Constants
+#import Constants
+import Constants
 
 def countUniqueStringOccurences(stringList):
   

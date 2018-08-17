@@ -21,7 +21,7 @@ import source.Fhiaims as FHIaims
 import source.IO as IO
 
 _fhiaimsGeometryFile = "geometry.in"
-_fhiaimsOutFile = "FHIaims.out"
+_fhiaimsOutFile = "fhiAims.out"
 _outputDir = "output"
 _topDir = "tops"
 _uniqueDir = "unique"
@@ -177,7 +177,11 @@ def saveFiles(systemsList):
     success_, error_ = IO.writeXYZ(systemsList[i], fileName)
     
     hashkeyRadius = Atoms.getRadius(systemsList[i]) + 1.0
-
+    
+    hashkeyRadius = 2.8
+    #hashkeyRadius = 3.06
+    #hashkeyRadius = 2.6
+    
     cmdLine = "python ~/git/hkg/hkg.py %s %f" % (fileName, hashkeyRadius)
     
     hashkey = os.popen(cmdLine).read().strip()

@@ -12,8 +12,10 @@ import math
 import numpy as np
 import os
 
-from .import Atoms
-from . import Utilities
+# import Atoms
+# import Utilities
+import Atoms
+import Utilities
 from scipy.constants.constants import Rydberg
 
 _const_zero_value = 0.0
